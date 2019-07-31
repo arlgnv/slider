@@ -1,0 +1,79 @@
+.lrs {
+    position: relative;
+
+    display: inline-block;
+    width: 100%;
+}
+
+.lrs__range {
+    position: absolute;
+    left: 0;
+    top: 50%;
+
+    height: 5px;
+    width: 100%;
+
+    background-color: lightgray;
+    transform: translateY(-50%);
+}
+
+.lrs__handle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+
+    height: 15px;
+    width: 15px;
+
+    border-radius: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.lrs__tip {
+    position: absolute;
+    left: 0;
+    top: -40px;
+
+    display: inline-block;
+    padding: 5px 8px;
+
+    font-size: 14px;
+    line-height: normal;
+
+    border-radius: 3px 3px 0 0;
+
+    &::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -4px;
+        z-index: -1;
+
+        width: 8px;
+        height: 8px;
+
+        transform: translateX(-50%) rotate(45deg);
+    }
+}
+
+.lrs--aqua {
+    .lrs__handle {
+        background-color: #53B6A8;
+    }
+
+    .lrs__tip {
+        color: white;
+        background-color: rgba(83, 182, 169, 1);
+
+        &::before {
+            background-color: rgba(83, 182, 169, 1);
+        }
+    }
+}
+
+.lrs--red {
+    .lrs__handle {
+        background-color: #E5573D;
+    }
+}

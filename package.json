@@ -1,0 +1,34 @@
+{
+  "name": "rangeslider",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/example/example.pug",
+  "scripts": {
+    "start": "rimraf dist && parcel src/example/example.pug --open",
+    "build": "rimraf dist docs && parcel build src/example/example.pug -d docs --no-cache --public-url ./",
+    "utilities-test": "parcel src/app/utilities/utilities-tests.html --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madnessJs/rangeSlider.git"
+  },
+  "author": "Artem Lagunov",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel-bundler": "^1.12.3",
+    "postcss-modules": "^1.4.1",
+    "autoprefixer": "^9.6.0",
+    "cssnano": "^4.1.10",
+    "sass": "^1.21.0",
+    "pug": "^2.0.3",
+    "rimraf": "^2.6.3"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 4 versions"
+  ],
+  "bugs": {
+    "url": "https://github.com/madnessJs/rangeSlider/issues"
+  },
+  "homepage": "https://github.com/madnessJs/rangeSlider#readme"
+}
