@@ -2,13 +2,16 @@ import { assert } from "chai";
 import { createSliderTemplate } from "./utilities";
 
 describe("Create slider template", () => {
-    const settings = {value: 0, min: 0, max: 100, step: 1, range: false, view: "horizontal", hideTip: true, theme: "aqua"};
-
     it("function returns string", () => {
+        const settings = {};
+
         assert.isString(createSliderTemplate(settings));
     });
-    
-    it("function returns correct string", () => {
+
+    it("function returns string with theme", () => {
+        const settings = {};
+        settings.theme = "aqua";
+        
         const template = createSliderTemplate(settings);
 
         assert.notEqual(template.indexOf(settings.theme), -1);
