@@ -1,3 +1,6 @@
+var jquery = require("jquery");
+window.$ = window.jQuery = jquery;
+
 import App from "./app/app";
 
 (function($) {

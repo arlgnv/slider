@@ -1,7 +1,7 @@
-import { createTemplate } from "./utilities/utilities";
-import Model from "./mvc/model/model";
-import View from "./mvc/view/view";
-import Controller from "./mvc/controller/controller";
+import { createTemplate } from "./utilities";
+import Model from "./mvc/model";
+import View from "./mvc/view";
+import Controller from "./mvc/controller";
 
 export default class App {
     constructor(input, settings) {

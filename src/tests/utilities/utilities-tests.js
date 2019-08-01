@@ -1,5 +1,4 @@
-import { assert } from "chai";
-import { createSliderTemplate } from "./utilities";
+import { createSliderTemplate } from "./../../app/utilities";
 
 describe("Create slider template", () => {
     it("function returns string", () => {

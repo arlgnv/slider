@@ -22,4 +22,4 @@ function createSliderTemplate(parameters) {
     return template;
 }
 
-export {createSliderTemplate};
+export { createSliderTemplate };

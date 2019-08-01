@@ -5,8 +5,7 @@
   "main": "src/example/example.pug",
   "scripts": {
     "start": "rimraf dist && parcel src/example/example.pug --open",
-    "build": "rimraf dist docs && parcel build src/example/example.pug -d docs --no-cache --public-url ./",
-    "utilities-test": "mocha --require @babel/register src/app/utilities/utilities-tests.js"
+    "build": "rimraf dist docs && parcel build src/example/example.pug -d docs --no-cache --public-url ./"
   },
   "repository": {
     "type": "git",
@@ -15,11 +14,6 @@
   "author": "Artem Lagunov",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/node": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/register": "^7.5.5",
     "autoprefixer": "^9.6.0",
     "chai": "^4.2.0",
     "cssnano": "^4.1.10",
@@ -27,6 +21,7 @@
     "parcel-bundler": "^1.12.3",
     "postcss-modules": "^1.4.1",
     "pug": "^2.0.3",
+    "jquery": "^3.4.1",
     "rimraf": "^2.6.3",
     "sass": "^1.21.0"
   },
