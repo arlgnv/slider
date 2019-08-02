@@ -13,4 +13,16 @@ export default class View {
     handleDragStart() {
 
     }
+
+    changeHandlePosition(value) {
+        this.handle.style.left = value + "px";
+    }
+
+    changeTipPosition(value) {
+        this.tip.style.left = value + "px";
+    }
+
+    changeValue(value) {
+        this.input.value = value;
+    }
 }

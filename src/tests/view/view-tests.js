@@ -1,25 +1,40 @@
 import View from "./../../app/mvc/view.js";
 
+const view = new View(document.querySelector(".range"), document.querySelector(".lrs"));
+
 describe("View", () => {
     describe("Constructor", () => {
         it("add listener to handle", () => {
-            document.body.insertAdjacentHTML("beforeend",
-            `<span class="lrs lrs--aqua">
-            <span class="lrs__range">
-            <span class="lrs__tip"></span>
-            <span class="lrs__handle"></span>
-            </span>
-            </span>
-            <input type="text" class="range">`
-            );
-
-            const view = new View(document.querySelector(".range"), document.querySelector(".lrs"));
-
             assert.isOk(view.handle.onmousedown);
         });
     });
 
-    describe("Methods", () => {});
+    describe("Methods", () => {
+        it("change handle position", () => {
+            const shift = 5;
+            view.changeHandlePosition(shift);
+
+            const hanlePosition = parseFloat(view.handle.style.left);
+
+            assert.equal(shift, hanlePosition);
+        });
+
+        it("change tip position", () => {
+            const shift = 16;
+            view.changeTipPosition(shift);
+
+            const tipPosition = parseFloat(view.tip.style.left);
+
+            assert.equal(shift, tipPosition);
+        });
+
+        it("change value", () => {
+            const value = 500;
+            view.changeValue(value);
+
+            assert.equal(value, view.input.value);
+        });
+    });
 });
 
 mocha.run();

@@ -2,14 +2,26 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.4/mocha.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.4/mocha.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.4/mocha.js"></script>
-        <script>mocha.setup("bdd")</script>
+        <script>
+            mocha.setup("bdd");
+        </script>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.js"></script>
-        <script>let assert = chai.assert</script>
+        <script>
+            let assert = chai.assert;
+        </script>
     </head>
-    <body>
+    <body style="padding: 10px">
+        <span class="lrs lrs--aqua">
+            <span class="lrs__range">
+                <span class="lrs__tip"></span>
+                <span class="lrs__handle"></span>
+            </span>
+        </span>
+        <input type="text" class="range" style="display: none" />
+
         <div id="mocha"></div>
 
         <script type="module" src="./view-tests.js"></script>
