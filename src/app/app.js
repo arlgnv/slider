@@ -5,14 +5,13 @@ import Controller from "./mvc/controller.js";
 
 export default class App {
     constructor(input, settings) {
-        // this.settings = settings;
-        // this.template = createSliderTemplate(this.settings);
+        this.template = createSliderTemplate(settings);
 
-        // this.input = input;
-        // this.input.insertAdjacentHTML("beforeBegin", this.template);
+        input.insertAdjacentHTML("beforeBegin", this.template);
+        input.style.display = "none";
 
-        // this.model = new Model();
-        // this.view = new View(this.input);
-        // this.controller = new Controller(this.model, this.view);
+        this.model = new Model(settings);
+        this.view = new View(input);
+        this.controller = new Controller(this.model, this.view);
     }
 }

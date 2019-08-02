@@ -8,9 +8,7 @@ describe("App", () => {
 
         new App(input, {});
 
-        const slider = document.querySelector(".lrs");
-        
-        assert.isOk(slider);
+        assert.isOk( document.querySelector(".lrs") );
     });
 });
 
