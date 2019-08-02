@@ -1,5 +1,5 @@
 export default class Model {
-    constructor() {
-        
+    constructor(settings = {}) {
+        this.state = settings;
     }
 }

@@ -6,7 +6,7 @@ import App from "./app/app";
 (function($) {
     "use strict";
 
-    $.fn.rangeSlider = function(options) {
+    $.fn.rangeSlider = function(parameters) {
         const settings = $.extend(
             {
                 value: 0, // начальное значение
