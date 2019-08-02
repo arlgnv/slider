@@ -19,7 +19,7 @@ import App from "./app/app";
                 hideTip: true, // скрыть подсказку над бегунком
                 theme: "aqua" // цветовая схема
             },
-            options
+            parameters
         );
 
         return new App(this[0], settings);

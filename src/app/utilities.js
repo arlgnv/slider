@@ -22,4 +22,22 @@ function createSliderTemplate(parameters) {
     return template;
 }
 
-export { createSliderTemplate };
+function checkSettings(settings) {
+    const {value, min, max, step, range, view, hideTip, theme} = settings;
+
+    if (typeof value !== "number" || typeof min !== "number" || typeof max !== "number" || typeof step !== "number") {
+        return false;
+    }
+
+    if (typeof range !== "boolean" || typeof hideTip !== "boolean") {
+        return false;
+    }
+
+    if (typeof view !== "string" || typeof theme !== "string") {
+        return false;
+    }
+
+    return true;
+}
+
+export { createSliderTemplate, checkSettings };
