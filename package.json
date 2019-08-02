@@ -14,14 +14,11 @@
   "author": "Artem Lagunov",
   "license": "ISC",
   "devDependencies": {
-    "autoprefixer": "^9.6.0",
-    "chai": "^4.2.0",
-    "cssnano": "^4.1.10",
-    "mocha": "^6.2.0",
+    "autoprefixer": "^9.6.1",
+    "jquery": "^3.4.1",
     "parcel-bundler": "^1.12.3",
     "postcss-modules": "^1.4.1",
     "pug": "^2.0.3",
-    "jquery": "^3.4.1",
     "rimraf": "^2.6.3",
     "sass": "^1.21.0"
   },

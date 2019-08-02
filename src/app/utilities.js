@@ -1,4 +1,6 @@
 function createSliderTemplate(parameters) {
+    if (parameters.theme !== "aqua" || parameters.theme !== "red") parameters.theme = "aqua";
+    
     let template;
 
     if (parameters.hideTip === false) {

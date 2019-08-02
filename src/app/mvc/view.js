@@ -6,6 +6,11 @@ export default class View {
         this.handle = slider.querySelector(".lrs__handle");
         this.tip = slider.querySelector(".lrs__tip");
 
-        //this.handle.addEventListener("mousedown", this.handleDragStart.bind(this));
+        //this.handle.addEventListener("mousedown", () => this.handleDragStart);
+        this.handle.onmousedown = () => this.handleDragStart;
+    }
+
+    handleDragStart() {
+
     }
 }

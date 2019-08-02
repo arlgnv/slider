@@ -9,6 +9,14 @@ describe("Utilities", () => {
                 assert.isString(createSliderTemplate(settings));
             });
 
+            it("string has basic theme if \"settings.theme\" is unknown", () => {
+                const settings = {theme: "parapampampam"};
+
+                const template = createSliderTemplate(settings);
+
+                assert.notEqual(template.indexOf("aqua"), -1);
+            });
+
             it("string has settings' theme", () => {
                 const settings = {theme: "aqua"};
 
@@ -19,7 +27,7 @@ describe("Utilities", () => {
         });
 
         describe("checkSettings", () => {
-            it("It's ok with correct settings", () => {
+            it("It's ok with valid settings", () => {
                 const settings = {value: 0,min: 0,max: 100,step: 1,range: false,view: "horizontal",hideTip: true,theme: "aqua"};
 
                 assert.isOk(checkSettings(settings));
