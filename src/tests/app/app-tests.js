@@ -1,14 +1,17 @@
-import { assert } from "chai";
-import jsdom from "mocha-jsdom";
-
-import App from "./app";
+import App from "./../../app/app.js";
 
 describe("App", () => {
-    jsdom();
-
     it("init template on page", () => {
-        const slider = document.querySelector(".lrs");
+        let input = document.createElement("input");
+        input.classList.add("range");
+        document.body.appendChild(input);
 
-        assert(slider);
+        new App(input, {});
+
+        const slider = document.querySelector(".lrs");
+        
+        assert.isOk(slider);
     });
 });
+
+mocha.run();

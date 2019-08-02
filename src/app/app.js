@@ -1,12 +1,12 @@
-import { createTemplate } from "./utilities";
-import Model from "./mvc/model";
-import View from "./mvc/view";
-import Controller from "./mvc/controller";
+import { createSliderTemplate } from "./utilities.js";
+import Model from "./mvc/model.js";
+import View from "./mvc/view.js";
+import Controller from "./mvc/controller.js";
 
 export default class App {
     constructor(input, settings) {
         // this.settings = settings;
-        // this.template = createTemplate(this.settings);
+        // this.template = createSliderTemplate(this.settings);
 
         // this.input = input;
         // this.input.insertAdjacentHTML("beforeBegin", this.template);

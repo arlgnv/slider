@@ -1,4 +1,4 @@
-var jquery = require("jquery");
+let jquery = require("jquery");
 window.$ = window.jQuery = jquery;
 
 import App from "./app/app";

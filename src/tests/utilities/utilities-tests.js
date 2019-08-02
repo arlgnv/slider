@@ -1,4 +1,4 @@
-import { createSliderTemplate } from "./../../app/utilities";
+import { createSliderTemplate } from "./../../app/utilities.js";
 
 describe("Create slider template", () => {
     it("function returns string", () => {
@@ -16,3 +16,5 @@ describe("Create slider template", () => {
         assert.notEqual(template.indexOf(settings.theme), -1);
     });
 });
+
+mocha.run();
