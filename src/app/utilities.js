@@ -1,20 +1,20 @@
 function createSliderTemplate(parameters) {
-    if (parameters.theme !== "aqua" || parameters.theme !== "red") parameters.theme = "aqua";
+    if (parameters.theme !== "aqua" && parameters.theme !== "red") parameters.theme = "aqua";
 
     let template;
 
-    if (parameters.hideTip === false) {
-        template = `
-    <span class="lrs lrs--${parameters.theme}">
-    <span class="lrs__range">
-    <span class="lrs__tip"></span>
-    <span class="lrs__handle"></span>
-    </span>
-    </span>`;
+    if (parameters.hideTip === true) {
+        template = `<span class="lrs lrs--${parameters.theme}">
+        <span class="lrs__range">
+        <span class="lrs__tip lrs__tip--hidden"></span>
+        <span class="lrs__handle"></span>
+        </span>
+        </span>`;
     } else {
         template = `
     <span class="lrs lrs--${parameters.theme}">
     <span class="lrs__range">
+    <span class="lrs__tip"></span>
     <span class="lrs__handle">
     </span>
     </span>
@@ -42,14 +42,6 @@ function checkSettings(settings) {
     return true;
 }
 
-function checkExtremeHandlePositions(num, min, max) {
-    if (num < min) num = min;
-
-    if (num > max) num = max;
-
-    return num;
-}
-
 class EventEmitter {
     constructor() {
         this.events = {};
@@ -64,4 +56,4 @@ class EventEmitter {
     }
 }
 
-export { createSliderTemplate, checkSettings, checkExtremeHandlePositions, EventEmitter };
+export { createSliderTemplate, checkSettings, EventEmitter };

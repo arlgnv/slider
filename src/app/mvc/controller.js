@@ -1,5 +1,3 @@
-import { checkExtremeHandlePositions } from "./../utilities.js";
-
 export default class Controller {
     constructor(model, view) {
         this.model = model;
@@ -11,28 +9,47 @@ export default class Controller {
     drag(evt) {
         const cursorShift = evt.clientX - evt.target.getBoundingClientRect().left;
         const sliderCoords = this.view.slider.getBoundingClientRect();
-        const minHandlePosition = 0;
-        const maxHandlePosition = this.view.slider.offsetWidth - this.view.handle.offsetWidth;
 
         document.body.onmousemove = evt => {
             let handlePosition = evt.clientX - cursorShift - sliderCoords.left;
-            handlePosition = checkExtremeHandlePositions(handlePosition, minHandlePosition, maxHandlePosition);
-
-            let value = Math.round(handlePosition / (( this.view.range.offsetWidth - this.view.handle.offsetWidth) / this.model.state.max));
-            this.model.state.value = value;
-
-
-            //let { tipPosition } = this.model.state;
-            //tipPosition = Math.ceil(handlePosition - (this.view.tip.offsetWidth - this.model.state["handleWidth"]) / 2);
-
+            handlePosition = this.checkExtremeHandlePositions(handlePosition);
             this.view.changeHandlePosition(handlePosition);
-            //this.view.changeTipPosition(tipPosition);
+
+            let value = this.model.state.value;
+            value = this.getValue(handlePosition);
+            this.model.state.value = value;
             this.view.changeValue(this.model.state.value);
+
+            if (!this.model.state.hideTip) {
+                let tipPosition = Math.round(handlePosition - (this.view.tip.offsetWidth - this.view.handle.offsetWidth) / 2);
+                this.view.changeTipPosition(tipPosition);
+            }
         };
 
         document.body.onmouseup = () => {
             document.body.onmousemove = null;
             document.body.onmouseup = null;
         };
+    }
+
+    checkExtremeHandlePositions(num) {
+        const maxHandlePosition = this.view.slider.offsetWidth - this.view.handle.offsetWidth;
+
+        if (num < 0) num = 0;
+        if (num > maxHandlePosition) num = maxHandlePosition;
+
+        return num;
+    }
+
+    getValue(handlePosition) {
+        let value;
+
+        if (this.model.state.min === 0) {
+            value = Math.round(handlePosition / ((this.view.range.offsetWidth - this.view.handle.offsetWidth) / this.model.state.max));
+        } else if (this.model.state.min > 0) {
+            value = this.model.state.min + Math.round(handlePosition / ((this.view.range.offsetWidth - this.view.handle.offsetWidth) / (this.model.state.max - this.model.state.min)));
+        }
+
+        return value;
     }
 }

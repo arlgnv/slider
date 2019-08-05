@@ -55,6 +55,10 @@
 
         transform: translateX(-50%) rotate(45deg);
     }
+
+    &--hidden {
+        display: none;
+    }
 }
 
 .lrs--aqua {
