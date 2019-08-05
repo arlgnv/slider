@@ -42,4 +42,18 @@ function checkSettings(settings) {
     return true;
 }
 
-export { createSliderTemplate, checkSettings };
+class EventEmitter {
+    constructor() {
+        this.events = {};
+    }
+
+    on(type, callback) {
+        this.events[type] = callback;
+    }
+
+    emit(type, arg) {
+        if (this.events[type]) this.events[type](arg);
+    }
+}
+
+export { createSliderTemplate, checkSettings, EventEmitter };

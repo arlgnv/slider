@@ -1,4 +1,4 @@
-import { createSliderTemplate, checkSettings } from "./../../app/utilities.js";
+import { createSliderTemplate, checkSettings, EventEmitter } from "./../../app/utilities.js";
 
 describe("Utilities", () => {
     describe("Functions", () => {
@@ -27,7 +27,7 @@ describe("Utilities", () => {
         });
 
         describe("checkSettings", () => {
-            it("It's ok with valid settings", () => {
+            it("It's ok with correct settings", () => {
                 const settings = {value: 0,min: 0,max: 100,step: 1,range: false,view: "horizontal",hideTip: true,theme: "aqua"};
 
                 assert.isOk(checkSettings(settings));
@@ -46,7 +46,19 @@ describe("Utilities", () => {
         });
     });
 
-    describe("Classes", () => {});
+    describe("Classes", () => {
+        describe("EventEmitter", () => {
+            it("attach callback to event", () => {
+                const events = new EventEmitter();
+                const typeEvent = "drag";
+                const callback = () => "It's me";
+
+                events.on(typeEvent, callback);
+
+                assert.equal(callback, events.events[typeEvent]);
+            });
+        });
+    });
 });
 
 mocha.run();

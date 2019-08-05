@@ -4,9 +4,7 @@ const view = new View(document.querySelector(".range"), document.querySelector("
 
 describe("View", () => {
     describe("Constructor", () => {
-        it("add listener to handle", () => {
-            assert.isOk(view.handle.onmousedown);
-        });
+        
     });
 
     describe("Methods", () => {
