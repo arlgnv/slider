@@ -18,12 +18,16 @@ export default class Controller {
             let handlePosition = evt.clientX - cursorShift - sliderCoords.left;
             handlePosition = checkExtremeHandlePositions(handlePosition, minHandlePosition, maxHandlePosition);
 
+            let value = Math.round(handlePosition / (( this.view.range.offsetWidth - this.view.handle.offsetWidth) / this.model.state.max));
+            this.model.state.value = value;
+
+
             //let { tipPosition } = this.model.state;
             //tipPosition = Math.ceil(handlePosition - (this.view.tip.offsetWidth - this.model.state["handleWidth"]) / 2);
 
             this.view.changeHandlePosition(handlePosition);
             //this.view.changeTipPosition(tipPosition);
-            //this.view.changeValue(value);
+            this.view.changeValue(this.model.state.value);
         };
 
         document.body.onmouseup = () => {
