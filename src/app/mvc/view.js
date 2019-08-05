@@ -10,22 +10,13 @@ export default class View extends EventEmitter {
         this.handle = slider.querySelector(".lrs__handle");
         this.tip = slider.querySelector(".lrs__tip");
 
-        this.handle.addEventListener("mousedown", evt => this.handleDragStart(evt));
+        this.handle.addEventListener("mousedown", this.handleDragStart.bind(this));
     }
 
     handleDragStart(evt) {
         evt.preventDefault();
 
-        const info = {
-            input: this.input,
-            slider: this.slider,
-            range: this.range,
-            handle: this.handle,
-            tip: this.tip,
-            cursorShift: evt.clientX - evt.target.getBoundingClientRect().left
-        };
-
-        this.emit("drag", info);
+        this.emit("dragStart", evt);
     }
 
     changeHandlePosition(value) {

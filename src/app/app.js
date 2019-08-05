@@ -10,7 +10,7 @@ export default class App {
         this.template = createSliderTemplate(settings);
 
         input.insertAdjacentHTML("beforeBegin", this.template);
-        input.style.display = "none";
+        //input.style.display = "none";
 
         this.model = new Model(settings);
         this.view = new View(input, input.previousElementSibling);

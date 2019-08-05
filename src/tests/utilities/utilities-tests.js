@@ -1,4 +1,4 @@
-import { createSliderTemplate, checkSettings, EventEmitter } from "./../../app/utilities.js";
+import { createSliderTemplate, checkSettings, checkExtremeHandlePositions, EventEmitter } from "./../../app/utilities.js";
 
 describe("Utilities", () => {
     describe("Functions", () => {
@@ -42,6 +42,35 @@ describe("Utilities", () => {
 
                 settings = {value: 0,min: 0,max: 100,step: 1,range: false,view: true,hideTip: true,theme: {}};
                 assert.isNotOk(checkSettings(settings)); //view, theme are must be strings
+            });
+        });
+
+        describe("checkExtremeHandlePositions", () => {
+            it("returns min if num less than min", () => {
+                const min = 5, max = 15;
+                let num = 3;
+
+                const result = checkExtremeHandlePositions(num, min, max);
+
+                assert.equal(result, min);
+            });
+
+            it("returns max if num more than min", () => {
+                const min = 5, max = 15;
+                let num = 20;
+
+                const result = checkExtremeHandlePositions(num, min, max);
+
+                assert.equal(result, max);
+            });
+
+            it("returns num if num between min and max 'inclusively'", () => {
+                const min = 5, max = 15;
+                let num = 7;
+
+                const result = checkExtremeHandlePositions(num, min, max);
+
+                assert.equal(result, num);
             });
         });
     });
