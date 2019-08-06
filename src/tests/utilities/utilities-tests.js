@@ -32,6 +32,11 @@ describe("Utilities", () => {
                 assert.isOk(checkSettings(settings));
             });
 
+            it("It's wrong if value less than min", () => {
+                const settings = {value: 3,min: 10,max: 22,step: 1,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
+                assert.isNotOk(checkSettings(settings));
+            });
+
             it("It's wrong with negative numeric values", () => {
                 const settings = {value: -5,min: 3,max: -1,step: -1234,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
                 assert.isNotOk(checkSettings(settings));

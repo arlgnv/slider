@@ -30,6 +30,6 @@ export default class View extends EventEmitter {
     changeValue(value) {
         this.input.value = value;
 
-        if (!this.tip.classList.contains(".lrs__tip--hidden")) this.tip.textContent = value;
+        if (!this.tip.classList.contains("lrs__tip--hidden")) this.tip.textContent = value;
     }
 }

@@ -27,10 +27,13 @@ function createSliderTemplate(parameters) {
 function checkSettings(settings) {
     const { value, min, max, step, range, view, hideTip, theme } = settings;
 
-    if ((typeof value !== "number" || Math.sign(value) == -1) ||
-        (typeof min !== "number" || Math.sign(min) == -1) ||
-        (typeof max !== "number" || Math.sign(max) == -1) ||
-        (typeof step !== "number" || Math.sign(step) == -1)) {
+    if (value < min) return false;
+
+    if (typeof value !== "number" || typeof min !== "number" || Math.sign(min) == -1 || typeof max !== "number" || typeof step !== "number") {
+        return false;
+    }
+
+    if (Math.sign(value) == -1 || Math.sign(min) == -1 || Math.sign(max) == -1 || Math.sign(step) == -1) {
         return false;
     }
 
