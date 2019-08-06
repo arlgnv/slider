@@ -29,19 +29,27 @@ describe("Utilities", () => {
         describe("checkSettings", () => {
             it("It's ok with correct settings", () => {
                 const settings = {value: 0,min: 0,max: 100,step: 1,range: false,view: "horizontal",hideTip: true,theme: "aqua"};
-
                 assert.isOk(checkSettings(settings));
             });
 
-            it("It's wrong with incorrect settings", () => {
-                let settings = {value: "5",min: [],max: "13",step: false,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
-                assert.isNotOk(checkSettings(settings)); // value, min, max, step must be numbers
+            it("It's wrong with negative numeric values", () => {
+                const settings = {value: -5,min: 3,max: -1,step: -1234,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
+                assert.isNotOk(checkSettings(settings));
+            });
 
-                settings = {value: 0,min: 0,max: 100,step: 1,range: 3,view: "horizontal",hideTip: "alala",theme: "aqua"};
-                assert.isNotOk(checkSettings(settings)); //range, hideTip are must be boolean
+            it("It's wrong with incorrect numeric values", () => {
+                const settings = {value: [],min: "asdsa",max: {},step: true,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
+                assert.isNotOk(checkSettings(settings));
+            });
 
-                settings = {value: 0,min: 0,max: 100,step: 1,range: false,view: true,hideTip: true,theme: {}};
-                assert.isNotOk(checkSettings(settings)); //view, theme are must be strings
+            it("It's wrong with incorrect boolean values", () => {
+                const settings = {value: 0,min: 0,max: 100,step: 1,range: "aga",view: "horizontal",hideTip: "alala",theme: "aqua"};
+                assert.isNotOk(checkSettings(settings));
+            });
+
+            it("It's wrong with incorrect string values", () => {
+                const settings = {value: 0,min: 0,max: 100,step: 1,range: false,view: true,hideTip: true,theme: {}};
+                assert.isNotOk(checkSettings(settings));
             });
         });
     });

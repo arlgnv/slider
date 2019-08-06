@@ -41,7 +41,21 @@ describe("Controller", () => {
         });
 
         describe("getValue", () => {
-            it("return value between min and max", () => {});
+            it("return min if handle is leaning against start of the slider", () => {
+                const handlePosition = 0;
+
+                const value = controller.getValue(handlePosition);
+
+                assert.equal(value, model.state.min);
+            });
+
+            it("return max if handle is leaning against end of the slider", () => {
+                const handlePosition = view.range.offsetWidth - view.handle.offsetWidth;
+
+                const value = controller.getValue(handlePosition);
+
+                assert.equal(value, model.state.max);
+            });
         });
     });
 });
