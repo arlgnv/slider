@@ -27,7 +27,7 @@ function createSliderTemplate(parameters) {
 function checkSettings(settings) {
     const { value, min, max, step, range, view, hideTip, theme } = settings;
 
-    if (value < min) return false;
+    if (value < min || value > max) return false;
 
     if (typeof value !== "number" || typeof min !== "number" || Math.sign(min) == -1 || typeof max !== "number" || typeof step !== "number") {
         return false;

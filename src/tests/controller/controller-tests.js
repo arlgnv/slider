@@ -2,7 +2,7 @@ import Model from "./../../app/mvc/model.js";
 import View from "./../../app/mvc/view.js";
 import Controller from "./../../app/mvc/controller.js";
 
-const model = new Model({ value: 0, min: 10, max: 35 });
+const model = new Model({ value: 0, min: 0, max: 35 });
 const view = new View(document.querySelector(".range"), document.querySelector(".lrs"));
 const controller = new Controller(model, view);
 
@@ -40,21 +40,40 @@ describe("Controller", () => {
             });
         });
 
-        describe("getValue", () => {
-            it("return min if handle is leaning against start of the slider", () => {
+        describe("getValueFromHandlePosition", () => {
+            it("return min if handle is leaning against to the start of the slider", () => {
                 const handlePosition = 0;
 
-                const value = controller.getValue(handlePosition);
+                const value = controller.getValueFromHandlePosition(handlePosition);
 
                 assert.equal(value, model.state.min);
             });
 
-            it("return max if handle is leaning against end of the slider", () => {
-                const handlePosition = view.range.offsetWidth - view.handle.offsetWidth;
+            it("return max if handle is leaning against to the end of the slider", () => {
+                const maxHandlePosition = view.range.offsetWidth - view.handle.offsetWidth;
 
-                const value = controller.getValue(handlePosition);
+                const value = controller.getValueFromHandlePosition(maxHandlePosition);
 
                 assert.equal(value, model.state.max);
+            });
+        });
+
+        describe("getHandlePositionFromValue", () => {
+            it("return 0 if value equals 0", () => {
+                const value = 0;
+
+                const handlePosition = controller.getHandlePositionFromValue(value);
+
+                assert.equal(handlePosition, 0);
+            });
+
+            it("return max handle's position if value equals max", () => {
+                const maxHandlePosition = view.range.offsetWidth - view.handle.offsetWidth;
+                const value = model.state.max;
+
+                const handlePosition = controller.getHandlePositionFromValue(value);
+
+                assert.equal(handlePosition, maxHandlePosition);
             });
         });
     });

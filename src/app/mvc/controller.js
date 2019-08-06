@@ -16,7 +16,7 @@ export default class Controller {
             this.view.changeHandlePosition(handlePosition);
 
             let value = this.model.state.value;
-            value = this.getValue(handlePosition);
+            value = this.getValueFromHandlePosition(handlePosition);
             this.model.state.value = value;
             this.view.changeValue(this.model.state.value);
 
@@ -41,7 +41,7 @@ export default class Controller {
         return num;
     }
 
-    getValue(handlePosition) {
+    getValueFromHandlePosition(handlePosition) {
         let value;
 
         if (this.model.state.min === 0) {
@@ -51,5 +51,20 @@ export default class Controller {
         }
 
         return value;
+    }
+
+    getHandlePositionFromValue(value) {
+        let handlePosition;
+
+        if (this.model.state.min === 0) {
+            const ratio = ((this.view.range.offsetWidth - this.view.handle.offsetWidth) / this.model.state.max);
+            handlePosition = value * ratio;
+        }
+        else {
+            const ratio = (this.view.range.offsetWidth - this.view.handle.offsetWidth) / (this.model.state.max - this.model.state.min);
+            handlePosition = (value - this.model.state.min) * ratio;
+        }
+
+        return handlePosition;
     }
 }
