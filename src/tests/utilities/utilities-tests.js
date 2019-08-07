@@ -28,32 +28,32 @@ describe("Utilities", () => {
 
         describe("checkSettings", () => {
             it("It's ok with correct settings", () => {
-                const settings = {value: 0,min: 0,max: 100,step: 1,range: false,view: "horizontal",hideTip: true,theme: "aqua"};
+                const settings = {from: 0,min: 0,max: 100,step: 1,range: false,view: "horizontal",hideTip: true,theme: "aqua"};
                 assert.isOk(checkSettings(settings));
             });
 
-            it("It's wrong if value less than min", () => {
-                const settings = {value: 3,min: 10,max: 22,step: 1,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
+            it("It's wrong if from less than min", () => {
+                const settings = {from: 3,min: 10,max: 22,step: 1,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
                 assert.isNotOk(checkSettings(settings));
             });
 
             it("It's wrong with negative numeric values", () => {
-                const settings = {value: -5,min: 3,max: -1,step: -1234,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
+                const settings = {from: -5,min: 3,max: -1,step: -1234,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
                 assert.isNotOk(checkSettings(settings));
             });
 
             it("It's wrong with incorrect numeric values", () => {
-                const settings = {value: [],min: "asdsa",max: {},step: true,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
+                const settings = {from: [],min: "asdsa",max: {},step: true,range: false,view: "horizontal",hideTip: true,theme: "aqua"};     
                 assert.isNotOk(checkSettings(settings));
             });
 
             it("It's wrong with incorrect boolean values", () => {
-                const settings = {value: 0,min: 0,max: 100,step: 1,range: "aga",view: "horizontal",hideTip: "alala",theme: "aqua"};
+                const settings = {from: 0,min: 0,max: 100,step: 1,range: "aga",view: "horizontal",hideTip: "alala",theme: "aqua"};
                 assert.isNotOk(checkSettings(settings));
             });
 
             it("It's wrong with incorrect string values", () => {
-                const settings = {value: 0,min: 0,max: 100,step: 1,range: false,view: true,hideTip: true,theme: {}};
+                const settings = {from: 0,min: 0,max: 100,step: 1,range: false,view: true,hideTip: true,theme: {}};
                 assert.isNotOk(checkSettings(settings));
             });
         });

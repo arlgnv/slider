@@ -1,39 +1,26 @@
 function createSliderTemplate(parameters) {
     if (parameters.theme !== "aqua" && parameters.theme !== "red") parameters.theme = "aqua";
 
-    let template;
-
-    if (parameters.hideTip === true) {
-        template = `<span class="lrs lrs--${parameters.theme}">
+    return `
+    <span class="lrs lrs--${parameters.theme}${parameters.view === "vertical" ? " lrs--vertical" : ""}">
         <span class="lrs__range">
-        <span class="lrs__tip lrs__tip--hidden"></span>
-        <span class="lrs__handle"></span>
+            <span class="${parameters.hideTip ? "lrs__tip lrs__tip--hidden" : "lrs__tip"}"></span>
+            <span class="lrs__handle">
+            </span>
         </span>
-        </span>`;
-    } else {
-        template = `
-    <span class="lrs lrs--${parameters.theme}">
-    <span class="lrs__range">
-    <span class="lrs__tip"></span>
-    <span class="lrs__handle">
-    </span>
-    </span>
     </span>`;
-    }
-
-    return template;
 }
 
 function checkSettings(settings) {
-    const { value, min, max, step, range, view, hideTip, theme } = settings;
+    const { from, min, max, step, range, view, hideTip, theme } = settings;
 
-    if (value < min || value > max) return false;
+    if (from < min || from > max) return false;
 
-    if (typeof value !== "number" || typeof min !== "number" || Math.sign(min) == -1 || typeof max !== "number" || typeof step !== "number") {
+    if (typeof from !== "number" || typeof min !== "number" || typeof max !== "number" || typeof step !== "number") {
         return false;
     }
 
-    if (Math.sign(value) == -1 || Math.sign(min) == -1 || Math.sign(max) == -1 || Math.sign(step) == -1) {
+    if (Math.sign(from) == -1 || Math.sign(min) == -1 || Math.sign(max) == -1 || Math.sign(step) == -1) {
         return false;
     }
 

@@ -2,7 +2,7 @@ import Model from "./../../app/mvc/model.js";
 import View from "./../../app/mvc/view.js";
 import Controller from "./../../app/mvc/controller.js";
 
-const model = new Model({ value: 0, min: 0, max: 35, step: 3 });
+const model = new Model({ from: 0, min: 0, max: 35, step: 3 });
 const view = new View(document.querySelector(".range"), document.querySelector(".lrs"));
 const controller = new Controller(model, view);
 
@@ -37,6 +37,26 @@ describe("Controller", () => {
                 const result = controller.checkExtremeHandlePositions(handlePosition);
 
                 assert.equal(result, handlePosition);
+            });
+        });
+
+        describe("checkNeedToMoveHandle", () => {
+            it("returns boolean type", () => {
+                const value = 0;
+
+                assert.isBoolean( controller.checkNeedToMoveHandle(value) );
+            });
+
+            it("returns true if handle can be moved", () => {
+                const value = 3;
+
+                assert.isOk( controller.checkNeedToMoveHandle(value) );
+            });
+
+            it("returns false if handle cannot be moved", () => {
+                const value = 1;
+
+                assert.isNotOk( controller.checkNeedToMoveHandle(value) );
             });
         });
 
@@ -93,23 +113,9 @@ describe("Controller", () => {
             });
         });
 
-        describe("checkNeedToMoveHandle", () => {
-            it("returns boolean type", () => {
-                const value = 0;
+        describe("getHandleOldPosition", () => {
+            it("", () => {
 
-                assert.isBoolean( controller.checkNeedToMoveHandle(value) );
-            });
-
-            it("returns true if handle can be moved", () => {
-                const value = 3;
-
-                assert.isOk( controller.checkNeedToMoveHandle(value) );
-            });
-
-            it("returns false if handle cannot be moved", () => {
-                const value = 1;
-
-                assert.isNotOk( controller.checkNeedToMoveHandle(value) );
             });
         });
     });

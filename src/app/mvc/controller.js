@@ -7,28 +7,34 @@ export default class Controller {
     }
 
     drag(evt) {
-        const handleOldPosition = evt.clientX - (parseFloat(evt.target.style.left) || 0);
+        let handleOldPosition = this.getHandleOldPosition(evt);
 
-        document.body.onmousemove = ({ clientX: cursorNewPosition }) => {
-            let handlePosition = cursorNewPosition - handleOldPosition;
+        window.onmousemove = (evt) => {
+            let handlePosition;
+            if (this.model.state.view === "horizontal") {
+                handlePosition = evt.clientX - handleOldPosition;
+            } else {
+                handlePosition = handleOldPosition - evt.clientY;
+            }
+            
             handlePosition = this.checkExtremeHandlePositions(handlePosition);
 
             let value = this.getValueFromHandlePosition(handlePosition);
 
             if ( this.checkNeedToMoveHandle(value) ) {
-                this.model.state.value = value;
+                this.model.state.from = value;
 
-                this.view.changeValue(this.model.state.value);
+                this.view.changeValue(this.model.state.from);
 
-                handlePosition = this.getHandlePositionFromValue(this.model.state.value);
+                handlePosition = this.getHandlePositionFromValue(this.model.state.from);
                 this.view.changeHandlePosition(handlePosition);
                 this.view.changeTipPosition( handlePosition - ((this.view.tip.offsetWidth - this.view.handle.offsetWidth) / 2) );
             }
         };
 
-        document.body.onmouseup = () => {
-            document.body.onmousemove = null;
-            document.body.onmouseup = null;
+        window.onmouseup = () => {
+            window.onmousemove = null;
+            window.onmouseup = null;
         };
     }
 
