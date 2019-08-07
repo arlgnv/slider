@@ -5,7 +5,7 @@ import Controller from "./mvc/controller.js";
 
 export default class App {
     constructor(input, settings) {
-        if(!checkSettings(settings)) throw new Error("You should read docs and set correct parameters");
+        if (!checkSettings(settings)) throw new Error("You should read docs and set correct parameters");
 
         input.insertAdjacentHTML("beforeBegin", createSliderTemplate(settings));
 
@@ -21,9 +21,6 @@ export default class App {
 
         const handlePosition = this.controller.getHandlePositionFromValue(this.model.state.value);
         this.view.changeHandlePosition(handlePosition);
-
-        if (!this.model.state.hideTip) {
-            this.view.changeTipPosition(handlePosition - Math.round(this.view.tip.offsetWidth - this.view.handle.offsetWidth) / 2);
-        }
+        this.view.changeTipPosition(handlePosition - Math.round(this.view.tip.offsetWidth - this.view.handle.offsetWidth) / 2);
     }
 }

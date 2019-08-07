@@ -14,8 +14,6 @@ export default class View extends EventEmitter {
     }
 
     handleDragStart(evt) {
-        evt.preventDefault();
-
         this.emit("dragStart", evt);
     }
 
@@ -24,7 +22,9 @@ export default class View extends EventEmitter {
     }
 
     changeTipPosition(value) {
-        this.tip.style.left = value + "px";
+        if (!this.tip.classList.contains("lrs__tip--hidden")) {
+            this.tip.style.left = value + "px";
+        }
     }
 
     changeValue(value) {

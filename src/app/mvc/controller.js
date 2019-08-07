@@ -7,25 +7,22 @@ export default class Controller {
     }
 
     drag(evt) {
-        const emptySpace = (evt.clientX - evt.target.getBoundingClientRect().left) + this.view.slider.getBoundingClientRect().left;
+        const handleOldPosition = evt.clientX - (parseFloat(evt.target.style.left) || 0);
 
-        document.body.onmousemove = evt => {
-            let handlePosition = evt.clientX - emptySpace;
+        document.body.onmousemove = ({ clientX: cursorNewPosition }) => {
+            let handlePosition = cursorNewPosition - handleOldPosition;
             handlePosition = this.checkExtremeHandlePositions(handlePosition);
-            
+
             let value = this.getValueFromHandlePosition(handlePosition);
 
-            if (value !== this.model.state.value) {
+            if ( this.checkNeedToMoveHandle(value) ) {
                 this.model.state.value = value;
+
                 this.view.changeValue(this.model.state.value);
 
                 handlePosition = this.getHandlePositionFromValue(this.model.state.value);
                 this.view.changeHandlePosition(handlePosition);
-
-                if (!this.model.state.hideTip) {
-                    let tipPosition = Math.round(handlePosition - (this.view.tip.offsetWidth - this.view.handle.offsetWidth) / 2);
-                    this.view.changeTipPosition(tipPosition);
-                }
+                this.view.changeTipPosition( handlePosition - ((this.view.tip.offsetWidth - this.view.handle.offsetWidth) / 2) );
             }
         };
 
@@ -35,37 +32,29 @@ export default class Controller {
         };
     }
 
-    checkExtremeHandlePositions(num) {
-        const maxHandlePosition = this.view.slider.offsetWidth - this.view.handle.offsetWidth;
+    checkNeedToMoveHandle(value) {
+        return value === this.model.state.min || (value - this.model.state.min) % this.model.state.step === 0 || value === this.model.state.max;
+    }
 
-        if (num < 0) num = 0;
-        if (num > maxHandlePosition) num = maxHandlePosition;
+    checkExtremeHandlePositions(position) {
+        const maxHandlePosition = this.view.range.offsetWidth - this.view.handle.offsetWidth;
 
-        return num;
+        if (position < 0) position = 0;
+        if (position > maxHandlePosition) position = maxHandlePosition;
+
+        return position;
     }
 
     getValueFromHandlePosition(handlePosition) {
-        let value;
-
-        if (this.model.state.min === 0) {
-            value = handlePosition / ((this.view.range.offsetWidth - this.view.handle.offsetWidth) / this.model.state.max);
-        } else {
-            value = this.model.state.min + Math.round(handlePosition / ((this.view.range.offsetWidth - this.view.handle.offsetWidth) / (this.model.state.max - this.model.state.min)));
-        }
+        const ratio = (this.view.range.offsetWidth - this.view.handle.offsetWidth) / (this.model.state.max - this.model.state.min);
+        const value = this.model.state.min + handlePosition / ratio;
 
         return Math.round(value);
     }
 
     getHandlePositionFromValue(value) {
-        let handlePosition;
-
-        if (this.model.state.min === 0) {
-            const ratio = ((this.view.range.offsetWidth - this.view.handle.offsetWidth) / this.model.state.max);
-            handlePosition = value * ratio;
-        } else {
-            const ratio = (this.view.range.offsetWidth - this.view.handle.offsetWidth) / (this.model.state.max - this.model.state.min);
-            handlePosition = (value - this.model.state.min) * ratio;
-        }
+        const ratio = (this.view.range.offsetWidth - this.view.handle.offsetWidth) / (this.model.state.max - this.model.state.min);
+        const handlePosition = (value - this.model.state.min) * ratio;
 
         return Math.round(handlePosition);
     }
