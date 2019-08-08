@@ -1,22 +1,24 @@
 $(".range1").rangeSlider({
     min: 0,
-    max: 100,
+    max: 1000,
     from: 0,
-    to: 100,
     step: 1,
     hideTip: false,
-    range: true,
+    //range: true,
+    //to: 40
 });
 
-// $(".range2").rangeSlider({
-//     min: 10,
-//     max: 50,
-//     from: 10,
-//     step: 4,
-//     view: "vertical",
-//     hideTip: false,
-//     range: true
-// });
+$(".range2").rangeSlider({
+    min: 10,
+    max: 50,
+    from: 11,
+    step: 4,
+    view: "vertical",
+    hideTip: false,
+    range: true,
+    to: 45,
+    theme: "red"
+});
 
 // $(".js-range-slider").ionRangeSlider({
 //     min: 10,

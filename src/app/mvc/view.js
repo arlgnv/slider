@@ -17,6 +17,8 @@ export default class View extends EventEmitter {
     }
 
     handleDragStart(evt) {
+        if (!evt.target.classList.contains("lrs__handle")) return;
+
         if (evt.target === this.handleFrom) {
             this.handleFrom.classList.add("lrs__handle--last-dragged");
             this.handleTo.classList.remove("lrs__handle--last-dragged");

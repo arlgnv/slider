@@ -14,90 +14,88 @@
         </script>
         <style>
             .lrs {
-                position: relative;
-                display: inline-block;
-                width: 300px;
-                height: 5px;
-                user-select: none;
-            }
-            .lrs .lrs__range {
-                position: absolute;
-                left: 0;
-                right: 0;
-                top: 0;
-                bottom: 0;
-                background-color: lightgray;
-            }
-            .lrs .lrs__handle {
-                position: absolute;
-                left: 0;
-                top: 50%;
-                height: 15px;
-                width: 15px;
-                border-radius: 50%;
-                transform: translateY(-50%);
-            }
-            .lrs .lrs__handle--hidden {
-                display: none;
-            }
-            .lrs .lrs__handle--last-dragged {
-                z-index: 1;
-            }
-            .lrs .lrs__tip {
-                position: absolute;
-                top: -40px;
-                display: inline-block;
-                padding: 5px 8px;
-                font-size: 14px;
-                line-height: normal;
-                border-radius: 3px 3px 0 0;
-            }
-            .lrs .lrs__tip::before {
-                content: "";
-                position: absolute;
-                left: 50%;
-                bottom: -4px;
-                width: 8px;
-                height: 8px;
-                transform: translateX(-50%) rotate(45deg);
-            }
-            .lrs .lrs__tip--hidden {
-                display: none;
-            }
+  position: relative;
+  display: inline-block;
+  width: 300px;
+  height: 5px;
+  user-select: none;
+}
+.lrs .lrs__range {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.lrs .lrs__handle {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+.lrs .lrs__handle--hidden {
+  display: none;
+}
+.lrs .lrs__handle--last-dragged {
+  z-index: 1;
+}
+.lrs .lrs__tip {
+  position: absolute;
+  top: -40px;
+  display: inline-block;
+  padding: 5px 8px;
+  font-size: 14px;
+  line-height: normal;
+  border-radius: 3px 3px 0 0;
+}
+.lrs .lrs__tip::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 8px;
+  height: 8px;
+  transform: translateX(-50%) rotate(45deg);
+}
+.lrs .lrs__tip--hidden {
+  display: none;
+}
 
-            .lrs--vertical {
-                transform: rotate(-90deg) translateX(-100%);
-                transform-origin: left top;
-            }
-            .lrs--vertical .lrs__tip {
-                top: auto;
-                bottom: -40px;
-                border-radius: 0 3px 3px 0;
-                transform: rotate(90deg);
-            }
-            .lrs--vertical .lrs__tip::before {
-                top: 50%;
-                left: -4px;
-                transform: translateY(-50%) rotate(45deg);
-            }
+.lrs--vertical {
+  transform: rotate(-90deg) translateX(-100%);
+  transform-origin: left top;
+}
+.lrs--vertical .lrs__tip {
+  top: auto;
+  bottom: -40px;
+  border-radius: 0 3px 3px 0;
+  transform: rotate(90deg);
+}
+.lrs--vertical .lrs__tip::before {
+  top: 50%;
+  left: -4px;
+  transform: translateY(-50%) rotate(45deg);
+}
 
-            .lrs--aqua .lrs__handle {
-                background-color: #53b6a8;
-            }
-            .lrs--aqua .lrs__tip {
-                color: white;
-                background-color: #53b6a9;
-            }
-            .lrs--aqua .lrs__tip::before {
-                background-color: #53b6a9;
-            }
-
-            .lrs--red .lrs__handle {
-                background-color: #e5573d;
-            }
+.lrs--aqua .lrs__range {
+  background-color: rgba(83, 182, 169, 0.5);
+}
+.lrs--aqua .lrs__handle {
+  background-color: #53B6A8;
+}
+.lrs--aqua .lrs__tip {
+  color: white;
+  background-color: #53b6a9;
+}
+.lrs--aqua .lrs__tip::before {
+  background-color: #53b6a9;
+}
         </style>
     </head>
-    <body style="padding: 10px">
+    <body>
         <span class="lrs lrs--aqua">
             <span class="lrs__range">
                 <span class="lrs__handle lrs__handle-from">

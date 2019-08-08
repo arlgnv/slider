@@ -6,15 +6,14 @@ import App from "./app/app";
     $.fn.rangeSlider = function(parameters) {
         const settings = $.extend(
             {
-                min: 0, // минимальное значение
-                max: 100, // максимальное значение
-                step: 1, // размер шага
-                from: 0, // начальное значение
-
-                range: false, // возможность выбора диапазона
-                view: "horizontal", // расположение слайдера
-                hideTip: true, // скрыть подсказку над бегунком
-                theme: "aqua" // цветовая схема
+                min: 0,
+                max: 100,
+                step: 1,
+                from: 0,
+                range: false,
+                view: "horizontal",
+                hideTip: true,
+                theme: "aqua"
             },
             parameters
         );

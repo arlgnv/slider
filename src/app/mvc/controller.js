@@ -7,7 +7,7 @@ export default class Controller {
     }
 
     drag(evt) {
-        const handle = evt.target;console.log(handle);
+        const handle = evt.target;
         const handleOldPosition = this.getHandleOldPosition(handle, evt.clientX, evt.clientY);
 
         window.onmousemove = evt => {
