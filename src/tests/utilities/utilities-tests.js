@@ -24,6 +24,14 @@ describe("Utilities", () => {
 
                 assert.notEqual(template.indexOf(settings.theme), -1);
             });
+
+            it("string has not handle__to--hidden if settings.range: true", () => {
+                const settings = {range: true};
+
+                const template = createSliderTemplate(settings);
+
+                assert.equal(template.indexOf("lrs__handle--hidden"), -1);
+            });
         });
 
         describe("checkSettings", () => {

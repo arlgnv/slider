@@ -3,34 +3,68 @@ import View from "./../../app/mvc/view.js";
 const view = new View(document.querySelector(".range"), document.querySelector(".lrs"));
 
 describe("View", () => {
-    describe("Constructor", () => {
-        
-    });
+    describe("Constructor", () => {});
 
     describe("Methods", () => {
-        it("change handle position", () => {
-            const shift = 5;
-            view.changeHandlePosition(shift);
+        describe("changeHandlePosition", () => {
+            it("correct change postition", () => {
+                const position = 5;
 
-            const hanlePosition = parseFloat(view.handle.style.left);
+                view.changeHandlePosition(position, "from");
 
-            assert.equal(shift, hanlePosition);
+                const hanlePosition = parseFloat(view.handleFrom.style.left);
+
+                assert.equal(position, hanlePosition);
+            });
+            it("change postition on right handle", () => {
+                const position = 4;
+
+                view.changeHandlePosition(position, "to");
+
+                const hanlePosition = parseFloat(view.handleFrom.style.left);
+
+                assert.notEqual(position, hanlePosition);
+            });
         });
 
-        it("change tip position", () => {
-            const shift = 16;
-            view.changeTipPosition(shift);
+        describe("changeTipPosition", () => {
+            it("correct change postition", () => {
+                const position = 16;
 
-            const tipPosition = parseFloat(view.tip.style.left);
+                view.changeTipPosition(position, "from");
 
-            assert.equal(shift, tipPosition);
+                const tipPosition = parseFloat(view.tipFrom.style.left);
+
+                assert.equal(position, tipPosition);
+            });
+
+            it("change postition on right tip", () => {
+                const position = 12;
+
+                view.changeTipPosition(position, "from");
+
+                const tipPosition = parseFloat(view.tipTo.style.left);
+
+                assert.notEqual(position, tipPosition);
+            });
         });
 
-        it("change value", () => {
-            const value = 500;
-            view.changeValue(value);
+        describe("changeValue", () => {
+            it("correct change value with 1 arg", () => {
+                const value = 500;
 
-            assert.equal(value, view.input.value);
+                view.changeValue(value);
+
+                assert.equal(value, view.input.value);
+            });
+
+            it("correct change value with 2 args", () => {
+                const value1 = 12, value2 = 17;
+
+                view.changeValue(value1, value2);
+
+                assert.equal(view.input.value, `${value1} - ${value2}`);
+            });
         });
     });
 });

@@ -4,17 +4,18 @@ function createSliderTemplate(parameters) {
     return `
     <span class="lrs lrs--${parameters.theme}${parameters.view === "vertical" ? " lrs--vertical" : ""}">
         <span class="lrs__range">
-            <span class="${parameters.hideTip ? "lrs__tip lrs__tip--hidden" : "lrs__tip"}"></span>
-            <span class="lrs__handle">
+            <span class="lrs__handle lrs__handle-from">
+                <span class="${parameters.hideTip ? "lrs__tip lrs__tip--hidden" : "lrs__tip"}"></span>
+            </span>
+            <span class="lrs__handle lrs__handle-to${!parameters.range ? " lrs__handle--hidden" : ""}">
+                <span class="${parameters.hideTip ? "lrs__tip lrs__tip--hidden" : "lrs__tip"}"></span>
             </span>
         </span>
     </span>`;
 }
 
 function checkSettings(settings) {
-    const { from, min, max, step, range, view, hideTip, theme } = settings;
-
-    if (from < min || from > max) return false;
+    const { from, to, min, max, step, range, view, hideTip, theme } = settings;
 
     if (typeof from !== "number" || typeof min !== "number" || typeof max !== "number" || typeof step !== "number") {
         return false;
@@ -30,6 +31,16 @@ function checkSettings(settings) {
 
     if (typeof view !== "string" || typeof theme !== "string") {
         return false;
+    }
+
+    if (range) {
+        if (typeof to !== "number" || Math.sign(to) === -1) return false;
+
+        if (from < min || from > to || to > max) return false;
+    }
+
+    if (!range) {
+        if (from < min || from > max) return false;
     }
 
     return true;

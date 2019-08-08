@@ -19,8 +19,20 @@ export default class App {
     init() {
         this.view.changeValue(this.model.state.from);
 
-        const handlePosition = this.controller.getHandlePositionFromValue(this.model.state.from);
-        this.view.changeHandlePosition(handlePosition);
-        this.view.changeTipPosition(handlePosition - Math.round(this.view.tip.offsetWidth - this.view.handle.offsetWidth) / 2);
+        const handleFromPosition = this.controller.getHandlePositionFromValue(this.model.state.from);
+        this.view.changeHandlePosition(handleFromPosition, "from");
+
+        const tipFromPosition = -((this.view.tipFrom.offsetWidth - this.view.handleFrom.offsetWidth) / 2);
+        this.view.changeTipPosition(tipFromPosition, "from");
+
+        if (this.model.state.range) {
+            this.view.changeValue(this.model.state.from, this.model.state.to);
+
+            const handleToPosition = this.controller.getHandlePositionFromValue(this.model.state.to);
+            this.view.changeHandlePosition(handleToPosition, "to");
+
+            const tipToPosition = -((this.view.tipTo.offsetWidth - this.view.handleTo.offsetWidth) / 2);
+            this.view.changeTipPosition(tipToPosition, "to");
+        }
     }
 }
