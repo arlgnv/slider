@@ -74,7 +74,7 @@ describe("Controller", () => {
             it("returns max handle's position if range = false and handle's position more than max handle's position", () => {
                 const maxHandlePosition = view.range.offsetWidth - view.handleFrom.offsetWidth;
                 const handlePosition = maxHandlePosition + 1;
-                const result = controller.checkExtremeHandlePositions(handlePosition, "from");
+                const result = controller.checkExtremeHandlePositions(handlePosition, view.handleFrom);
                 assert.equal(result, maxHandlePosition);
             });
 
@@ -91,22 +91,18 @@ describe("Controller", () => {
                 assert.equal(result, 0);
             });
 
-            it("returns max handleFrom's position if range = true, handle is handleFrom and handle's position more than max handleFrom's position", () => {
+            it("returns max handle's position if range = true, handle is handleFrom and handle's position more than max handle's position", () => {
                 model.state.range = true;
-                model.state.to = 50;
-                view.changeHandlePosition(model.state.to, "to");
+                view.changeHandlePosition(50, view.handleTo);
+                const handleToPosition = parseFloat(view.handleTo.style.left);
 
-                const maxHandlePosition = parseFloat(view.handleTo.style.left);
-                const handlePosition = maxHandlePosition + 1;
-
-                const result = controller.checkExtremeHandlePositions(handlePosition, view.handleFrom);
-                assert.equal(result, maxHandlePosition);
+                const result = controller.checkExtremeHandlePositions(handleToPosition + 1, view.handleFrom);
+                assert.equal(result, handleToPosition);
             });
 
-            it("returns handleFrom's position if range = true, handle is handleFrom and handleFrom's position between 0 and max handleFrom's position", () => {
+            it("returns handle's position if range = true, handle is handleFrom and handle's position between 0 and max handle's position", () => {
                 model.state.range = true;
-                model.state.to = 70;
-                view.changeHandlePosition(model.state.to, "to");
+                view.changeHandlePosition(50, view.handleTo);
 
                 const maxHandlePosition = parseFloat(view.handleTo.style.left);
                 const handlePosition = Math.floor(Math.random() * (maxHandlePosition - 0 + 1)) + 0;
@@ -115,49 +111,40 @@ describe("Controller", () => {
                 assert.equal(result, handlePosition);
             });
 
-            it("returns min handleFrom's position if range = true, handle is handleTo and handle's position less than min handleFrom's position", () => {
+            it("returns min handle's position if range = true, handle is handleTo and handle's position less than min handle's position", () => {
                 model.state.range = true;
-                model.state.to = 70;
+                view.changeHandlePosition(10, view.handleFrom);
 
-                view.changeHandlePosition(10, "from");
-
-                const minHandleFromPosition = parseFloat(view.handleFrom.style.left);
-                const handlePosition = minHandleFromPosition - 1;
-                view.changeHandlePosition(handlePosition, "to");
+                const minHandlePosition = parseFloat(view.handleFrom.style.left);
+                const handlePosition = minHandlePosition - 1;
+                view.changeHandlePosition(handlePosition, view.handleTo);
                 
                 const result = controller.checkExtremeHandlePositions(handlePosition, view.handleTo);
-                assert.equal(result, minHandleFromPosition);
+                assert.equal(result, minHandlePosition);
             });
 
-            it("returns max handleTo's position if range = true, handle is handleTo and handleTo's position more than max handleTo's position", () => {
+            it("returns max handle's position if range = true, handle is handleTo and handle's position more than range's length", () => {
                 model.state.range = true;
-                model.state.to = 70;
 
-                const maxHandleToPosition = view.range.offsetWidth - view.handleTo.offsetWidth;
+                const maxHandlePosition = view.range.offsetWidth - view.handleTo.offsetWidth;
    
-                const handleToPosition = controller.checkExtremeHandlePositions(maxHandleToPosition + 1, view.handleTo);
-
-                view.changeHandlePosition(handleToPosition, "to");
+                const handlePosition = controller.checkExtremeHandlePositions(maxHandlePosition + 1, view.handleTo);
                 
-                assert.equal(handleToPosition, maxHandleToPosition);
+                assert.equal(handlePosition, maxHandlePosition);
             });
 
-            it("returns handleTo's position if range = true, handle is handleTo and handleTo's position between min handleTo's position and max handleTo's position", () => {
+            it("returns handle's position if range = true, handle is handleTo and handle's position between min handle's position and range's length", () => {
                 model.state.range = true;
-                model.state.to = 70;
 
-                view.changeHandlePosition(30, "from");
+                const minHandlePosition = parseFloat(view.handleFrom.style.left);
+                const maxHandlePosition = view.range.offsetWidth - view.handleTo.offsetWidth;
 
-                const minHandleToPosition = parseFloat(view.handleFrom.style.left);
-                const maxHandleToPosition = view.range.offsetWidth - view.handleTo.offsetWidth;
-                
-                let randomPosition = Math.floor(Math.random() * (maxHandleToPosition - minHandleToPosition + 1)) + minHandleToPosition;
+                const handlePosition = Math.floor(Math.random() * (maxHandlePosition - minHandlePosition + 1)) + minHandlePosition;
+                view.changeHandlePosition(handlePosition, view.handleTo);
 
-                const handleToPosition = controller.checkExtremeHandlePositions(randomPosition, view.handleTo);
+                const result = controller.checkExtremeHandlePositions(handlePosition, view.handleTo);
 
-                view.changeHandlePosition(handleToPosition, "to");
-
-                assert.equal(handleToPosition, handleToPosition);
+                assert.equal(result, handlePosition);
             });
         });
 

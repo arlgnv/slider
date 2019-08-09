@@ -21,10 +21,6 @@ function checkSettings(settings) {
         return false;
     }
 
-    if (Math.sign(from) == -1 || Math.sign(min) == -1 || Math.sign(max) == -1 || Math.sign(step) == -1) {
-        return false;
-    }
-
     if (typeof range !== "boolean" || typeof hideTip !== "boolean") {
         return false;
     }
@@ -33,8 +29,10 @@ function checkSettings(settings) {
         return false;
     }
 
+    if (step < 1) return false;
+
     if (range) {
-        if (typeof to !== "number" || Math.sign(to) === -1) return false;
+        if (typeof to !== "number") return false;
 
         if (from < min || from > to || to > max) return false;
     }

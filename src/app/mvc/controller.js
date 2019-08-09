@@ -15,54 +15,60 @@ export default class Controller {
 
             handlePosition = this.checkExtremeHandlePositions(handlePosition, handle);
 
-            let value = this.getValueFromHandlePosition(handlePosition);
+            const value = this.getValueFromHandlePosition(handlePosition);
 
-            if (this.checkNeedToMoveHandle(value)) {
-                switch (this.model.state.range) {
-                    case true:
-                        if (handle.classList.contains("lrs__handle-from")) this.model.state.from = value;
-                        if (handle.classList.contains("lrs__handle-to")) this.model.state.to = value;
-
-                        this.view.changeValue(this.model.state.from, this.model.state.to);
-
-                        if (handle.classList.contains("lrs__handle-from")) {
-                            handlePosition = this.getHandlePositionFromValue(this.model.state.from);
-                            this.view.changeHandlePosition(handlePosition, "from");
-
-                            const tip = handle.querySelector(".lrs__tip");
-                            const tipPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
-                            this.view.changeTipPosition(tipPosition, "from");
-                        }
-
-                        if (handle.classList.contains("lrs__handle-to")) {
-                            handlePosition = this.getHandlePositionFromValue(this.model.state.to);
-                            this.view.changeHandlePosition(handlePosition, "to");
-
-                            const tip = handle.querySelector(".lrs__tip");
-                            const tipPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
-                            this.view.changeTipPosition(tipPosition, "to");
-                        }
-                        break;
-
-                    case false:
-                        this.model.state.from = value;
-
-                        this.view.changeValue(this.model.state.from);
-
-                        handlePosition = this.getHandlePositionFromValue(this.model.state.from);
-                        this.view.changeHandlePosition(handlePosition, "from");
-
-                        const tipFromPosition = -((this.view.tipFrom.offsetWidth - this.view.handleFrom.offsetWidth) / 2);
-                        this.view.changeTipPosition(tipFromPosition, "from");
-                        break;
-                }
-            }
+            if (this.checkNeedToMoveHandle(value)) this.updateApplication(value, handle);
         };
 
         window.onmouseup = () => {
             window.onmousemove = null;
             window.onmouseup = null;
         };
+    }
+
+    updateApplication(value, handle) {
+        switch (this.model.state.range) {
+            case true:
+                if (handle.classList.contains("lrs__handle-from")) {
+                    this.model.state.from = value;
+
+                    this.view.changeValue(this.model.state.from, this.model.state.to);
+
+                    const handleFromPosition = this.getHandlePositionFromValue(this.model.state.from);
+                    this.view.changeHandlePosition(handleFromPosition, handle);
+
+                    const tip = handle.querySelector(".lrs__tip");
+                    const tipFromPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
+                    this.view.changeTipPosition(tipFromPosition, tip);
+                }
+
+                if (handle.classList.contains("lrs__handle-to")) {
+                    this.model.state.to = value;
+
+                    this.view.changeValue(this.model.state.from, this.model.state.to);
+
+                    const handlePosition = this.getHandlePositionFromValue(this.model.state.to);
+                    this.view.changeHandlePosition(handlePosition, handle);
+
+                    const tip = handle.querySelector(".lrs__tip");
+                    const tipToPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
+                    this.view.changeTipPosition(tipToPosition, tip);
+                }
+                break;
+
+            case false:
+                this.model.state.from = value;
+
+                this.view.changeValue(this.model.state.from);
+
+                const handleFromPosition = this.getHandlePositionFromValue(this.model.state.from);
+                this.view.changeHandlePosition(handleFromPosition, handle);
+
+                const tip = handle.querySelector(".lrs__tip");
+                const tipFromPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
+                this.view.changeTipPosition(tipFromPosition, tip);
+            break;
+        }
     }
 
     checkNeedToMoveHandle(value) {
@@ -73,26 +79,26 @@ export default class Controller {
         switch (this.model.state.range) {
             case true:
                 if (handle.classList.contains("lrs__handle-from")) {
-                    const maxHandleFromPosition = parseFloat(this.view.handleTo.style.left);
+                    const maxHandlePosition = parseFloat(this.view.handleTo.style.left);
 
                     if (position < 0) position = 0;
-                    if (position > maxHandleFromPosition) position = maxHandleFromPosition;
+                    if (position > maxHandlePosition) position = maxHandlePosition;
                 }
 
                 if (handle.classList.contains("lrs__handle-to")) {
-                    const maxHandleToPosition = this.view.range.offsetWidth - this.view.handleTo.offsetWidth;
-                    const handleFromPosition = parseFloat(this.view.handleFrom.style.left);
+                    const maxHandlePosition = this.view.range.offsetWidth - handle.offsetWidth;
+                    const minHandlePosition = parseFloat(this.view.handleFrom.style.left);
 
-                    if (position < handleFromPosition) position = handleFromPosition;
-                    if (position > maxHandleToPosition) position = maxHandleToPosition;
+                    if (position < minHandlePosition) position = minHandlePosition;
+                    if (position > maxHandlePosition) position = maxHandlePosition;
                 }
                 break;
 
             case false:
-                const maxHandleFromPosition = this.view.range.offsetWidth - this.view.handleFrom.offsetWidth;
+                const maxHandlePosition = this.view.range.offsetWidth - handle.offsetWidth;
 
                 if (position < 0) position = 0;
-                if (position > maxHandleFromPosition) position = maxHandleFromPosition;
+                if (position > maxHandlePosition) position = maxHandlePosition;
                 break;
         }
 

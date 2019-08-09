@@ -1,18 +1,18 @@
 $(".range1").rangeSlider({
-    min: 0,
-    max: 1000,
-    from: 0,
-    step: 1,
+    min: -100,
+    max: 15,
+    from: -50,
+    step: 2,
     hideTip: false,
     //range: true,
     //to: 40
 });
 
 $(".range2").rangeSlider({
-    min: 10,
+    min: -10,
     max: 50,
     from: 11,
-    step: 4,
+    step: 1,
     view: "vertical",
     hideTip: false,
     range: true,

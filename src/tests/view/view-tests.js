@@ -7,45 +7,32 @@ describe("View", () => {
 
     describe("Methods", () => {
         describe("changeHandlePosition", () => {
-            it("correct change postition", () => {
-                const position = 5;
+            it("correct change postition with random value", () => {
+                const position = Math.floor(Math.random() * (1000 - 0 + 1)) + 0;
 
-                view.changeHandlePosition(position, "from");
+                view.changeHandlePosition(position, view.handleFrom);
 
-                const hanlePosition = parseFloat(view.handleFrom.style.left);
-
-                assert.equal(position, hanlePosition);
-            });
-            it("change postition on right handle", () => {
-                const position = 4;
-
-                view.changeHandlePosition(position, "to");
-
-                const hanlePosition = parseFloat(view.handleFrom.style.left);
-
-                assert.notEqual(position, hanlePosition);
+                assert.equal(position, parseFloat(view.handleFrom.style.left));
             });
         });
 
         describe("changeTipPosition", () => {
-            it("correct change postition", () => {
-                const position = 16;
+            it("correct change postition with random value", () => {
+                const position = Math.floor(Math.random() * (1000 - 0 + 1)) + 0;
 
-                view.changeTipPosition(position, "from");
+                view.changeTipPosition(position, view.tipFrom);
 
-                const tipPosition = parseFloat(view.tipFrom.style.left);
-
-                assert.equal(position, tipPosition);
+                assert.equal(position, parseFloat(view.tipFrom.style.left));
             });
 
-            it("change postition on right tip", () => {
-                const position = 12;
+            it("doesn't change postition on hidden tip", () => {
+                view.tipTo.style.left = "0px";
+                const tipToPosition = parseFloat(view.tipTo.style.left);
 
-                view.changeTipPosition(position, "from");
+                const position = Math.floor(Math.random() * (1000 - 0 + 1)) + 0;
+                view.changeTipPosition(position, view.tipTo);
 
-                const tipPosition = parseFloat(view.tipTo.style.left);
-
-                assert.notEqual(position, tipPosition);
+                assert.equal(tipToPosition, parseFloat(view.tipTo.style.left));
             });
         });
 
