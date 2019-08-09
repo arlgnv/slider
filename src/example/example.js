@@ -1,24 +1,27 @@
-$(".range1").rangeSlider({
-    min: -100,
-    max: 15,
-    from: -50,
-    step: 2,
+const slider = $(".range1");
+
+slider.rangeSlider({
+    min: 0,
+    max: 100,
+    from: 0,
+    step: 1,
     hideTip: false,
-    //range: true,
-    //to: 40
 });
 
-$(".range2").rangeSlider({
-    min: -10,
-    max: 50,
-    from: 11,
-    step: 1,
-    view: "vertical",
-    hideTip: false,
-    range: true,
-    to: 45,
-    theme: "red"
-});
+const sliderApp = slider.data("rangeSlider");
+//console.log(sliderApp.init())
+
+// $(".range2").rangeSlider({
+//     min: -10,
+//     max: 50,
+//     from: 11,
+//     step: 1,
+//     view: "vertical",
+//     hideTip: false,
+//     range: true,
+//     to: 45,
+//     theme: "red"
+// });
 
 // $(".js-range-slider").ionRangeSlider({
 //     min: 10,

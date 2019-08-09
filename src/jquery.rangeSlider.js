@@ -18,6 +18,8 @@ import App from "./app/app";
             parameters
         );
 
-        return new App(this[0], settings);
+        return this.each(function() {
+            $.data(this, {"rangeSlider": new App(this, settings)});
+        });
     };
 })(jQuery);

@@ -7,9 +7,11 @@ export default class App {
     constructor(input, settings) {
         if (!checkSettings(settings)) throw new Error("You should read docs and set correct parameters");
 
-        input.insertAdjacentHTML("beforeBegin", createSliderTemplate(settings));
+        this.startState = settings;
 
-        this.model = new Model(settings);
+        input.insertAdjacentHTML("beforeBegin", createSliderTemplate(this.startState));
+
+        this.model = new Model(this.startState);
         this.view = new View(input, input.previousElementSibling);
         this.controller = new Controller(this.model, this.view);
 
@@ -17,18 +19,18 @@ export default class App {
     }
 
     init() {
-        this.view.changeValue(this.model.state.from);
+        this.view.changeValue(this.startState.from);
 
-        const handleFromPosition = this.controller.getHandlePositionFromValue(this.model.state.from);
+        const handleFromPosition = this.controller.getHandlePositionFromValue(this.startState.from);
         this.view.changeHandlePosition(handleFromPosition, this.view.handleFrom);
 
         const tipFromPosition = -((this.view.tipFrom.offsetWidth - this.view.handleFrom.offsetWidth) / 2);
         this.view.changeTipPosition(tipFromPosition, this.view.tipFrom);
 
-        if (this.model.state.range) {
-            this.view.changeValue(this.model.state.from, this.model.state.to);
+        if (this.startState.range) {
+            this.view.changeValue(this.startState.from, this.startState.to);
 
-            const handleToPosition = this.controller.getHandlePositionFromValue(this.model.state.to);
+            const handleToPosition = this.controller.getHandlePositionFromValue(this.startState.to);
             this.view.changeHandlePosition(handleToPosition, this.view.handleTo);
 
             const tipToPosition = -((this.view.tipTo.offsetWidth - this.view.handleTo.offsetWidth) / 2);
