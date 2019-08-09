@@ -2,6 +2,7 @@ import { createSliderTemplate, checkSettings } from "./utilities.js";
 import Model from "./mvc/model.js";
 import View from "./mvc/view.js";
 import Controller from "./mvc/controller.js";
+import { spawn } from "child_process";
 
 export default class App {
     constructor(input, settings) {
@@ -27,6 +28,9 @@ export default class App {
         const tipFromPosition = -((this.view.tipFrom.offsetWidth - this.view.handleFrom.offsetWidth) / 2);
         this.view.changeTipPosition(tipFromPosition, this.view.tipFrom);
 
+        const progressBarRightEdge = this.view.range.offsetWidth - (parseFloat(this.view.handleFrom.style.left) + (this.view.handleFrom.offsetWidth / 2));
+        this.view.changeProgressBarFilling(0, progressBarRightEdge);
+
         if (this.startState.range) {
             this.view.changeValue(this.startState.from, this.startState.to);
 
@@ -35,6 +39,11 @@ export default class App {
 
             const tipToPosition = -((this.view.tipTo.offsetWidth - this.view.handleTo.offsetWidth) / 2);
             this.view.changeTipPosition(tipToPosition, this.view.tipTo);
+
+            const progressBarLeftEdge = parseFloat(this.view.handleFrom.style.left) + (this.view.handleFrom.offsetWidth / 2);
+            const progressBarRightEdge = this.view.range.offsetWidth - (parseFloat(this.view.handleTo.style.left) + (this.view.handleTo.offsetWidth / 2));
+
+            this.view.changeProgressBarFilling(progressBarLeftEdge, progressBarRightEdge);
         }
     }
 }

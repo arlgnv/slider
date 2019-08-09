@@ -27,47 +27,27 @@ export default class Controller {
     }
 
     updateApplication(value, handle) {
-        switch (this.model.state.range) {
-            case true:
-                if (handle.classList.contains("lrs__handle-from")) {
-                    this.model.state.from = value;
+        if (handle.classList.contains("lrs__handle-from")) this.model.state.from = value;
+        if (handle.classList.contains("lrs__handle-to")) this.model.state.to = value;
 
-                    this.view.changeValue(this.model.state.from, this.model.state.to);
+        this.view.changeValue(this.model.state.from);
 
-                    const handleFromPosition = this.getHandlePositionFromValue(this.model.state.from);
-                    this.view.changeHandlePosition(handleFromPosition, handle);
+        const handlePosition = this.getHandlePositionFromValue(value);
+        this.view.changeHandlePosition(handlePosition, handle);
 
-                    const tip = handle.querySelector(".lrs__tip");
-                    const tipFromPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
-                    this.view.changeTipPosition(tipFromPosition, tip);
-                }
+        const tip = handle.querySelector(".lrs__tip");
+        const tipFromPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
+        this.view.changeTipPosition(tipFromPosition, tip);
 
-                if (handle.classList.contains("lrs__handle-to")) {
-                    this.model.state.to = value;
+        const progressBarRightEdge = this.view.range.offsetWidth - (handlePosition + handle.offsetWidth / 2);
+        this.view.changeProgressBarFilling(0, progressBarRightEdge);
 
-                    this.view.changeValue(this.model.state.from, this.model.state.to);
+        if (this.model.state.range) {
+            this.view.changeValue(this.model.state.from, this.model.state.to);
 
-                    const handlePosition = this.getHandlePositionFromValue(this.model.state.to);
-                    this.view.changeHandlePosition(handlePosition, handle);
-
-                    const tip = handle.querySelector(".lrs__tip");
-                    const tipToPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
-                    this.view.changeTipPosition(tipToPosition, tip);
-                }
-                break;
-
-            case false:
-                this.model.state.from = value;
-
-                this.view.changeValue(this.model.state.from);
-
-                const handleFromPosition = this.getHandlePositionFromValue(this.model.state.from);
-                this.view.changeHandlePosition(handleFromPosition, handle);
-
-                const tip = handle.querySelector(".lrs__tip");
-                const tipFromPosition = -((tip.offsetWidth - handle.offsetWidth) / 2);
-                this.view.changeTipPosition(tipFromPosition, tip);
-            break;
+            const progressBarLeftEdge = parseFloat(this.view.handleFrom.style.left) + (this.view.handleFrom.offsetWidth / 2);
+            const progressBarRightEdge = this.view.range.offsetWidth - (parseFloat(this.view.handleTo.style.left) + (this.view.handleTo.offsetWidth / 2));
+            this.view.changeProgressBarFilling(progressBarLeftEdge, progressBarRightEdge);
         }
     }
 

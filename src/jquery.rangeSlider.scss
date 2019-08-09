@@ -3,18 +3,21 @@
 
     display: inline-block;
     width: 300px;
-    height: 6px;
 
     user-select: none;
 
     .lrs__range {
         position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
+        height: 6px;
+        width: 100%;
 
         border-radius: 5px;
+    }
+
+    .lrs__progress-bar {
+        position: absolute;
+
+        height: 100%;
     }
 
     .lrs__handle {
@@ -28,12 +31,16 @@
         border-radius: 50%;
         transform: translateY(-50%);
 
+        &-from {
+            z-index: 1;
+        }
+
         &--hidden {
             display: none;
         }
 
         &--last-dragged {
-            z-index: 1;
+            z-index: 2;
         }
     }
 
@@ -91,6 +98,10 @@
         background-color: #e5e5e5;
     }
 
+    .lrs__progress-bar {
+        background-color: #53B6A8;
+    }
+
     .lrs__handle {
         background-color: #53B6A8;
     }
@@ -108,6 +119,10 @@
 .lrs--red {
     .lrs__range {
         background-color: #e5e5e5;
+    }
+
+    .lrs__progress-bar {
+        background-color: #E5573D;
     }
 
     .lrs__handle {

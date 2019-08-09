@@ -7,6 +7,7 @@ export default class View extends EventEmitter {
         this.input = input;
         this.slider = slider;
         this.range = slider.querySelector(".lrs__range");
+        this.progressBar = slider.querySelector(".lrs__progress-bar");
         this.handleFrom = slider.querySelector(".lrs__handle-from");
         this.tipFrom = this.handleFrom.querySelector(".lrs__tip");
         this.handleTo = slider.querySelector(".lrs__handle-to");
@@ -34,6 +35,10 @@ export default class View extends EventEmitter {
         if (!tip.classList.contains("lrs__tip--hidden")) {
             tip.style.left = value + "px";
         }
+    }
+
+    changeProgressBarFilling(from, to) {
+        this.progressBar.style.cssText = `left: ${from}px; right: ${to}px;`;
     }
 
     changeValue(valueFrom, valueTo) {

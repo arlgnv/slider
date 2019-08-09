@@ -7,6 +7,8 @@ function createSliderTemplate(parameters) {
             <span class="lrs__handle lrs__handle-from">
                 <span class="${parameters.hideTip ? "lrs__tip lrs__tip--hidden" : "lrs__tip"}"></span>
             </span>
+            <span class="lrs__progress-bar">
+            </span>
             <span class="lrs__handle lrs__handle-to${!parameters.range ? " lrs__handle--hidden" : ""}">
                 <span class="${parameters.hideTip ? "lrs__tip lrs__tip--hidden" : "lrs__tip"}"></span>
             </span>
