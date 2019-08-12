@@ -42,7 +42,7 @@ export default class View extends EventEmitter {
     }
 
     changeValue(valueFrom, valueTo) {
-        if (!valueTo) {
+        if (valueTo == undefined) {
             this.input.value = valueFrom;
         } else {
             this.input.value = `${valueFrom} - ${valueTo}`;

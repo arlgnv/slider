@@ -1,6 +1,6 @@
 import App from "./app/app";
 
-(function($) {
+;(function($) {
     "use strict";
 
     $.fn.rangeSlider = function(parameters) {

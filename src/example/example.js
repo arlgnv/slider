@@ -1,24 +1,37 @@
-const slider = $(".range1");
-
-slider.rangeSlider({
+$(".js-range-slider1").rangeSlider({
     min: 0,
     max: 100,
-    from: 20,
-    step: 14,
+    from: 0,
+    step: 1,
     hideTip: false,
-    range: true,
-    to: 40
 });
 
-const sliderApp = slider.data("rangeSlider");
-
-$(".range2").rangeSlider({
-    min: -10,
-    max: 50,
-    from: 11,
+$(".js-range-slider2").rangeSlider({
+    min: 0,
+    max: 200,
+    from: 0,
     step: 1,
     hideTip: false,
     range: true,
-    to: 45,
-    theme: "red"
+    to: 90
+});
+
+$(".js-range-slider3").rangeSlider({
+    min: 0,
+    max: 100,
+    from: 0,
+    step: 1,
+    view: "vertical",
+    hideTip: false,
+});
+
+$(".js-range-slider4").rangeSlider({
+    min: 0,
+    max: 100,
+    from: 10,
+    step: 1,
+    hideTip: false,
+    view: "vertical",
+    range: true,
+    to: 90
 });

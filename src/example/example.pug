@@ -6,11 +6,60 @@ html(lang="ru")
         title rangeSlider
         link(rel="stylesheet" href="./example.scss")
     body
-        p.form__elem I'm a paragraph
-            input.range1(type="text")
-        p.form__elem I'm a paragraph, too
-            input.range2(type="text")
-        <input type="text" class="js-range-slider" name="my_range" value=""/>
+        .demonstration
+            section.demonstration__item
+                h2.demonstration__title Слайдер 1
+                .demonstration__block
+                    .demonstration__slider
+                        form.demonstration__form(action="https://echo.htmlacademy.ru", method="post")
+                            input.demonstration__field.js-range-slider1(type="text", name="slider1")
+                    .demostration__configuration
+                        form.demonstration__form(action="https://echo.htmlacademy.ru", method="post")
+                            input.demonstration__field(type="text" placeholder="min")
+                            input.demonstration__field(type="text" placeholder="max")
+                            input.demonstration__field(type="text" placeholder="step")
+                            label hide tip
+                                input.demonstration__field(type="checkbox")
+            section.demonstration__item
+                h2.demonstration__title Слайдер 2
+                .demonstration__block
+                    .demonstration__slider
+                        form.demonstration__form(action="https://echo.htmlacademy.ru", method="post")
+                            input.demonstration__field.js-range-slider2(type="text", name="slider2")
+                    .demostration__configuration
+                        form.demonstration__form(action="https://echo.htmlacademy.ru", method="post")
+                            input.demonstration__field(type="text" placeholder="min")
+                            input.demonstration__field(type="text" placeholder="max")
+                            input.demonstration__field(type="text" placeholder="step")
+                            label hide tip
+                                input.demonstration__field(type="checkbox")
+            div.demonstration__group
+                section.demonstration__item.demonstration__item--vertical
+                    h2.demonstration__title Слайдер 3
+                    .demonstration__block
+                        .demonstration__slider
+                            form.demonstration__form(action="https://echo.htmlacademy.ru", method="post")
+                                input.demonstration__field.js-range-slider3(type="text", name="slider3")
+                        .demostration__configuration
+                            form.demonstration__form(action="https://echo.htmlacademy.ru", method="post")
+                                input.demonstration__field(type="text" placeholder="min")
+                                input.demonstration__field(type="text" placeholder="max")
+                                input.demonstration__field(type="text" placeholder="step")
+                                label hide tip
+                                    input.demonstration__field(type="checkbox")
+                section.demonstration__item.demonstration__item--vertical
+                    h2.demonstration__title Слайдер 4
+                    .demonstration__block
+                        .demonstration__slider
+                            form.demonstration__form(action="https://echo.htmlacademy.ru", method="post")
+                                input.demonstration__field.js-range-slider4(type="text", name="slider4")
+                        .demostration__configuration
+                            form.demonstration__form(action="https://echo.htmlacademy.ru", method="post")
+                                input.demonstration__field(type="text" placeholder="min")
+                                input.demonstration__field(type="text" placeholder="max")
+                                input.demonstration__field(type="text" placeholder="step")
+                                label hide tip
+                                    input.demonstration__field(type="checkbox")
 
         script(src="https://code.jquery.com/jquery-3.4.1.min.js")
         script(src="./../jquery.rangeSlider.js")

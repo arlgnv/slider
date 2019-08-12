@@ -1,8 +1,74 @@
 @import "./../jquery.rangeSlider";
 
+.demonstration__item {
+    box-sizing: border-box;
+    padding: 10px;
+    margin-bottom: 40px;
 
-.form__elem {
-    width: 150px;
-    border: 1px solid black;
-    margin-top: 50px;
+    box-shadow: 0 0 10px gray;
+}
+
+.demonstration__title {
+    margin: 0 0 20px;
+}
+
+.demonstration__slider {
+    margin-bottom: 20px;
+
+    .demonstration__field {
+        margin: 0 0 0 15px;
+    }
+}
+
+.demonstration__field {
+    margin-right: 15px;
+}
+
+
+.demonstration__item--vertical {
+    position: relative;
+    height: 400px;
+
+    .demonstration__slider .demonstration__field {
+        position: absolute;
+        left: 90px;
+
+        margin: 0 0 50px;
+    }
+
+    .demostration__configuration {
+        position: absolute;
+        top: 110px;
+        left: 90px;
+
+        .demonstration__form {
+            display: flex;
+            flex-direction: column;
+
+            .demonstration__field {
+                margin: 0 0 10px;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 700px) {
+    .demonstration__group {
+        display: flex;
+        justify-content: space-around;
+    }
+}
+
+@media screen and (max-width: 700px) {
+    .demonstration__item:not(.demonstration__item--vertical) .lrs {
+        width: 100%;
+    }
+
+    .demonstration__slider {
+        margin-bottom: 20px;
+    
+        .demonstration__field {
+            margin-left: 0;
+        }
+    }
 }

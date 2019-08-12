@@ -43,7 +43,7 @@ export default class Controller {
         this.view.changeProgressBarFilling(0, progressBarRightEdge);
 
         if (this.model.state.range) {
-            this.view.changeValue(this.model.state.from, this.model.state.to);
+            this.view.changeValue(this.model.state.from, this.model.state.to);console.log(this.model.state.from, this.model.state.to)
 
             const progressBarLeftEdge = parseFloat(this.view.handleFrom.style.left) + (this.view.handleFrom.offsetWidth / 2);
             const progressBarRightEdge = this.view.range.offsetWidth - (parseFloat(this.view.handleTo.style.left) + (this.view.handleTo.offsetWidth / 2));
