@@ -5,7 +5,7 @@
   "main": "src/example/example.pug",
   "scripts": {
     "start": "rimraf dist && parcel src/example/example.pug",
-    "build": "rimraf dist docs && parcel build src/example/example.pug -d docs --no-cache --public-url ./"
+    "build": "rimraf dist docs && parcel build src/example/example.pug -d docs --no-cache --public-url /rangeSlider/"
   },
   "repository": {
     "type": "git",
@@ -15,17 +15,13 @@
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^9.6.1",
-    "jquery": "^3.4.1",
     "parcel-bundler": "^1.12.3",
     "postcss-modules": "^1.4.1",
     "pug": "^2.0.3",
     "rimraf": "^2.6.3",
     "sass": "^1.21.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 4 versions"
-  ],
+  "browserslist": "> 0.25%, last 4 versions",
   "bugs": {
     "url": "https://github.com/madnessJs/rangeSlider/issues"
   },
