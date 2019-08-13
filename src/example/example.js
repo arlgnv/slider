@@ -7,7 +7,7 @@ slider1.rangeSlider({
     hideTip: false,
 });
 
-setHandles(slider1);
+setHandlers(slider1);
 
 // =======================
 
@@ -22,7 +22,7 @@ slider2.rangeSlider({
     to: 90
 });
 
-setHandles(slider2);
+setHandlers(slider2);
 
 // =======================
 
@@ -37,7 +37,7 @@ slider3.rangeSlider({
     hideTip: false,
 });
 
-setHandles(slider3);
+setHandlers(slider3);
 
 // =======================
 
@@ -54,17 +54,26 @@ slider4.rangeSlider({
     to: 90
 });
 
-setHandles(slider4);
+setHandlers(slider4);
 
 // =======================
 
-function setHandles(elem) {
+function setHandlers(elem) {
     const app = elem.data("rangeSlider");
 
     elem.on("blur", function() {
         const value = $(this).val();
-    
-        app.updateSliderValue(value);
+        
+        if (value.indexOf(" - ") !== -1) {
+            const values = value.split(" - ");
+
+            app.update({
+                from: values[0],
+                to: values[1]
+            });
+        } else {
+            app.update({from: value});
+        }
     });
 
     elem.closest(".demonstration__block").find("input[type=submit]").on("click", function(evt){
@@ -78,6 +87,6 @@ function setHandles(elem) {
             if (this.type === "checkbox") obj[this.name] = this.checked;
         });
 
-        app.updateSliderParameters(obj);
+        app.update(obj);
     });
 }

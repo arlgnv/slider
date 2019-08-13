@@ -46,31 +46,15 @@ export default class App {
         }
     }
 
-    updateSliderValue(val) {
-        if (!this.model.state.range) {
-            if (val < this.model.state.min) val = this.model.state.min;
-            if (val > this.model.state.max) val = this.model.state.max;
+    update(obj) {
+        const {min, max, step, from, to, hideTip} = obj;
 
-            this.controller.updateApplication(val, this.view.handleFrom);
-        } else {
-            const values = val.split(" - ");
+        this.controller.updateApplication(from || this.model.state.from, this.view.handleFrom);
+        if (this.model.state.range) this.controller.updateApplication(to || this.model.state.to, this.view.handleTo);
 
-            if (values[0] < this.model.state.min) values[0] = this.model.state.min;
-            if (values[0] > this.model.state.to) values[0] = this.model.state.to;
-            if (values[1] < this.model.state.from) values[1] = this.model.state.from;
-            if (values[1] > this.model.state.max) values[1] = this.model.state.max;
-
-            this.controller.updateApplication(values[0], this.view.handleFrom);
-            this.controller.updateApplication(values[1], this.view.handleTo);
-        }
-    }
-
-    updateSliderParameters(obj) {
-        const {min, max, step, hideTip} = obj;
-
-        this.model.state.min = min;
-        this.model.state.max = max;
-        this.model.state.step = step;
+        this.model.state.min = min || this.model.state.min;
+        this.model.state.max = max || this.model.state.max;
+        this.model.state.step = step || this.model.state.step;
 
         if (hideTip === true) {
             this.model.state.hideTip = true;
