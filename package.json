@@ -2,10 +2,10 @@
   "name": "rangeslider",
   "version": "1.0.0",
   "description": "",
-  "main": "src/example/example.pug",
+  "main": "src/index/index.pug",
   "scripts": {
-    "start": "rimraf dist && parcel src/example/example.pug",
-    "build": "rimraf dist docs && parcel build src/example/example.pug -d docs --no-cache --public-url /rangeSlider/"
+    "start": "rimraf dist && parcel src/index/index.pug",
+    "build": "rimraf dist docs && parcel build src/index/index.pug -d docs --no-cache --public-url /rangeSlider/"
   },
   "repository": {
     "type": "git",
