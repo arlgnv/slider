@@ -34,7 +34,7 @@ UML-диаграмма приложения - [скачать](https://yadi.sk/d
 $("#example").rangeSlider();
 ```
 
-### Описание параметров
+## Параметры
 
 | Option | Default | Type | Description |
 | --- | --- | --- | --- |
@@ -47,3 +47,24 @@ $("#example").rangeSlider();
 | hideTip | true | boolean | Скрыть подсказку над бегунком |
 | view | "horizontal" | string | При "horizontal" - горизонтальное расположение слайдера на странце. При "vertical" - вертикальное |
 | theme | "aqua" | string | Тема слайдера. Имеется две темы - auqa и red |
+
+## Публичные методы
+Чтобы использовать публичные методы, необходимо сохранить экземпляр плагина в переменную
+```javascript
+// Идентифицировать плагин
+$("#range").rangeSlider();
+
+// Сохранить экземпляр плагина
+const slider = $("#range").data("rangeSlider");
+
+// Использовать метод
+slider.update();
+```
+Имеется один публичный метод
+```javascript
+// Метод update - обновляет слайдер с новыми параметрами
+slider.update({
+    min: 10,
+    from: 40
+});
+```
