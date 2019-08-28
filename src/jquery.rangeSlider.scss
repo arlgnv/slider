@@ -1,143 +1,143 @@
 .lrs {
-    position: relative;
+  position: relative;
+
+  display: inline-block;
+  width: 300px;
+  height: 15px;
+
+  user-select: none;
+
+  .lrs__range {
+    position: absolute;
+    top: 50%;
+    height: 6px;
+    width: 100%;
+
+    border-radius: 5px;
+    transform: translateY(-50%);
+  }
+
+  .lrs__progress-bar {
+    position: absolute;
+
+    height: 100%;
+  }
+
+  .lrs__handle {
+    position: absolute;
+    left: 0;
+    top: 50%;
+
+    height: 18px;
+    width: 18px;
+
+    border-radius: 50%;
+    transform: translateY(-50%);
+
+    &-from {
+      z-index: 1;
+    }
+
+    &_hidden {
+      display: none;
+    }
+
+    &_last-dragged {
+      z-index: 2;
+    }
+  }
+
+  .lrs__tip {
+    position: absolute;
+    top: -35px;
 
     display: inline-block;
-    width: 300px;
-    height: 15px;
+    padding: 5px 8px;
 
-    user-select: none;
+    font-size: 14px;
+    line-height: normal;
 
-    .lrs__range {
-        position: absolute;
-        top: 50%;
-        height: 6px;
-        width: 100%;
+    border-radius: 5px;
 
-        border-radius: 5px;
-        transform: translateY(-50%);
+    &::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -4px;
+
+      width: 8px;
+      height: 8px;
+
+      transform: translateX(-50%) rotate(45deg);
     }
 
-    .lrs__progress-bar {
-        position: absolute;
-
-        height: 100%;
+    &_hidden {
+      display: none;
     }
-
-    .lrs__handle {
-        position: absolute;
-        left: 0;
-        top: 50%;
-    
-        height: 18px;
-        width: 18px;
-    
-        border-radius: 50%;
-        transform: translateY(-50%);
-
-        &-from {
-            z-index: 1;
-        }
-
-        &--hidden {
-            display: none;
-        }
-
-        &--last-dragged {
-            z-index: 2;
-        }
-    }
-
-    .lrs__tip {
-        position: absolute;
-        top: -35px;
-    
-        display: inline-block;
-        padding: 5px 8px;
-    
-        font-size: 14px;
-        line-height: normal;
-    
-        border-radius: 5px;
-    
-        &::before {
-            content: "";
-            position: absolute;
-            left: 50%;
-            bottom: -4px;
-    
-            width: 8px;
-            height: 8px;
-    
-            transform: translateX(-50%) rotate(45deg);
-        }
-    
-        &--hidden {
-            display: none;
-        }
-    }
+  }
 }
 
-.lrs--vertical {
-    transform: rotate(-90deg) translateX(-100%);
-    transform-origin: left top;
+.lrs_vertical {
+  transform: rotate(-90deg) translateX(-100%);
+  transform-origin: left top;
 
-    .lrs__tip {
-        top: auto;
-        bottom: -40px;
+  .lrs__tip {
+    top: auto;
+    bottom: -40px;
 
-        transform: rotate(90deg);
+    transform: rotate(90deg);
 
-        &::before {
-            top: 50%;
-            left: -4px;
-    
-            transform: translateY(-50%) rotate(45deg);
-        }
+    &::before {
+      top: 50%;
+      left: -4px;
+
+      transform: translateY(-50%) rotate(45deg);
     }
+  }
 }
 
-.lrs--aqua {
-    .lrs__range {
-        background-color: #e5e5e5;
-    }
+.lrs_aqua {
+  .lrs__range {
+    background-color: #e5e5e5;
+  }
 
-    .lrs__progress-bar {
-        background-color: #53B6A8;
-    }
+  .lrs__progress-bar {
+    background-color: #53b6a8;
+  }
 
-    .lrs__handle {
-        background-color: #53B6A8;
-    }
+  .lrs__handle {
+    background-color: #53b6a8;
+  }
 
-    .lrs__tip {
-        color: white;
-        background-color: #53B6A8;
+  .lrs__tip {
+    color: white;
+    background-color: #53b6a8;
 
-        &::before {
-            background-color: #53B6A8;
-        }
+    &::before {
+      background-color: #53b6a8;
     }
+  }
 }
 
-.lrs--red {
-    .lrs__range {
-        background-color: #e5e5e5;
-    }
+.lrs_red {
+  .lrs__range {
+    background-color: #e5e5e5;
+  }
 
-    .lrs__progress-bar {
-        background-color: #E5573D;
-    }
+  .lrs__progress-bar {
+    background-color: #e5573d;
+  }
 
-    .lrs__handle {
-        background-color: #E5573D;
-    }
+  .lrs__handle {
+    background-color: #e5573d;
+  }
 
-    .lrs__tip {
-        color: white;
-        background-color: #E5573D;
+  .lrs__tip {
+    color: white;
+    background-color: #e5573d;
 
-        &::before {
-            background-color: #E5573D;
-        }
+    &::before {
+      background-color: #e5573d;
     }
+  }
 }

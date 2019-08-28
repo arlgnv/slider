@@ -1,63 +1,68 @@
 function createSliderTemplate(parameters) {
-    if (parameters.theme !== "aqua" && parameters.theme !== "red") parameters.theme = "aqua";
-
-    return `
-    <span class="lrs lrs--${parameters.theme}${parameters.view === "vertical" ? " lrs--vertical" : ""}">
+  return `
+    <span class="lrs lrs_${parameters.theme}${parameters.view === "vertical" ? " lrs_vertical" : ""}">
         <span class="lrs__range">
             <span class="lrs__handle lrs__handle-from">
-                <span class="${parameters.hideTip ? "lrs__tip lrs__tip--hidden" : "lrs__tip"}"></span>
+                <span class="${parameters.hideTip ? "lrs__tip lrs__tip_hidden" : "lrs__tip"}"></span>
             </span>
             <span class="lrs__progress-bar">
             </span>
-            <span class="lrs__handle lrs__handle-to${!parameters.range ? " lrs__handle--hidden" : ""}">
-                <span class="${parameters.hideTip ? "lrs__tip lrs__tip--hidden" : "lrs__tip"}"></span>
+            <span class="lrs__handle lrs__handle-to${!parameters.range ? " lrs__handle_hidden" : ""}">
+                <span class="${parameters.hideTip ? "lrs__tip lrs__tip_hidden" : "lrs__tip"}"></span>
             </span>
         </span>
     </span>`;
 }
 
-function checkSettings(settings) {
-    const { from, to, min, max, step, range, view, hideTip, theme } = settings;
+function correctSettings(settings) {
+  if (settings.from) {
+    if (typeof settings.from === "string") settings.from = +settings.from;
+    if (settings.from < settings.min) settings.from = settings.min;
+  }
 
-    if (typeof from !== "number" || typeof min !== "number" || typeof max !== "number" || typeof step !== "number") {
-        return false;
-    }
+  if (settings.min) {
+    if (typeof settings.min === "string") settings.min = +settings.min;
+  }
 
-    if (typeof range !== "boolean" || typeof hideTip !== "boolean") {
-        return false;
-    }
+  if (settings.max) {
+    if (typeof settings.max === "string") settings.max = +settings.max;
+  }
 
-    if (typeof view !== "string" || typeof theme !== "string") {
-        return false;
-    }
+  if (settings.step) {
+    if (typeof settings.step === "string") settings.step = +settings.step;
+    if (settings.step < 1) settings.step = 1;
+  }
 
-    if (step < 1) return false;
+  if (settings.theme) {
+    if (settings.theme !== "aqua" && settings.theme !== "red") settings.theme = "aqua";
+  }
 
-    if (range) {
-        if (typeof to !== "number") return false;
+  if (settings.range) {
+    if (typeof settings.to === "string") settings.to = +settings.to;
+    if (settings.from > settings.to) settings.from = settings.to;
+    if (settings.to < settings.from) settings.to = settings.from;
+    if (settings.to > settings.max) settings.to = settings.max;
+  }
 
-        if (from < min || from > to || to > max) return false;
-    }
+  if (!settings.range) {
+    if (settings.from > settings.max) settings.from = settings.max;
+  }
 
-    if (!range) {
-        if (from < min || from > max) return false;
-    }
-
-    return true;
+  return settings;
 }
 
 class EventEmitter {
-    constructor() {
-        this.events = {};
-    }
+  constructor() {
+    this.events = {};
+  }
 
-    on(type, callback) {
-        this.events[type] = callback;
-    }
+  on(type, callback) {
+    this.events[type] = callback;
+  }
 
-    emit(type, arg) {
-        if (this.events[type]) this.events[type](arg);
-    }
+  emit(type, arg) {
+    if (this.events[type]) this.events[type](arg);
+  }
 }
 
-export { createSliderTemplate, checkSettings, EventEmitter };
+export { createSliderTemplate, correctSettings, EventEmitter };

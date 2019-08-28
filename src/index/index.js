@@ -15,7 +15,7 @@ const slider2 = $(".js-range-slider2");
 slider2.rangeSlider({
     min: 0,
     max: 200,
-    from: 0,
+    from: 10,
     step: 1,
     hideTip: false,
     range: true,
