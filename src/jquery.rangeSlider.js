@@ -1,9 +1,9 @@
-import App from "./app/app";
+/* eslint-disable func-names */
+/* eslint-disable no-param-reassign */
+import App from './app/app.js';
 
-;(function($) {
-  "use strict";
-
-  $.fn.rangeSlider = function(parameters) {
+(function ($) {
+  $.fn.rangeSlider = function (parameters) {
     const settings = $.extend(
       {
         min: 0,
@@ -11,15 +11,15 @@ import App from "./app/app";
         step: 1,
         from: 0,
         range: false,
-        view: "horizontal",
+        view: 'horizontal',
         hideTip: true,
-        theme: "aqua"
+        theme: 'aqua',
       },
-      parameters
+      parameters,
     );
 
-    return this.each(function() {
-      $.data(this, { "rangeSlider": new App(this, settings) });
+    return this.each(function () {
+      $.data(this, { rangeSlider: new App(this, settings) });
     });
   };
-})(jQuery);
+}(jQuery));

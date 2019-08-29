@@ -1,54 +1,66 @@
 function createSliderTemplate(parameters) {
   return `
-    <span class="lrs lrs_${parameters.theme}${parameters.view === "vertical" ? " lrs_vertical" : ""}">
+    <span class="lrs lrs_${parameters.theme}${
+  parameters.view === 'vertical' ? ' lrs_vertical' : ''
+}">
         <span class="lrs__range">
             <span class="lrs__handle lrs__handle-from">
-                <span class="${parameters.hideTip ? "lrs__tip lrs__tip_hidden" : "lrs__tip"}"></span>
+                <span class="${
+  parameters.hideTip ? 'lrs__tip lrs__tip_hidden' : 'lrs__tip'
+}"></span>
             </span>
             <span class="lrs__progress-bar">
             </span>
-            <span class="lrs__handle lrs__handle-to${!parameters.range ? " lrs__handle_hidden" : ""}">
-                <span class="${parameters.hideTip ? "lrs__tip lrs__tip_hidden" : "lrs__tip"}"></span>
+            <span class="lrs__handle lrs__handle-to${
+  !parameters.range ? ' lrs__handle_hidden' : ''
+}">
+                <span class="${
+  parameters.hideTip ? 'lrs__tip lrs__tip_hidden' : 'lrs__tip'
+}"></span>
             </span>
         </span>
     </span>`;
 }
 
 function correctSettings(settings) {
-  if (settings.from) {
-    if (typeof settings.from === "string") settings.from = +settings.from;
-    if (settings.from < settings.min) settings.from = settings.min;
+  const parameters = settings;
+
+  if (parameters.from) {
+    if (typeof parameters.from === 'string') parameters.from = +parameters.from;
+    if (parameters.from < parameters.min) parameters.from = parameters.min;
   }
 
-  if (settings.min) {
-    if (typeof settings.min === "string") settings.min = +settings.min;
+  if (parameters.min) {
+    if (typeof parameters.min === 'string') parameters.min = +parameters.min;
   }
 
-  if (settings.max) {
-    if (typeof settings.max === "string") settings.max = +settings.max;
+  if (parameters.max) {
+    if (typeof parameters.max === 'string') parameters.max = +parameters.max;
   }
 
-  if (settings.step) {
-    if (typeof settings.step === "string") settings.step = +settings.step;
-    if (settings.step < 1) settings.step = 1;
+  if (parameters.step) {
+    if (typeof parameters.step === 'string') parameters.step = +parameters.step;
+    if (parameters.step < 1) parameters.step = 1;
   }
 
-  if (settings.theme) {
-    if (settings.theme !== "aqua" && settings.theme !== "red") settings.theme = "aqua";
+  if (parameters.theme) {
+    if (parameters.theme !== 'aqua' && parameters.theme !== 'red') {
+      parameters.theme = 'aqua';
+    }
   }
 
-  if (settings.range) {
-    if (typeof settings.to === "string") settings.to = +settings.to;
-    if (settings.from > settings.to) settings.from = settings.to;
-    if (settings.to < settings.from) settings.to = settings.from;
-    if (settings.to > settings.max) settings.to = settings.max;
+  if (parameters.range) {
+    if (typeof parameters.to === 'string') parameters.to = +parameters.to;
+    if (parameters.from > parameters.to) parameters.from = parameters.to;
+    if (parameters.to < parameters.from) parameters.to = parameters.from;
+    if (parameters.to > parameters.max) parameters.to = parameters.max;
   }
 
-  if (!settings.range) {
-    if (settings.from > settings.max) settings.from = settings.max;
+  if (!parameters.range) {
+    if (parameters.from > parameters.max) parameters.from = parameters.max;
   }
 
-  return settings;
+  return parameters;
 }
 
 class EventEmitter {
