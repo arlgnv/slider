@@ -1,4 +1,6 @@
 /* eslint-disable import/extensions */
+/* eslint class-methods-use-this: ["error", { "exceptMethods": ["changeHandlePosition", "changeTipPosition"] }] */
+
 import { EventEmitter } from '../utilities.js';
 
 export default class View extends EventEmitter {

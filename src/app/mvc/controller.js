@@ -1,4 +1,6 @@
-/* eslint-disable default-case */
+/* eslint-disable max-len */
+/* global window */
+
 export default class Controller {
   constructor(model, view) {
     this.model = model;
@@ -47,7 +49,8 @@ export default class Controller {
       this.view.changeValue(this.model.state.from, this.model.state.to);
 
       const progressBarLeftEdge = parseFloat(this.view.handleFrom.style.left) + this.view.handleFrom.offsetWidth / 2;
-      progressBarRightEdge = this.view.range.offsetWidth - (parseFloat(this.view.handleTo.style.left) + this.view.handleTo.offsetWidth / 2);
+      progressBarRightEdge = this.view.range.offsetWidth
+        - (parseFloat(this.view.handleTo.style.left) + this.view.handleTo.offsetWidth / 2);
       this.view.changeProgressBarFilling(progressBarLeftEdge, progressBarRightEdge);
     }
   }
@@ -61,44 +64,46 @@ export default class Controller {
   }
 
   checkExtremeHandlePositions(position, handle) {
-    switch (this.model.state.range) {
-      case true:
-        if (handle.classList.contains('lrs__handle-from')) {
-          const maxHandlePosition = parseFloat(this.view.handleTo.style.left);
+    let newPosition = position;
 
-          if (position < 0) position = 0;
-          if (position > maxHandlePosition) position = maxHandlePosition;
-        }
+    if (this.model.state.range === true) {
+      if (handle.classList.contains('lrs__handle-from')) {
+        const maxHandlePosition = parseFloat(this.view.handleTo.style.left);
 
-        if (handle.classList.contains('lrs__handle-to')) {
-          const maxHandlePosition = this.view.range.offsetWidth - handle.offsetWidth;
-          const minHandlePosition = parseFloat(this.view.handleFrom.style.left);
+        if (position < 0) newPosition = 0;
+        if (position > maxHandlePosition) newPosition = maxHandlePosition;
+      }
 
-          if (position < minHandlePosition) position = minHandlePosition;
-          if (position > maxHandlePosition) position = maxHandlePosition;
-        }
-        break;
-
-      case false:
+      if (handle.classList.contains('lrs__handle-to')) {
         const maxHandlePosition = this.view.range.offsetWidth - handle.offsetWidth;
+        const minHandlePosition = parseFloat(this.view.handleFrom.style.left);
 
-        if (position < 0) position = 0;
-        if (position > maxHandlePosition) position = maxHandlePosition;
-        break;
+        if (position < minHandlePosition) newPosition = minHandlePosition;
+        if (position > maxHandlePosition) newPosition = maxHandlePosition;
+      }
     }
 
-    return position;
+    if (this.model.state.range === false) {
+      const maxHandlePosition = this.view.range.offsetWidth - handle.offsetWidth;
+
+      if (position < 0) newPosition = 0;
+      if (position > maxHandlePosition) newPosition = maxHandlePosition;
+    }
+
+    return newPosition;
   }
 
   getValueFromHandlePosition(handlePosition) {
-    const ratio = (this.view.range.offsetWidth - this.view.handleFrom.offsetWidth) / (this.model.state.max - this.model.state.min);
+    const ratio = (this.view.range.offsetWidth - this.view.handleFrom.offsetWidth)
+      / (this.model.state.max - this.model.state.min);
     const value = this.model.state.min + handlePosition / ratio;
 
     return Math.round(value);
   }
 
   getHandlePositionFromValue(value) {
-    const ratio = (this.view.range.offsetWidth - this.view.handleFrom.offsetWidth) / (this.model.state.max - this.model.state.min);
+    const ratio = (this.view.range.offsetWidth - this.view.handleFrom.offsetWidth)
+      / (this.model.state.max - this.model.state.min);
     const handlePosition = (value - this.model.state.min) * ratio;
 
     return Math.round(handlePosition);
@@ -107,14 +112,12 @@ export default class Controller {
   getHandleOldPosition(target, clientX, clientY) {
     let handlePosition;
 
-    switch (this.model.state.view) {
-      case 'vertical':
-        handlePosition = clientY + (parseFloat(target.style.left) || 0);
-        break;
+    if (this.model.state.view === 'vertical') {
+      handlePosition = clientY + (parseFloat(target.style.left) || 0);
+    }
 
-      case 'horizontal':
-        handlePosition = clientX - (parseFloat(target.style.left) || 0);
-        break;
+    if (this.model.state.view === 'horizontal') {
+      handlePosition = clientX - (parseFloat(target.style.left) || 0);
     }
 
     return handlePosition;
@@ -123,14 +126,12 @@ export default class Controller {
   getHandleNewPosition(clientX, clientY, position) {
     let handlePosition;
 
-    switch (this.model.state.view) {
-      case 'vertical':
-        handlePosition = position - clientY;
-        break;
+    if (this.model.state.view === 'vertical') {
+      handlePosition = position - clientY;
+    }
 
-      case 'horizontal':
-        handlePosition = clientX - position;
-        break;
+    if (this.model.state.view === 'horizontal') {
+      handlePosition = clientX - position;
     }
 
     return handlePosition;

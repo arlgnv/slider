@@ -1,4 +1,45 @@
 /* eslint-disable func-names */
+/* global $ */
+
+function setHandlers(elem) {
+  const app = elem.data('rangeSlider');
+
+  elem.on('blur', function () {
+    const value = $(this).val();
+
+    if (value.indexOf(' - ') !== -1) {
+      const values = value.split(' - ');
+
+      app.update({
+        from: values[0],
+        to: values[1],
+      });
+    } else {
+      app.update({ from: value });
+    }
+  });
+
+  elem
+    .closest('.demonstration__block')
+    .find('input[type=submit]')
+    .on('click', function (evt) {
+      evt.preventDefault();
+
+      const obj = {};
+
+      $(this)
+        .closest('.demonstration__form')
+        .find('input:not([type=submit])')
+        .each(function () {
+          obj[this.name] = +this.value;
+
+          if (this.type === 'checkbox') obj[this.name] = this.checked;
+        });
+
+      app.update(obj);
+    });
+}
+
 const slider1 = $('.js-range-slider1');
 slider1.rangeSlider({
   min: 0,
@@ -56,44 +97,3 @@ slider4.rangeSlider({
 });
 
 setHandlers(slider4);
-
-// =======================
-
-function setHandlers(elem) {
-  const app = elem.data('rangeSlider');
-
-  elem.on('blur', function () {
-    const value = $(this).val();
-
-    if (value.indexOf(' - ') !== -1) {
-      const values = value.split(' - ');
-
-      app.update({
-        from: values[0],
-        to: values[1],
-      });
-    } else {
-      app.update({ from: value });
-    }
-  });
-
-  elem
-    .closest('.demonstration__block')
-    .find('input[type=submit]')
-    .on('click', function (evt) {
-      evt.preventDefault();
-
-      const obj = {};
-
-      $(this)
-        .closest('.demonstration__form')
-        .find('input:not([type=submit])')
-        .each(function () {
-          obj[this.name] = +this.value;
-
-          if (this.type === 'checkbox') obj[this.name] = this.checked;
-        });
-
-      app.update(obj);
-    });
-}

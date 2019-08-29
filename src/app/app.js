@@ -1,4 +1,6 @@
-/* eslint-disable no-multi-spaces */
+/* eslint-disable max-len */
+/* eslint-disable import/extensions */
+
 import { createSliderTemplate, correctSettings } from './utilities.js';
 import Model from './mvc/model.js';
 import View from './mvc/view.js';
@@ -26,7 +28,7 @@ export default class App {
     const tipFromPosition = -((this.view.tipFrom.offsetWidth - this.view.handleFrom.offsetWidth) / 2);
     this.view.changeTipPosition(tipFromPosition, this.view.tipFrom);
 
-    let progressBarRightEdge =      this.view.range.offsetWidth
+    let progressBarRightEdge = this.view.range.offsetWidth
       - (parseFloat(this.view.handleFrom.style.left) + this.view.handleFrom.offsetWidth / 2);
     this.view.changeProgressBarFilling(0, progressBarRightEdge);
 
@@ -40,7 +42,7 @@ export default class App {
       this.view.changeTipPosition(tipToPosition, this.view.tipTo);
 
       const progressBarLeftEdge = parseFloat(this.view.handleFrom.style.left) + this.view.handleFrom.offsetWidth / 2;
-      progressBarRightEdge =        this.view.range.offsetWidth - (parseFloat(this.view.handleTo.style.left) + this.view.handleTo.offsetWidth / 2);
+      progressBarRightEdge = this.view.range.offsetWidth - (parseFloat(this.view.handleTo.style.left) + this.view.handleTo.offsetWidth / 2);
 
       this.view.changeProgressBarFilling(progressBarLeftEdge, progressBarRightEdge);
     }
