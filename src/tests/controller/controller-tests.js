@@ -1,219 +1,103 @@
-import Model from "../../app/mvc/model.js";
-import View from "../../app/mvc/view.js";
-import Controller from "../../app/mvc/controller.js";
+/* eslint-disable max-len */
+/* eslint-disable import/extensions */
+/* global document describe it assert mocha */
+import Model from '../../app/mvc/model.js';
+import View from '../../app/mvc/view.js';
+import Controller from '../../app/mvc/controller.js';
 
-const model = new Model();
-const view = new View(document.querySelector('.range'), document.querySelector('.lrs'));
+const model = new Model({
+  min: 0,
+  max: 100,
+  step: 1,
+  from: 0,
+  range: true,
+  to: 100,
+  view: 'horizontal',
+  tip: true,
+  theme: 'aqua',
+});
+const view = new View(document.querySelector('.range'), '<span class="lrs lrs_aqua"><span class="lrs__handle lrs__handle_from"></span><span class="lrs__tip lrs__tip_from"></span><span class="lrs__bar"></span><span class="lrs__handle lrs__handle_to"></span><span class="lrs__tip lrs__tip_to"></span></span>');
 const controller = new Controller(model, view);
 
 describe('Controller', () => {
-  describe('Constructor', () => {});
-
   describe('Methods', () => {
-    beforeEach(() => {
-      model.state = {
-        min: 0,
-        max: 100,
-        step: 1,
-        from: 0,
-        range: false,
-        view: 'horizontal',
-        hideTip: true,
-        theme: 'aqua',
-      };
-    });
-
-    describe('checkNeedToMoveHandle', () => {
-      it('returns boolean type', () => {
-        const value = 5;
-
-        assert.isBoolean(controller.checkNeedToMoveHandle(value));
+    describe('correctExtremeHandlePositions', () => {
+      it('return 0 (handle = handleFrom, handlePosition < 0, range = false, view = horizontal)', () => {
+        assert.equal(controller.correctExtremeHandlePositions(-1, view.handleFrom), 0);
       });
 
-      it('returns true if value equals min', () => {
-        const value = model.state.min;
+      it("return max-handle's-position (handle = handleFrom, handlePosition > max-handle's-position, range = false, view = horizontal)", () => {
+        const maxHandlePosition = view.slider.offsetWidth - view.handleFrom.offsetWidth;
 
-        assert.isOk(controller.checkNeedToMoveHandle(value));
+        assert.equal(controller.correctExtremeHandlePositions(maxHandlePosition + 1, view.handleFrom), maxHandlePosition);
       });
 
-      it('returns true if value equals max', () => {
-        const value = model.state.max;
-
-        assert.isOk(controller.checkNeedToMoveHandle(value));
-      });
-
-      it('returns true if handle can be moved with value equals 6 and step equals 2', () => {
-        const value = 6;
-        model.state.step = 2;
-        assert.isOk(controller.checkNeedToMoveHandle(value));
-      });
-
-      it('returns true if handle can be moved with value equals 42 and step equals 14', () => {
-        const value = 42;
-        model.state.step = 14;
-        assert.isOk(controller.checkNeedToMoveHandle(value));
-      });
-
-      it('returns true if handle can be moved with value equals 6 and step equals 2', () => {
-        const value = 6;
-        model.state.step = 2;
-        assert.isOk(controller.checkNeedToMoveHandle(value));
-      });
-
-      it('returns false if handle cannot be moved with value equals 5 and step quals 2', () => {
-        const value = 5;
-        model.state.step = 2;
-        assert.isNotOk(controller.checkNeedToMoveHandle(value));
-      });
-
-      it('returns false if handle cannot be moved with value equals 16 and step quals 28', () => {
-        const value = 32;
-        model.state.step = 28;
-        assert.isNotOk(controller.checkNeedToMoveHandle(value));
-      });
-    });
-
-    describe('checkExtremeHandlePositions', () => {
-      it("returns 0 if range = false and handle's position less than 0", () => {
-        const handlePosition = -2;
-        const result = controller.checkExtremeHandlePositions(handlePosition, 'from');
-        assert.equal(result, 0);
-      });
-
-      it("returns max handle's position if range = false and handle's position more than max handle's position", () => {
-        const maxHandlePosition = view.range.offsetWidth - view.handleFrom.offsetWidth;
-        const handlePosition = maxHandlePosition + 1;
-        const result = controller.checkExtremeHandlePositions(handlePosition, view.handleFrom);
-        assert.equal(result, maxHandlePosition);
-      });
-
-      it("returns handle's position if range = false and handle's position between 0 and max handle's position", () => {
-        const maxHandlePosition = view.range.offsetWidth - view.handleFrom.offsetWidth;
+      it("returns handle's position (handle = handleFrom, handlePosition > 0 and < max handle's position, range = false)", () => {
+        const maxHandlePosition = view.slider.offsetWidth - view.handleFrom.offsetWidth;
         const handlePosition = Math.floor(Math.random() * (maxHandlePosition - 0 + 1)) + 0;
-        const result = controller.checkExtremeHandlePositions(handlePosition, 'from');
-        assert.equal(result, handlePosition);
+
+        assert.equal(controller.correctExtremeHandlePositions(handlePosition, view.handleFrom), handlePosition);
       });
 
-      it("returns 0 if range = true, handle is handleFrom and handle's position less than 0", () => {
-        const handlePosition = -2;
-        const result = controller.checkExtremeHandlePositions(handlePosition, 'from');
-        assert.equal(result, 0);
-      });
-
-      it("returns max handle's position if range = true, handle is handleFrom and handle's position more than max handle's position", () => {
+      it('returns 0 (handle = handleFrom, handlePosition < 0, range = true)', () => {
         model.state.range = true;
-        view.changeHandlePosition(50, view.handleTo);
+
+        assert.equal(controller.correctExtremeHandlePositions(-1, view.handleFrom), 0);
+      });
+
+      it("returns handleTo's position (handle = handleFrom, handlePosition > handleTo's position, range = true)", () => {
+        model.state.range = true;
         const handleToPosition = parseFloat(view.handleTo.style.left);
 
-        const result = controller.checkExtremeHandlePositions(
-          handleToPosition + 1,
-          view.handleFrom,
-        );
-        assert.equal(result, handleToPosition);
+        assert.equal(controller.correctExtremeHandlePositions(handleToPosition + 1, view.handleFrom), handleToPosition);
       });
 
-      it("returns handle's position if range = true, handle is handleFrom and handle's position between 0 and max handle's position", () => {
+      it("returns handle's position (handle = handleFrom, handlePosition > 0 and < handleTo's position, range = true)", () => {
         model.state.range = true;
-        view.changeHandlePosition(50, view.handleTo);
+        const handleToPosition = parseFloat(view.handleTo.style.left);
+        const handlePosition = Math.floor(Math.random() * (handleToPosition - 0 + 1)) + 0;
 
-        const maxHandlePosition = parseFloat(view.handleTo.style.left);
-        const handlePosition = Math.floor(Math.random() * (maxHandlePosition - 0 + 1)) + 0;
-
-        const result = controller.checkExtremeHandlePositions(handlePosition, view.handleFrom);
-        assert.equal(result, handlePosition);
+        assert.equal(controller.correctExtremeHandlePositions(handlePosition, view.handleFrom), handlePosition);
       });
 
-      it("returns min handle's position if range = true, handle is handleTo and handle's position less than min handle's position", () => {
+      it("returns handleFrom's position (handle = handleTo, handlePosition < handleFrom's position, range = true)", () => {
         model.state.range = true;
-        view.changeHandlePosition(10, view.handleFrom);
-
         const minHandlePosition = parseFloat(view.handleFrom.style.left);
-        const handlePosition = minHandlePosition - 1;
-        view.changeHandlePosition(handlePosition, view.handleTo);
 
-        const result = controller.checkExtremeHandlePositions(handlePosition, view.handleTo);
-        assert.equal(result, minHandlePosition);
+        assert.equal(controller.correctExtremeHandlePositions(minHandlePosition - 1, view.handleTo), minHandlePosition);
       });
 
-      it("returns max handle's position if range = true, handle is handleTo and handle's position more than range's length", () => {
+      it("returns max handle's position (handle = handleTo, handlePosition > max handle's position, range = true)", () => {
         model.state.range = true;
+        const maxHandlePosition = view.slider.offsetWidth - view.handleTo.offsetWidth;
 
-        const maxHandlePosition = view.range.offsetWidth - view.handleTo.offsetWidth;
-
-        const handlePosition = controller.checkExtremeHandlePositions(
-          maxHandlePosition + 1,
-          view.handleTo,
-        );
-
-        assert.equal(handlePosition, maxHandlePosition);
+        assert.equal(controller.correctExtremeHandlePositions(maxHandlePosition + 1, view.handleTo), maxHandlePosition);
       });
 
-      it("returns handle's position if range = true, handle is handleTo and handle's position between min handle's position and range's length", () => {
+      it("returns handle's position (handle = handleTo, handlePosition > handleFrom's position and < max handle's position, range = true)", () => {
         model.state.range = true;
-
         const minHandlePosition = parseFloat(view.handleFrom.style.left);
-        const maxHandlePosition = view.range.offsetWidth - view.handleTo.offsetWidth;
-
-        const handlePosition =          Math.floor(Math.random() * (maxHandlePosition - minHandlePosition + 1))
+        const maxHandlePosition = view.slider.offsetWidth - view.handleTo.offsetWidth;
+        const handlePosition = Math.floor(Math.random() * (maxHandlePosition - minHandlePosition + 1))
           + minHandlePosition;
-        view.changeHandlePosition(handlePosition, view.handleTo);
 
-        const result = controller.checkExtremeHandlePositions(handlePosition, view.handleTo);
-
-        assert.equal(result, handlePosition);
+        assert.equal(controller.correctExtremeHandlePositions(handlePosition, view.handleTo), handlePosition);
       });
     });
 
-    describe('getValueFromHandlePosition', () => {
-      it('return numeric type value', () => {
-        const handlePosition = 0;
-
-        const value = controller.getValueFromHandlePosition(handlePosition);
-
-        assert.isNumber(value);
+    describe('correctValueWithStep', () => {
+      it('return value (value = min-value or value = max-value)', () => {
+        assert.equal(controller.correctValueWithStep(model.state.min), model.state.min);
+        assert.equal(controller.correctValueWithStep(model.state.max), model.state.max);
       });
 
-      it('return min if handle is leaning against to the start of the slider', () => {
-        const handlePosition = 0;
+      it('return correct value (value > min-value and value < max-value)', () => {
+        model.state.min = 9;
+        model.state.step = 3;
+        const value = 11;
+        const neededValue = 12;
 
-        const value = controller.getValueFromHandlePosition(handlePosition);
-
-        assert.equal(value, model.state.min);
-      });
-
-      it('return max if handle is leaning against to the end of the slider', () => {
-        const maxHandlePosition = view.range.offsetWidth - view.handleFrom.offsetWidth;
-
-        const value = controller.getValueFromHandlePosition(maxHandlePosition);
-
-        assert.equal(value, model.state.max);
-      });
-    });
-
-    describe('getHandlePositionFromValue', () => {
-      it("return numeric type handle's position", () => {
-        const value = 0;
-
-        const handlePosition = controller.getHandlePositionFromValue(value);
-
-        assert.isNumber(handlePosition);
-      });
-
-      it('return 0 if value equals 0', () => {
-        const value = 0;
-
-        const handlePosition = controller.getHandlePositionFromValue(value);
-
-        assert.equal(handlePosition, 0);
-      });
-
-      it("return max handle's position if value equals max", () => {
-        const maxHandlePosition = view.range.offsetWidth - view.handleFrom.offsetWidth;
-        const value = model.state.max;
-
-        const handlePosition = controller.getHandlePositionFromValue(value);
-
-        assert.equal(handlePosition, maxHandlePosition);
+        assert.equal(controller.correctValueWithStep(value), neededValue);
       });
     });
   });

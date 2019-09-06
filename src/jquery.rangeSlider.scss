@@ -1,23 +1,19 @@
+.hidden-input {
+  display: none;
+}
+
 .lrs {
   position: relative;
 
   display: inline-block;
   width: 300px;
-  height: 15px;
+  height: 6px;
 
+  background-color: #e5e5e5;
+  border-radius: 5px;
   user-select: none;
 
-  .lrs__range {
-    position: absolute;
-    top: 50%;
-    height: 6px;
-    width: 100%;
-
-    border-radius: 5px;
-    transform: translateY(-50%);
-  }
-
-  .lrs__progress-bar {
+  .lrs__bar {
     position: absolute;
 
     height: 100%;
@@ -33,27 +29,37 @@
 
     border-radius: 50%;
     transform: translateY(-50%);
+    cursor: grab;
 
-    &-from {
+    &_from {
       z-index: 1;
+    }
+
+    &_to {
+      z-index: 2;
+    }
+
+    &_grabbed {
+      cursor: grabbing;
+    }
+
+    &_last-grabbed,
+    &_last-grabbed + .lrs__tip {
+      z-index: 3;
     }
 
     &_hidden {
       display: none;
     }
-
-    &_last-dragged {
-      z-index: 2;
-    }
   }
 
   .lrs__tip {
     position: absolute;
-    top: -35px;
+    top: -42px;
 
-    display: inline-block;
     padding: 5px 8px;
 
+    color: white;
     font-size: 14px;
     line-height: normal;
 
@@ -68,7 +74,7 @@
       width: 8px;
       height: 8px;
 
-      transform: translateX(-50%) rotate(45deg);
+      transform: translate(-50%, 0) rotate(45deg);
     }
 
     &_hidden {
@@ -78,66 +84,51 @@
 }
 
 .lrs_vertical {
-  transform: rotate(-90deg) translateX(-100%);
-  transform-origin: left top;
+  width: 6px;
+  height: 150px;
+
+  .lrs__bar {
+    height: auto;
+    width: 100%;
+  }
+
+  .lrs__handle {
+    left: 50%;
+    top: auto;
+    bottom: 0;
+
+    height: 18px;
+    width: 18px;
+
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
 
   .lrs__tip {
     top: auto;
-    bottom: -40px;
+    left: 20px;
 
-    transform: rotate(90deg);
+    padding: 4px 8px;
 
     &::before {
-      top: 50%;
       left: -4px;
+      top: 50%;
 
-      transform: translateY(-50%) rotate(45deg);
+      transform: translate(0, -50%) rotate(45deg);
     }
   }
 }
 
-.lrs_aqua {
-  .lrs__range {
-    background-color: #e5e5e5;
-  }
-
-  .lrs__progress-bar {
-    background-color: #53b6a8;
-  }
-
-  .lrs__handle {
-    background-color: #53b6a8;
-  }
-
-  .lrs__tip {
-    color: white;
-    background-color: #53b6a8;
-
-    &::before {
-      background-color: #53b6a8;
-    }
-  }
+.lrs_aqua .lrs__bar,
+.lrs_aqua .lrs__handle,
+.lrs_aqua .lrs__tip,
+.lrs_aqua .lrs__tip::before {
+  background-color: #53b6a8;
 }
 
-.lrs_red {
-  .lrs__range {
-    background-color: #e5e5e5;
-  }
-
-  .lrs__progress-bar {
-    background-color: #e5573d;
-  }
-
-  .lrs__handle {
-    background-color: #e5573d;
-  }
-
-  .lrs__tip {
-    color: white;
-    background-color: #e5573d;
-
-    &::before {
-      background-color: #e5573d;
-    }
-  }
+.lrs_red .lrs__bar,
+.lrs_red .lrs__handle,
+.lrs_red .lrs__tip,
+.lrs_red .lrs__tip::before {
+  background-color: #e5573d;
 }

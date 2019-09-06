@@ -1,61 +1,68 @@
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-param-reassign */
 /* eslint-disable import/extensions */
-/* eslint class-methods-use-this: ["error", { "exceptMethods": ["changeHandlePosition", "changeTipPosition"] }] */
 
 import { EventEmitter } from '../utilities.js';
 
 export default class View extends EventEmitter {
-  constructor(input, slider) {
+  constructor(input, template) {
     super();
 
     this.input = input;
-    this.slider = slider;
-    this.range = slider.querySelector('.lrs__range');
-    this.progressBar = slider.querySelector('.lrs__progress-bar');
-    this.handleFrom = slider.querySelector('.lrs__handle-from');
-    this.tipFrom = this.handleFrom.querySelector('.lrs__tip');
-    this.handleTo = slider.querySelector('.lrs__handle-to');
-    this.tipTo = this.handleTo.querySelector('.lrs__tip');
+    this.input.classList.add('hidden-input');
+    this.input.insertAdjacentHTML('beforeBegin', template);
+    this.slider = input.previousElementSibling;
+    this.handleFrom = this.slider.querySelector('.lrs__handle_from');
+    this.tipFrom = this.slider.querySelector('.lrs__tip_from');
+    this.bar = this.slider.querySelector('.lrs__bar');
+    this.handleTo = this.slider.querySelector('.lrs__handle_to');
+    this.tipTo = this.slider.querySelector('.lrs__tip_to');
 
-    this.setHandlersToHandles();
+    this.setHandlerToHandle(this.handleFrom, this.handleDragStart.bind(this));
+    if (this.handleTo) this.setHandlerToHandle(this.handleTo, this.handleDragStart.bind(this));
   }
 
   handleDragStart(evt) {
-    if (!evt.target.classList.contains('lrs__handle')) return;
+    if (this.handleTo) {
+      this.handleFrom.classList.remove('lrs__handle_last-grabbed');
+      this.handleTo.classList.remove('lrs__handle_last-grabbed');
+      evt.target.classList.add('lrs__handle_last-grabbed');
+    }
 
-    this.handleFrom.classList.remove('lrs__handle_last-dragged');
-    this.handleTo.classList.remove('lrs__handle_last-dragged');
-    evt.target.classList.add('lrs__handle_last-dragged');
+    evt.target.classList.add('lrs__handle_grabbed');
 
     this.emit('dragStart', evt);
   }
 
-  setHandlersToHandles() {
-    this.handleFrom.addEventListener('mousedown', this.handleDragStart.bind(this));
-    this.handleTo.addEventListener('mousedown', this.handleDragStart.bind(this));
+  setHandlerToHandle(handle, callback) {
+    handle.addEventListener('mousedown', callback);
   }
 
-  changeHandlePosition(value, handle) {
-    handle.style.left = `${value}px`;
+  changeHandlePosition(handle, value, sliderView) {
+    if (sliderView === 'vertical') {
+      handle.style.cssText = `bottom: ${value}px`;
+    } else handle.style.cssText = `left: ${value}px`;
   }
 
-  changeTipPosition(value, tip) {
-    if (!tip.classList.contains('lrs__tip_hidden')) {
-      tip.style.left = `${value}px`;
-    }
+  changeTipPosition(tip, value, sliderView) {
+    if (sliderView === 'vertical') {
+      tip.style.cssText = `bottom: ${value}px`;
+    } else tip.style.cssText = `left: ${value}px`;
   }
 
-  changeProgressBarFilling(from, to) {
-    this.progressBar.style.cssText = `left: ${from}px; right: ${to}px;`;
+  changeTipText(tip, text) {
+    tip.textContent = text;
+  }
+
+  changeBarFilling(from, to, sliderView) {
+    if (sliderView === 'vertical') {
+      this.bar.style.cssText = `bottom: ${from}px; top: ${to}px;`;
+    } else this.bar.style.cssText = `left: ${from}px; right: ${to}px;`;
   }
 
   changeValue(valueFrom, valueTo) {
-    if (valueTo === undefined) {
-      this.input.value = valueFrom;
-    } else {
-      this.input.value = `${valueFrom} - ${valueTo}`;
-      this.tipTo.textContent = valueTo;
-    }
+    this.input.value = valueFrom;
 
-    this.tipFrom.textContent = valueFrom;
+    if (valueTo !== undefined) this.input.value += ` - ${valueTo}`;
   }
 }

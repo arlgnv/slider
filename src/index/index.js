@@ -1,99 +1,148 @@
 /* eslint-disable func-names */
 /* global $ */
 
-function setHandlers(elem) {
-  const app = elem.data('rangeSlider');
-
-  elem.on('blur', function () {
-    const value = $(this).val();
-
-    if (value.indexOf(' - ') !== -1) {
-      const values = value.split(' - ');
-
-      app.update({
-        from: values[0],
-        to: values[1],
-      });
-    } else {
-      app.update({ from: value });
-    }
-  });
-
-  elem
-    .closest('.demonstration__block')
-    .find('input[type=submit]')
-    .on('click', function (evt) {
-      evt.preventDefault();
-
-      const obj = {};
-
-      $(this)
-        .closest('.demonstration__form')
-        .find('input:not([type=submit])')
-        .each(function () {
-          obj[this.name] = +this.value;
-
-          if (this.type === 'checkbox') obj[this.name] = this.checked;
-        });
-
-      app.update(obj);
-    });
-}
-
-const slider1 = $('.js-range-slider1');
-slider1.rangeSlider({
+const $firstSlider = $('.js-first-slider');
+$firstSlider.rangeSlider({
   min: 0,
-  max: 100,
+  max: 50,
   from: 0,
   step: 1,
-  hideTip: false,
-});
+  tip: true,
+  onChange(value) {
+    const values = value.split(' - ');
+    const $valueFrom = $firstSlider.closest('.demonstration').find('.js-slider-from-value');
+    const $valueTo = $firstSlider.closest('.demonstration').find('.js-slider-to-value');
 
-setHandlers(slider1);
+    $valueFrom.val(values[0]);
+    $valueTo.val(values[1]);
+  },
+});
 
 // =======================
 
-const slider2 = $('.js-range-slider2');
-slider2.rangeSlider({
+const $secondSlider = $('.js-second-slider');
+$secondSlider.rangeSlider({
   min: 0,
   max: 200,
   from: 10,
   step: 1,
-  hideTip: false,
+  tip: true,
   range: true,
-  to: 90,
-});
+  to: 190,
+  theme: 'red',
+  onChange(value) {
+    const values = value.split(' - ');
+    const $valueFrom = $secondSlider.closest('.demonstration').find('.js-slider-from-value');
+    const $valueTo = $secondSlider.closest('.demonstration').find('.js-slider-to-value');
 
-setHandlers(slider2);
+    $valueFrom.val(values[0]);
+    $valueTo.val(values[1]);
+  },
+});
 
 // =======================
 
-const slider3 = $('.js-range-slider3');
-
-slider3.rangeSlider({
-  min: 0,
-  max: 100,
-  from: 0,
+const $thirdSlider = $('.js-third-slider');
+$thirdSlider.rangeSlider({
+  min: 10,
+  max: 80,
+  from: 20,
   step: 1,
+  tip: true,
+  theme: 'red',
   view: 'vertical',
-  hideTip: false,
+  onChange(value) {
+    const values = value.split(' - ');
+    const $valueFrom = $thirdSlider.closest('.demonstration').find('.js-slider-from-value');
+    const $valueTo = $thirdSlider.closest('.demonstration').find('.js-slider-to-value');
+
+    $valueFrom.val(values[0]);
+    $valueTo.val(values[1]);
+  },
 });
 
-setHandlers(slider3);
+$('.js-slider-from-value').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
 
-// =======================
-
-const slider4 = $('.js-range-slider4');
-
-slider4.rangeSlider({
-  min: 0,
-  max: 100,
-  from: 10,
-  step: 1,
-  hideTip: false,
-  view: 'vertical',
-  range: true,
-  to: 90,
+  $field.on('blur', () => {
+    sliderData.update({ from: $field.val() });
+  });
 });
 
-setHandlers(slider4);
+$('.js-slider-to-value').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
+
+  $field.on('blur', () => {
+    sliderData.update({ to: $field.val() });
+  });
+});
+
+$('.js-slider-min-value').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
+
+  $field.on('blur', () => {
+    sliderData.update({ min: $field.val() });
+  });
+});
+
+$('.js-slider-max-value').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
+
+  $field.on('blur', () => {
+    sliderData.update({ max: $field.val() });
+  });
+});
+
+$('.js-slider-step').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
+
+  $field.on('blur', () => {
+    sliderData.update({ step: $field.val() });
+  });
+});
+
+
+$('.js-slider-tip').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
+
+  $field.on('change', () => {
+    if ($field.val() === 'show') sliderData.update({ tip: true });
+    if ($field.val() === 'hide') sliderData.update({ tip: false });
+  });
+});
+
+$('.js-slider-theme').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
+
+  $field.on('change', () => {
+    if ($field.val() === 'aqua') sliderData.update({ theme: 'aqua' });
+    if ($field.val() === 'red') sliderData.update({ theme: 'red' });
+  });
+});
+
+$('.js-slider-type').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
+
+  $field.on('change', () => {
+    if ($field.val() === 'single') sliderData.update({ range: false });
+    if ($field.val() === 'double') sliderData.update({ range: true });
+  });
+});
+
+$('.js-slider-view').each(function () {
+  const $field = $(this);
+  const sliderData = $field.closest('.demonstration').find('input[name$=slider]').data('rangeSlider');
+
+  $field.on('change', () => {
+    if ($field.val() === 'horizontal') sliderData.update({ view: 'horizontal' });
+    if ($field.val() === 'vertical') sliderData.update({ view: 'vertical' });
+  });
+});

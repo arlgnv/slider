@@ -1,64 +1,70 @@
 function createSliderTemplate(parameters) {
   return `
-    <span class="lrs lrs_${parameters.theme}${
-  parameters.view === 'vertical' ? ' lrs_vertical' : ''
-}">
-        <span class="lrs__range">
-            <span class="lrs__handle lrs__handle-from">
-                <span class="${
-  parameters.hideTip ? 'lrs__tip lrs__tip_hidden' : 'lrs__tip'
-}"></span>
-            </span>
-            <span class="lrs__progress-bar">
-            </span>
-            <span class="lrs__handle lrs__handle-to${
-  !parameters.range ? ' lrs__handle_hidden' : ''
-}">
-                <span class="${
-  parameters.hideTip ? 'lrs__tip lrs__tip_hidden' : 'lrs__tip'
-}"></span>
-            </span>
-        </span>
-    </span>`;
+  <span class="lrs lrs_${parameters.theme}${parameters.view === 'vertical' ? ' lrs_vertical' : ''}">
+    <span class="lrs__handle lrs__handle_from"></span>
+    ${parameters.tip ? '<span class="lrs__tip lrs__tip_from"></span>' : ''}
+    <span class="lrs__bar"></span>
+    ${parameters.range ? `
+    <span class="lrs__handle lrs__handle_to"></span>
+    ${parameters.tip ? '<span class="lrs__tip lrs__tip_to"></span>' : ''}` : ''}
+  </span>`;
 }
 
 function correctSettings(settings) {
   const parameters = settings;
 
-  if (parameters.from) {
-    if (typeof parameters.from === 'string') parameters.from = +parameters.from;
-    if (parameters.from < parameters.min) parameters.from = parameters.min;
+  parameters.min = parseFloat(parameters.min);
+  if (Number.isNaN(parameters.min)) parameters.min = 0;
+
+  parameters.from = parseFloat(parameters.from);
+  if (Number.isNaN(parameters.from)) parameters.from = parameters.min;
+
+  parameters.max = parseFloat(parameters.max);
+  if (Number.isNaN(parameters.max)) parameters.max = 100;
+  if (parameters.max < parameters.min) {
+    const min = Math.min(parameters.max, parameters.min);
+    const max = Math.max(parameters.max, parameters.min);
+
+    parameters.min = min;
+    parameters.max = max;
   }
 
-  if (parameters.min) {
-    if (typeof parameters.min === 'string') parameters.min = +parameters.min;
-  }
+  parameters.step = parseFloat(parameters.step);
+  if (Number.isNaN(parameters.step)) parameters.step = 1;
+  if (parameters.step < 1) parameters.step = 1;
 
-  if (parameters.max) {
-    if (typeof parameters.max === 'string') parameters.max = +parameters.max;
-  }
+  if (parameters.theme !== 'aqua' && parameters.theme !== 'red') parameters.theme = 'aqua';
 
-  if (parameters.step) {
-    if (typeof parameters.step === 'string') parameters.step = +parameters.step;
-    if (parameters.step < 1) parameters.step = 1;
-  }
+  if (parameters.view !== 'horizontal'
+    && parameters.view !== 'vertical') parameters.view = 'horizontal';
 
-  if (parameters.theme) {
-    if (parameters.theme !== 'aqua' && parameters.theme !== 'red') {
-      parameters.theme = 'aqua';
+  if (parameters.tip !== false && parameters.tip !== true) parameters.tip = false;
+
+  if (parameters.range !== true && parameters.range !== false) parameters.range = false;
+
+  if (parameters.range === true) {
+    parameters.to = parseFloat(parameters.to);
+    if (Number.isNaN(parameters.to)) parameters.to = parameters.max;
+
+    if (parameters.from < parameters.min
+      || parameters.from > parameters.max) parameters.from = parameters.min;
+    if (parameters.to < parameters.min
+      || parameters.to > parameters.max) parameters.to = parameters.max;
+    if (parameters.from > parameters.to) {
+      const max = Math.max(parameters.from, parameters.to);
+      const min = Math.min(parameters.from, parameters.to);
+
+      parameters.from = min;
+      parameters.to = max;
     }
   }
 
-  if (parameters.range) {
-    if (typeof parameters.to === 'string') parameters.to = +parameters.to;
-    if (parameters.from > parameters.to) parameters.from = parameters.to;
-    if (parameters.to < parameters.from) parameters.to = parameters.from;
-    if (parameters.to > parameters.max) parameters.to = parameters.max;
-  }
-
-  if (!parameters.range) {
+  if (parameters.range === false) {
+    if (parameters.from < parameters.min) parameters.from = parameters.min;
     if (parameters.from > parameters.max) parameters.from = parameters.max;
   }
+
+  if (typeof parameters.onChange !== 'function') parameters.onChange = null;
 
   return parameters;
 }

@@ -1,131 +1,114 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.4/mocha.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.4/mocha.js"></script>
+    <script>
+      mocha.setup('bdd');
+    </script>
 
-<head>
-  <meta charset="utf-8" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.4/mocha.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.1.4/mocha.js"></script>
-  <script>
-    mocha.setup("bdd");
-  </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.js"></script>
+    <script>
+      let assert = chai.assert;
+    </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.js"></script>
-  <script>
-    let assert = chai.assert;
-  </script>
+    <style>
+      .hidden-input {
+        display: none;
+      }
 
-  <style>
-    .lrs {
-      position: relative;
-      display: inline-block;
-      width: 300px;
-      height: 5px;
-      user-select: none;
-    }
+      .lrs {
+        position: relative;
+        display: inline-block;
+        width: 300px;
+        height: 6px;
+        background-color: #e5e5e5;
+        border-radius: 5px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+      .lrs .lrs__bar {
+        position: absolute;
+        height: 100%;
+      }
+      .lrs .lrs__handle {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        transform: translateY(-50%);
+        cursor: -webkit-grab;
+        cursor: grab;
+      }
+      .lrs .lrs__handle_from {
+        z-index: 1;
+      }
+      .lrs .lrs__handle_to {
+        z-index: 2;
+      }
+      .lrs .lrs__handle_grabbed {
+        cursor: -webkit-grabbing;
+        cursor: grabbing;
+      }
+      .lrs .lrs__handle_last-grabbed,
+      .lrs .lrs__handle_last-grabbed + .lrs__tip {
+        z-index: 3;
+      }
+      .lrs .lrs__handle_hidden {
+        display: none;
+      }
+      .lrs .lrs__tip {
+        position: absolute;
+        top: -42px;
+        padding: 5px 8px;
+        color: white;
+        font-size: 14px;
+        line-height: normal;
+        border-radius: 5px;
+      }
+      .lrs .lrs__tip::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: -4px;
+        width: 8px;
+        height: 8px;
+        -webkit-transform: translate(-50%, 0) rotate(45deg);
+        -ms-transform: translate(-50%, 0) rotate(45deg);
+        transform: translate(-50%, 0) rotate(45deg);
+      }
+      .lrs .lrs__tip_hidden {
+        display: none;
+      }
 
-    .lrs .lrs__range {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-    }
+      .lrs_aqua .lrs__bar,
+      .lrs_aqua .lrs__handle,
+      .lrs_aqua .lrs__tip,
+      .lrs_aqua .lrs__tip::before {
+        background-color: #53b6a8;
+      }
 
-    .lrs .lrs__handle {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      height: 15px;
-      width: 15px;
-      border-radius: 50%;
-      transform: translateY(-50%);
-    }
+      .lrs_red .lrs__bar,
+      .lrs_red .lrs__handle,
+      .lrs_red .lrs__tip,
+      .lrs_red .lrs__tip::before {
+        background-color: #e5573d;
+      }
+    </style>
+  </head>
 
-    .lrs .lrs__handle--hidden {
-      display: none;
-    }
+  <body>
+    <input type="text" class="range" />
 
-    .lrs .lrs__handle--last-dragged {
-      z-index: 1;
-    }
+    <div id="mocha"></div>
 
-    .lrs .lrs__tip {
-      position: absolute;
-      top: -40px;
-      display: inline-block;
-      padding: 5px 8px;
-      font-size: 14px;
-      line-height: normal;
-      border-radius: 3px 3px 0 0;
-    }
-
-    .lrs .lrs__tip::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -4px;
-      width: 8px;
-      height: 8px;
-      transform: translateX(-50%) rotate(45deg);
-    }
-
-    .lrs .lrs__tip--hidden {
-      display: none;
-    }
-
-    .lrs--vertical {
-      transform: rotate(-90deg) translateX(-100%);
-      transform-origin: left top;
-    }
-
-    .lrs--vertical .lrs__tip {
-      top: auto;
-      bottom: -40px;
-      border-radius: 0 3px 3px 0;
-      transform: rotate(90deg);
-    }
-
-    .lrs--vertical .lrs__tip::before {
-      top: 50%;
-      left: -4px;
-      transform: translateY(-50%) rotate(45deg);
-    }
-
-    .lrs--aqua .lrs__range {
-      background-color: rgba(83, 182, 169, 0.5);
-    }
-
-    .lrs--aqua .lrs__handle {
-      background-color: #53b6a8;
-    }
-
-    .lrs--aqua .lrs__tip {
-      color: white;
-      background-color: #53b6a9;
-    }
-
-    .lrs--aqua .lrs__tip::before {
-      background-color: #53b6a9;
-    }
-  </style>
-</head>
-
-<body>
-  <span class="lrs lrs--aqua">
-    <span class="lrs__range">
-      <span class="lrs__handle lrs__handle-from">
-        <span class="lrs__tip"></span>
-      </span>
-      <span class="lrs__handle lrs__handle-to">
-        <span class="lrs__tip"></span>
-      </span>
-    </span>
-  </span>
-  <input type="text" class="range" style="display: none" />
-
-  <div id="mocha"></div>
-
-  <script type="module" src="./controller-tests.js"></script>
-</body>
-
+    <script type="module" src="./controller-tests.js"></script>
+  </body>
 </html>

@@ -1,75 +1,62 @@
 @import './../jquery.rangeSlider';
-
-.demonstration__item {
-  box-sizing: border-box;
-  padding: 10px;
-  margin-bottom: 40px;
-
-  box-shadow: 0 0 10px gray;
+html {
+  font: 14px Roboto, sans-serif;
 }
 
-@media screen and (max-width: 700px) {
-  .demonstration__item:not(.demonstration__item_vertical) .lrs {
+.container {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  margin: 20px 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
+.demonstration {
+  box-sizing: border-box;
+  width: 450px;
+  padding: 10px;
+
+  box-shadow: 0 0 10px gray;
+
+  p {
+    margin: 15px 0;
+  }
+
+  .lrs:not(.lrs_vertical) {
     width: 100%;
   }
 }
 
 .demonstration__title {
-  margin: 0 0 20px;
-}
+  margin: 0 0 32px;
 
-.demonstration__slider {
-  margin-bottom: 20px;
-
-  .demonstration__field {
-    margin: 0 0 0 15px;
-  }
-}
-
-@media screen and (max-width: 700px) {
-  .demonstration__slider {
-    margin-bottom: 20px;
-
-    .demonstration__field {
-      margin-left: 0;
-    }
-  }
-}
-
-@media screen and (min-width: 700px) {
-  .demonstration__group {
-    display: flex;
-    justify-content: space-around;
-  }
+  font-size: 30px;
+  text-align: center;
 }
 
 .demonstration__field {
-  margin-right: 15px;
+  margin-left: 10px;
 }
 
-.demonstration__item_vertical {
-  position: relative;
-  height: 400px;
+.demonstration fieldset {
+  margin: 15px 0;
+  padding: 10px 5px;
+}
 
-  .demonstration__slider .demonstration__field {
-    position: absolute;
-    left: 90px;
+.demonstration fieldset legend {
+}
 
-    margin: 0 0 50px;
-  }
-
-  .demostration__configuration {
-    position: absolute;
-    top: 110px;
-    left: 90px;
-
-    .demonstration__form {
-      display: flex;
-      flex-direction: column;
-
-      .demonstration__field {
-        margin: 0 0 10px;
-      }
-    }
-  }
+.demonstration fieldset label {
+  margin-right: 15px;
 }

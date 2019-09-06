@@ -1,4 +1,6 @@
-import Model from "../../app/mvc/model.js";
+/* eslint-disable import/extensions */
+/* global describe it assert mocha */
+import Model from '../../app/mvc/model.js';
 
 describe('Model', () => {
   describe('Constructor', () => {
@@ -8,6 +10,7 @@ describe('Model', () => {
       assert.isObject(model.state);
       assert.isEmpty(model.state);
     });
+
     it("Model's state equals to parameters", () => {
       const parameters = { theme: 'aqua', lala: 'lala' };
 
@@ -16,8 +19,6 @@ describe('Model', () => {
       assert.strictEqual(parameters, model.state);
     });
   });
-
-  describe('Methods', () => {});
 });
 
 mocha.run();

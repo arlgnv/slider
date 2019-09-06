@@ -1,38 +1,94 @@
-import View from "../../app/mvc/view.js";
+/* eslint-disable import/extensions */
+/* global document describe it assert mocha afterEach */
+import View from '../../app/mvc/view.js';
 
-const view = new View(document.querySelector('.range'), document.querySelector('.lrs'));
+const view = new View(document.querySelector('.range'), '<span class="lrs lrs_aqua"><span class="lrs__handle lrs__handle_from"></span><span class="lrs__tip lrs__tip_from"></span><span class="lrs__bar"></span><span class="lrs__handle lrs__handle_to"></span><span class="lrs__tip lrs__tip_to"></span></span>');
 
 describe('View', () => {
-  describe('Constructor', () => {});
-
   describe('Methods', () => {
     describe('changeHandlePosition', () => {
-      it('correct change postition with random value', () => {
-        const position = Math.floor(Math.random() * (1000 - 0 + 1)) + 0;
+      afterEach(() => {
+        view.handleFrom.style.cssText = '';
+      });
 
-        view.changeHandlePosition(position, view.handleFrom);
+      it('change property on right handle', () => {
+        const position = 100;
 
-        assert.equal(position, parseFloat(view.handleFrom.style.left));
+        view.changeHandlePosition(view.handleFrom, position);
+
+        assert.notEqual(position, parseFloat(view.handleTo.style.left));
+      });
+
+      it('change left property if view doesn\'t equal vertical', () => {
+        view.changeHandlePosition(view.handleFrom, 100);
+
+        assert.equal(100, parseFloat(view.handleFrom.style.left));
+      });
+
+      it('change bottom property if view equal vertical', () => {
+        view.changeHandlePosition(view.handleFrom, 100, 'vertical');
+
+        assert.equal(100, parseFloat(view.handleFrom.style.bottom));
       });
     });
 
     describe('changeTipPosition', () => {
-      it('correct change postition with random value', () => {
-        const position = Math.floor(Math.random() * (1000 - 0 + 1)) + 0;
-
-        view.changeTipPosition(position, view.tipFrom);
-
-        assert.equal(position, parseFloat(view.tipFrom.style.left));
+      afterEach(() => {
+        view.tipFrom.style.cssText = '';
       });
 
-      it("doesn't change postition on hidden tip", () => {
-        view.tipTo.style.left = '0px';
-        const tipToPosition = parseFloat(view.tipTo.style.left);
+      it('change property on right handle', () => {
+        const position = 100;
 
-        const position = Math.floor(Math.random() * (1000 - 0 + 1)) + 0;
-        view.changeTipPosition(position, view.tipTo);
+        view.changeTipPosition(view.tipFrom, position);
 
-        assert.equal(tipToPosition, parseFloat(view.tipTo.style.left));
+        assert.notEqual(position, parseFloat(view.tipTo.style.left));
+      });
+
+      it('change left property if view doesn\'t equal vertical', () => {
+        view.changeTipPosition(view.tipFrom, 100);
+
+        assert.equal(100, parseFloat(view.tipFrom.style.left));
+      });
+
+      it('change bottom property if view equal vertical', () => {
+        view.changeTipPosition(view.tipFrom, 100, 'vertical');
+
+        assert.equal(100, parseFloat(view.tipFrom.style.bottom));
+      });
+    });
+
+    describe('changeTipText', () => {
+      afterEach(() => {
+        view.tipFrom.textContent = '';
+      });
+
+      it('change text on tip', () => {
+        const text = 'lalala';
+
+        view.changeTipText(view.tipFrom, text);
+
+        assert.equal(view.tipFrom.textContent, text);
+      });
+    });
+
+    describe('changeBarFilling', () => {
+      afterEach(() => {
+        view.bar.style.cssText = '';
+      });
+
+      it('change left property if view doesn\'t equal vertical', () => {
+        view.changeBarFilling(10, 100);
+
+        assert.equal(parseFloat(view.bar.style.left), 10);
+        assert.equal(parseFloat(view.bar.style.right), 100);
+      });
+
+      it('change bottom property if view equal vertical', () => {
+        view.changeBarFilling(10, 100, 'vertical');
+
+        assert.equal(parseFloat(view.bar.style.bottom), 10);
+        assert.equal(parseFloat(view.bar.style.top), 100);
       });
     });
 
@@ -47,7 +103,7 @@ describe('View', () => {
 
       it('correct change value with 2 args', () => {
         const value1 = 12;
-          const value2 = 17;
+        const value2 = 17;
 
         view.changeValue(value1, value2);
 

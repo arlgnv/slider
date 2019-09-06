@@ -14,9 +14,12 @@ import App from './app/app.js';
         step: 1,
         from: 0,
         range: false,
+        to: null,
         view: 'horizontal',
-        hideTip: true,
+        tip: false,
         theme: 'aqua',
+
+        onChange: null,
       },
       parameters,
     );
