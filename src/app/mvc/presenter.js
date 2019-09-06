@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* global window */
 
-export default class Controller {
+export default class Presenter {
   constructor(model, view) {
     this.model = model;
     this.view = view;
@@ -18,7 +18,7 @@ export default class Controller {
 
     window.onmousemove = (evt) => {
       let handlePosition = this.getHandlePosition(evt.clientX, evt.clientY, cursorPosition);
-      handlePosition = this.correctExtremeHandlePositions(handlePosition, handle); console.log(handlePosition, ratio);
+      handlePosition = this.correctExtremeHandlePositions(handlePosition, handle);
 
       let value = this.getValueFromHandlePosition(handlePosition, ratio);
       value = this.correctValueWithStep(value);

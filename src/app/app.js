@@ -3,7 +3,7 @@
 import { createSliderTemplate, correctSettings } from './utilities.js';
 import Model from './mvc/model.js';
 import View from './mvc/view.js';
-import Controller from './mvc/controller.js';
+import Presenter from './mvc/presenter.js';
 
 export default class App {
   constructor(input, settings) {
@@ -12,7 +12,7 @@ export default class App {
 
     this.model = new Model(this.settings);
     this.view = new View(input, this.template);
-    this.controller = new Controller(this.model, this.view);
+    this.presenter = new Presenter(this.model, this.view);
   }
 
   update(obj) {
@@ -100,6 +100,6 @@ export default class App {
     }
 
     this.model.state = correctedSettings;
-    this.controller.onStart();
+    this.presenter.onStart();
   }
 }
