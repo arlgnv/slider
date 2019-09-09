@@ -7,7 +7,7 @@ html {
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
-  margin: 20px 0;
+  flex-wrap: wrap;
 }
 
 .visually-hidden {
@@ -25,6 +25,7 @@ html {
 .demonstration {
   box-sizing: border-box;
   width: 450px;
+  margin: 10px;
   padding: 10px;
 
   box-shadow: 0 0 10px gray;
@@ -52,9 +53,6 @@ html {
 .demonstration fieldset {
   margin: 15px 0;
   padding: 10px 5px;
-}
-
-.demonstration fieldset legend {
 }
 
 .demonstration fieldset label {
