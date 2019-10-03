@@ -1,60 +1,62 @@
-@import './../jquery.rangeSlider';
-html {
-  font: 14px Roboto, sans-serif;
-}
-
-.container {
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  border: 0;
-  padding: 0;
-  clip-path: inset(100%);
-  clip: rect(0 0 0 0);
-  overflow: hidden;
-}
+@import '../app/variables';
+@import '../app/global';
+@import '../jquery.rangeSlider';
 
 .demonstration {
+  flex-grow: 1;
+
+  &__title {
+    &_hidden {
+      position: absolute;
+      width: 0.0714rem;
+      height: 0.0714rem;
+      margin: -0.0714rem;
+      border: 0;
+      padding: 0;
+      clip-path: inset(100%);
+      clip: rect(0 0 0 0);
+      overflow: hidden;
+    }
+  }
+
+  &__container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 0 0.7143rem;
+  }
+}
+
+.slider {
+  $root: &;
+
   box-sizing: border-box;
-  width: 450px;
-  margin: 10px;
-  padding: 10px;
+  width: 32.1429rem;
+  margin: 0.7143rem;
+  padding: 0.9143rem 0.7143rem 0.7143rem;
+  box-shadow: 0 0 0.9143rem $gray-color-100;
 
-  box-shadow: 0 0 10px gray;
-
-  p {
-    margin: 15px 0;
-  }
-
-  .lrs:not(.lrs_vertical) {
+  @media screen and (max-width: 470px) {
     width: 100%;
+    margin: 0.7143rem 0;
   }
-}
 
-.demonstration__title {
-  margin: 0 0 32px;
+  &__title {
+    margin: 0 0 2.2857rem;
+    font-size: 2.1429rem;
+    text-align: center;
+  }
 
-  font-size: 30px;
-  text-align: center;
-}
+  &__group {
+    margin: 1.0714rem 0;
+  }
 
-.demonstration__field {
-  margin-left: 10px;
-}
+  &__group-title + #{$root}__group-title {
+    margin-left: 1.0715rem;
+  }
 
-.demonstration fieldset {
-  margin: 15px 0;
-  padding: 10px 5px;
-}
-
-.demonstration fieldset label {
-  margin-right: 15px;
+  &__field {
+    margin-left: 0.6143rem;
+  }
 }

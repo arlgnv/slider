@@ -8,7 +8,7 @@ export default class Presenter {
 
     this.onStart();
 
-    view.on('dragStart', this.dragStart.bind(this));
+    this.view.subscribe('dragStart', this.dragStart.bind(this));
   }
 
   dragStart(event) {

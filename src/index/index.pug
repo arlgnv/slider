@@ -3,154 +3,124 @@ html(lang="ru")
   head
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="description" content="Простой, расширяемый и легко настраиваемый слайдер диапазона")
+    meta(name="keywords" content="range slider, слайдер диапазона, jquery plugin range slider, jquery plugin")
+    link(rel="apple-touch-icon", sizes="180x180", href="../favicon/apple-touch-icon.png")
+    link(rel="icon", type="image/png", sizes="32x32", href="../favicon/favicon-32x32.png")
+    link(rel="icon", type="image/png", sizes="16x16", href="../favicon/favicon-16x16.png")
+    link(rel="manifest", href="../favicon/site.webmanifest")
+    link(rel="mask-icon", href="../favicon/safari-pinned-tab.svg", color="#5bbad5")
+    meta(name="msapplication-TileColor", content="#da532c")
+    meta(name="theme-color", content="#ffffff")
     title range-slider
-    link(href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap&subset=cyrillic" rel="stylesheet")
     link(rel="stylesheet" href="./index.scss")
   body
-    main
-      h1.visually-hidden Демо страница со слайдерами
-      div.container
-        section.demonstration
-          h2.demonstration__title Слайдер 1
-          .demonstration__block
-            .demonstration__slider
-              form.demonstration__form(action="/mock-address/change-me" method="post")
-                input.demonstration__field.js-first-slider(type="text" name="first-slider")
-            .demostration__configuration
-              form.demonstration__form(action="/mock-address/change-me" method="post")
-                p
-                  label Значение ОТ
-                    input.demonstration__field.js-slider-from-value(type="text" value ="0")
-                p
-                  label Значение ДО
-                    input.demonstration__field.js-slider-to-value(type="text" value ="")
-                p
-                  label Минимальное значение
-                    input.demonstration__field.js-slider-min-value(type="text" value ="0")
-                p
-                  label Максимальное значение
-                    input.demonstration__field.js-slider-max-value(type="text" value ="50")
-                p
-                  label Шаг слайдера
-                    input.demonstration__field.js-slider-step(type="text" value ="1")
-                fieldset
+    main.demonstration
+      h1.demonstration__title.demonstration__title_hidden Демо страница со слайдерами
+      .demonstration__container
+        -
+          const sliders =
+          [
+            {
+              "title": "Слайдер 1",
+              "name": "first-slider",
+              "class": "js-first-slider",
+              "parameters": 
+              {
+                "valueFrom": "0", 
+                "valueTo": "", 
+                "valueMin": "0", 
+                "valueMax": "50", 
+                "step": "1", 
+                "tip": {"show": true, "hide": false}, 
+                "theme": {"aqua": true, "red": false}, 
+                "type": {"single": true, "double": false}, 
+                "view": {"horizontal": true, "vertical": false}
+              }
+            },
+            {
+              "title": "Слайдер 2",
+              "name": "second-slider",
+              "class": "js-second-slider",
+              "parameters": 
+              {
+                "valueFrom": "10", 
+                "valueTo": "190", 
+                "valueMin": "0", 
+                "valueMax": "200", 
+                "step": "1", 
+                "tip": {"show": true, "hide": false}, 
+                "theme": {"aqua": false, "red": true}, 
+                "type": {"single": false, "double": true}, 
+                "view": {"horizontal": true, "vertical": false}
+              }
+            },
+            {
+              "title": "Слайдер 3",
+              "name": "third-slider",
+              "class": "js-third-slider",
+              "parameters": 
+              {
+                "valueFrom": "20", 
+                "valueTo": "", 
+                "valueMin": "10", 
+                "valueMax": "80", 
+                "step": "1", 
+                "tip": {"show": true, "hide": false}, 
+                "theme": {"aqua": true, "red": false}, 
+                "type": {"single": true, "double": false}, 
+                "view": {"horizontal": false, "vertical": true}
+              }
+            }
+          ]
+        each slider in sliders
+          - const {valueFrom, valueTo, valueMin, valueMax, step, tip, theme, type, view} = slider.parameters
+          section.slider
+            h2.slider__title= slider.title
+            .slider__preview
+              form.slider__form(action="/mock-address/change-me" method="post")
+                input.slider__field(class= slider.class type="text" name= slider.name)
+            .slider__configuration
+              form.slider__form(action="/mock-address/change-me" method="post")
+                p.slider__group
+                  label.slider__group-title Значение ОТ
+                    input.slider__field.js-slider-from-value(type="text" value= valueFrom)
+                p.slider__group
+                  label.slider__group-title Значение ДО
+                    input.slider__field.js-slider-to-value(type="text" value= valueTo)
+                p.slider__group
+                  label.slider__group-title Минимальное значение
+                    input.slider__field.js-slider-min-value(type="text" value= valueMin)
+                p.slider__group
+                  label.slider__group-title Максимальное значение
+                    input.slider__field.js-slider-max-value(type="text" value= valueMax)
+                p.slider__group
+                  label.slider__group-title Шаг слайдера
+                    input.slider__field.js-slider-step(type="text" value= step)
+                fieldset.slider__group
                   legend Подсказка
-                  label Показать
-                    input.demonstration__field.js-slider-tip(type="radio" name="tip" value="show" checked)
-                  label Скрыть
-                    input.demonstration__field.js-slider-tip(type="radio" name="tip" value="hide")
-                fieldset
+                  label.slider__group-title Показать
+                    input.slider__field.js-slider-tip(type="radio" name="tip" value="show" checked= tip.show)
+                  label.slider__group-title Скрыть
+                    input.slider__field.js-slider-tip(type="radio" name="tip" value="hide" checked= tip.hide)
+                fieldset.slider__group
                   legend Цветовые темы слайдера
-                  label Голубая тема
-                    input.demonstration__field.js-slider-theme(type="radio" name="theme" value="aqua" checked)
-                  label Красная тема
-                    input.demonstration__field.js-slider-theme(type="radio" name="theme" value="red")
-                fieldset
+                  label.slider__group-title Голубая тема
+                    input.slider__field.js-slider-theme(type="radio" name="theme" value="aqua" checked= theme.aqua)
+                  label.slider__group-title Красная тема
+                    input.slider__field.js-slider-theme(type="radio" name="theme" value="red" checked= theme.red)
+                fieldset.slider__group
                   legend Тип слайдера
-                  label Одиночное значение
-                    input.demonstration__field.js-slider-type(type="radio" name="type" value="single" checked)
-                  label Диапазон
-                    input.demonstration__field.js-slider-type(type="radio" name="type" value="double")
-                fieldset
+                  label.slider__group-title Одиночное значение
+                    input.slider__field.js-slider-type(type="radio" name="type" value="single" checked= type.single)
+                  label.slider__group-title Диапазон
+                    input.slider__field.js-slider-type(type="radio" name="type" value="double" checked= type.double)
+                fieldset.slider__group
                   legend Вид слайдера
-                  label Горизонтальный
-                    input.demonstration__field.js-slider-view(type="radio" name="view" value="horizontal" checked)
-                  label Вертикальный
-                    input.demonstration__field.js-slider-view(type="radio" name="view" value="vertical")
-        section.demonstration
-          h2.demonstration__title Слайдер 2
-          .demonstration__block
-            .demonstration__slider
-              form.demonstration__form(action="/mock-address/change-me" method="post")
-                input.demonstration__field.js-second-slider(type="text" name="second-slider")
-            .demostration__configuration
-              form.demonstration__form(action="/mock-address/change-me" method="post")
-                p
-                  label Значение ОТ
-                    input.demonstration__field.js-slider-from-value(type="text" value ="10")
-                p
-                  label Значение ДО
-                    input.demonstration__field.js-slider-to-value(type="text" value ="190")
-                p
-                  label Минимальное значение
-                    input.demonstration__field.js-slider-min-value(type="text" value ="0")
-                p
-                  label Максимальное значение
-                    input.demonstration__field.js-slider-max-value(type="text" value ="200")
-                p
-                  label Шаг слайдера
-                    input.demonstration__field.js-slider-step(type="text" value ="1")
-                fieldset
-                  legend Подсказка
-                  label Показать
-                    input.demonstration__field.js-slider-tip(type="radio" name="tip" value="show" checked)
-                  label Скрыть
-                    input.demonstration__field.js-slider-tip(type="radio" name="tip" value="hide")
-                fieldset
-                  legend Цветовые темы слайдера
-                  label Голубая тема
-                    input.demonstration__field.js-slider-theme(type="radio" name="theme" value="aqua")
-                  label Красная тема
-                    input.demonstration__field.js-slider-theme(type="radio" name="theme" value="red" checked)
-                fieldset
-                  legend Тип слайдера
-                  label Одиночное значение
-                    input.demonstration__field.js-slider-type(type="radio" name="type" value="single")
-                  label Диапазон
-                    input.demonstration__field.js-slider-type(type="radio" name="type" value="double" checked)
-                fieldset
-                  legend Вид слайдера
-                  label Горизонтальный
-                    input.demonstration__field.js-slider-view(type="radio" name="view" value="horizontal" checked)
-                  label Вертикальный
-                    input.demonstration__field.js-slider-view(type="radio" name="view" value="vertical")
-        section.demonstration
-          h2.demonstration__title Слайдер 3
-          .demonstration__block
-            .demonstration__slider
-              form.demonstration__form(action="/mock-address/change-me" method="post")
-                input.demonstration__field.js-third-slider(type="text" name="third-slider")
-            .demostration__configuration
-              form.demonstration__form(action="/mock-address/change-me" method="post")
-                p
-                  label Значение ОТ
-                    input.demonstration__field.js-slider-from-value(type="text" value ="20")
-                p
-                  label Значение ДО
-                    input.demonstration__field.js-slider-to-value(type="text" value ="")
-                p
-                  label Минимальное значение
-                    input.demonstration__field.js-slider-min-value(type="text" value ="10")
-                p
-                  label Максимальное значение
-                    input.demonstration__field.js-slider-max-value(type="text" value ="80")
-                p
-                  label Шаг слайдера
-                    input.demonstration__field.js-slider-step(type="text" value ="1")
-                fieldset
-                  legend Подсказка
-                  label Показать
-                    input.demonstration__field.js-slider-tip(type="radio" name="tip" value="show" checked)
-                  label Скрыть
-                    input.demonstration__field.js-slider-tip(type="radio" name="tip" value="hide")
-                fieldset
-                  legend Цветовые темы слайдера
-                  label Голубая тема
-                    input.demonstration__field.js-slider-theme(type="radio" name="theme" value="aqua")
-                  label Красная тема
-                    input.demonstration__field.js-slider-theme(type="radio" name="theme" value="red" checked)
-                fieldset
-                  legend Тип слайдера
-                  label Одиночное значение
-                    input.demonstration__field.js-slider-type(type="radio" name="type" value="single" checked)
-                  label Диапазон
-                    input.demonstration__field.js-slider-type(type="radio" name="type" value="double")
-                fieldset
-                  legend Вид слайдера
-                  label Горизонтальный
-                    input.demonstration__field.js-slider-view(type="radio" name="view" value="horizontal")
-                  label Вертикальный
-                    input.demonstration__field.js-slider-view(type="radio" name="view" value="vertical" checked)
+                  label.slider__group-title Горизонтальный
+                    input.slider__field.js-slider-view(type="radio" name="view" value="horizontal" checked= view.horizontal)
+                  label.slider__group-title Вертикальный
+                    input.slider__field.js-slider-view(type="radio" name="view" value="vertical" checked= view.vertical)
     script(src="https://code.jquery.com/jquery-3.4.1.min.js")
     script(src="./../jquery.rangeSlider.js")
     script(src="./index.js")

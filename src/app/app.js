@@ -1,9 +1,9 @@
 /* eslint-disable import/extensions */
 
 import { createSliderTemplate, correctSettings } from './utilities.js';
-import Model from './mvc/model.js';
-import View from './mvc/view.js';
-import Presenter from './mvc/presenter.js';
+import Model from './mvp/model.js';
+import View from './mvp/view.js';
+import Presenter from './mvp/presenter.js';
 
 export default class App {
   constructor(input, settings) {
@@ -79,23 +79,23 @@ export default class App {
 
     if (correctedSettings.theme !== this.model.state.theme) {
       if (correctedSettings.theme === 'aqua') {
-        this.view.slider.classList.remove('lrs_red');
-        this.view.slider.classList.add('lrs_aqua');
+        this.view.slider.classList.remove('lrs_theme_red');
+        this.view.slider.classList.add('lrs_theme_aqua');
       }
 
       if (correctedSettings.theme === 'red') {
-        this.view.slider.classList.remove('lrs_aqua');
-        this.view.slider.classList.add('lrs_red');
+        this.view.slider.classList.remove('lrs_theme_aqua');
+        this.view.slider.classList.add('lrs_theme_red');
       }
     }
 
     if (correctedSettings.view !== this.model.state.view) {
       if (correctedSettings.view === 'horizontal') {
-        this.view.slider.classList.remove('lrs_vertical');
+        this.view.slider.classList.remove('lrs_theme_vertical');
       }
 
       if (correctedSettings.view === 'vertical') {
-        this.view.slider.classList.add('lrs_vertical');
+        this.view.slider.classList.add('lrs_theme_vertical');
       }
     }
 

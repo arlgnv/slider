@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
-/* global describe it assert mocha beforeEach */
-import { createSliderTemplate, correctSettings, EventEmitter } from '../../app/utilities.js';
+/* global describe it assert mocha */
+import { createSliderTemplate, correctSettings } from '../../app/utilities.js';
 
 describe('Utilities', () => {
   describe('Functions', () => {
@@ -115,20 +115,6 @@ describe('Utilities', () => {
         const correctedSettings = correctSettings({ step: -13 });
 
         assert.equal(correctedSettings.step, 1);
-      });
-    });
-  });
-
-  describe('Classes', () => {
-    describe('EventEmitter', () => {
-      it('attach callback to event', () => {
-        const events = new EventEmitter();
-        const typeEvent = 'drag';
-        const callback = () => "It's me";
-
-        events.on(typeEvent, callback);
-
-        assert.equal(callback, events.events[typeEvent]);
       });
     });
   });

@@ -1,6 +1,8 @@
 function createSliderTemplate(parameters) {
+  const sliderClassName = `lrs lrs_theme_${parameters.theme}${parameters.view === 'vertical' ? ' lrs_theme_vertical' : ''}`.trim();
+
   return `
-  <span class="lrs lrs_${parameters.theme}${parameters.view === 'vertical' ? ' lrs_vertical' : ''}">
+  <span class="${sliderClassName}">
     <span class="lrs__handle lrs__handle_from"></span>
     ${parameters.tip ? '<span class="lrs__tip lrs__tip_from"></span>' : ''}
     <span class="lrs__bar"></span>
@@ -69,18 +71,4 @@ function correctSettings(settings) {
   return parameters;
 }
 
-class EventEmitter {
-  constructor() {
-    this.events = {};
-  }
-
-  on(type, callback) {
-    this.events[type] = callback;
-  }
-
-  emit(type, arg) {
-    if (this.events[type]) this.events[type](arg);
-  }
-}
-
-export { createSliderTemplate, correctSettings, EventEmitter };
+export { createSliderTemplate, correctSettings };

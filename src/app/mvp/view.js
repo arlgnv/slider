@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/extensions */
 
-import { EventEmitter } from '../utilities.js';
+import EventEmitter from '../event-emitter.js';
 
 export default class View extends EventEmitter {
   constructor(input, template) {
@@ -31,7 +31,7 @@ export default class View extends EventEmitter {
 
     evt.target.classList.add('lrs__handle_grabbed');
 
-    this.emit('dragStart', evt);
+    this.notify('dragStart', evt);
   }
 
   setHandlerToHandle(handle, callback) {

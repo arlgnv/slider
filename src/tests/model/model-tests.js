@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 /* global describe it assert mocha */
-import Model from '../../app/mvc/model.js';
+import Model from '../../app/mvp/model.js';
 
 describe('Model', () => {
   describe('Constructor', () => {

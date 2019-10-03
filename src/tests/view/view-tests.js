@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 /* global document describe it assert mocha afterEach */
-import View from '../../app/mvc/view.js';
+import View from '../../app/mvp/view.js';
 
 const view = new View(document.querySelector('.range'), '<span class="lrs lrs_aqua"><span class="lrs__handle lrs__handle_from"></span><span class="lrs__tip lrs__tip_from"></span><span class="lrs__bar"></span><span class="lrs__handle lrs__handle_to"></span><span class="lrs__tip lrs__tip_to"></span></span>');
 
