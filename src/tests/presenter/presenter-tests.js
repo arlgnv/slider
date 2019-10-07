@@ -1,9 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable import/extensions */
 /* global document describe it assert mocha */
-import Model from '../../app/mvp/model.js';
-import View from '../../app/mvp/view.js';
-import Presenter from '../../app/mvp/presenter.js';
+import Model from '../../js/model.js';
+import View from '../../js/view.js';
+import Presenter from '../../js/presenter.js';
 
 const model = new Model({
   min: 0,

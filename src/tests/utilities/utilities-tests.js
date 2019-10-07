@@ -1,38 +1,9 @@
 /* eslint-disable import/extensions */
 /* global describe it assert mocha */
-import { createSliderTemplate, correctSettings } from '../../app/utilities.js';
+import correctSettings from '../../js/utilities.js';
 
 describe('Utilities', () => {
   describe('Functions', () => {
-    describe('createSliderTemplate', () => {
-      it('returns string type', () => {
-        assert.isString(createSliderTemplate({}));
-      });
-
-      it("string has settings' theme", () => {
-        const settings = { theme: 'aqua' };
-        const template = createSliderTemplate(settings);
-
-        assert.notEqual(template.indexOf(settings.theme), -1);
-      });
-
-      it('string has tip if settings tip = true', () => {
-        const settings = { tip: true };
-
-        const template = createSliderTemplate(settings);
-
-        assert.notEqual(template.indexOf('lrs__tip'), -1);
-      });
-
-      it('string has second handle if settings range = true', () => {
-        const settings = { range: true };
-
-        const template = createSliderTemplate(settings);
-
-        assert.notEqual(template.indexOf('lrs__handle_to'), -1);
-      });
-    });
-
     describe('correctSettings', () => {
       it('return object', () => {
         const correctedSettings = correctSettings({});

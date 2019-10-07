@@ -74,9 +74,9 @@
     }
   }
 
-  &_theme_vertical {
+  &_direction_vertical {
     width: 0.4286rem;
-    height: 10.7143rem;
+    height: 100%;
 
     #{$root}__bar {
       height: auto;

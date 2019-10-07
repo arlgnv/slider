@@ -1,18 +1,4 @@
-function createSliderTemplate(parameters) {
-  const sliderClassName = `lrs lrs_theme_${parameters.theme}${parameters.view === 'vertical' ? ' lrs_theme_vertical' : ''}`.trim();
-
-  return `
-  <span class="${sliderClassName}">
-    <span class="lrs__handle lrs__handle_from"></span>
-    ${parameters.tip ? '<span class="lrs__tip lrs__tip_from"></span>' : ''}
-    <span class="lrs__bar"></span>
-    ${parameters.range ? `
-    <span class="lrs__handle lrs__handle_to"></span>
-    ${parameters.tip ? '<span class="lrs__tip lrs__tip_to"></span>' : ''}` : ''}
-  </span>`;
-}
-
-function correctSettings(settings) {
+export default function correctSettings(settings) {
   const parameters = settings;
 
   parameters.min = parseFloat(parameters.min);
@@ -69,5 +55,3 @@ function correctSettings(settings) {
 
   return parameters;
 }
-
-export { createSliderTemplate, correctSettings };

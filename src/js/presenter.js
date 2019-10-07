@@ -14,7 +14,7 @@ export default class Presenter {
   dragStart(event) {
     const handle = event.target;
     const cursorPosition = this.getCursorPosition(handle, event.clientX, event.clientY);
-    const ratio = this.getRatio(handle, this.model.state.vertical);
+    const ratio = this.getRatio(handle);
 
     window.onmousemove = (evt) => {
       let handlePosition = this.getHandlePosition(evt.clientX, evt.clientY, cursorPosition);
@@ -57,18 +57,10 @@ export default class Presenter {
     return cursorPosition;
   }
 
-  getRatio(handle, isVertical) {
-    let ratio;
-
-    if (isVertical) {
-      ratio = (this.view.slider.offsetHeight - handle.offsetWidth) / (this.model.state.max - this.model.state.min);
-    }
-
-    if (!isVertical) {
-      ratio = (this.view.slider.offsetWidth - handle.offsetWidth) / (this.model.state.max - this.model.state.min);
-    }
-
-    return ratio;
+  getRatio(handle) {
+    return this.model.state.vertical
+      ? (this.view.slider.offsetHeight - handle.offsetWidth) / (this.model.state.max - this.model.state.min)
+      : (this.view.slider.offsetWidth - handle.offsetWidth) / (this.model.state.max - this.model.state.min);
   }
 
   getHandlePosition(clientX, clientY, position) {
@@ -164,7 +156,7 @@ export default class Presenter {
   drawView(handle, handlePosition) {
     if (this.model.state.vertical) {
       if (this.model.state.range === true) {
-        this.view.changeValue(this.model.state.from, this.model.state.to);
+        this.view.changeValue([this.model.state.from, this.model.state.to]);
 
         this.view.changeHandlePosition(handle, handlePosition, 'bottom');
 
@@ -190,7 +182,7 @@ export default class Presenter {
       }
 
       if (this.model.state.range === false) {
-        this.view.changeValue(this.model.state.from);
+        this.view.changeValue([this.model.state.from]);
 
         this.view.changeHandlePosition(handle, handlePosition, 'bottom');
 
@@ -208,7 +200,7 @@ export default class Presenter {
 
     if (!this.model.state.vertical) {
       if (this.model.state.range === true) {
-        this.view.changeValue(this.model.state.from, this.model.state.to);
+        this.view.changeValue([this.model.state.from, this.model.state.to]);
 
         this.view.changeHandlePosition(handle, handlePosition, 'left');
 
@@ -234,7 +226,7 @@ export default class Presenter {
       }
 
       if (this.model.state.range === false) {
-        this.view.changeValue(this.model.state.from);
+        this.view.changeValue([this.model.state.from]);
 
         this.view.changeHandlePosition(handle, handlePosition, 'left');
 
@@ -254,12 +246,12 @@ export default class Presenter {
   }
 
   onStart() {
-    let ratio = this.getRatio(this.view.handleFrom, this.model.state.vertical);
+    let ratio = this.getRatio(this.view.handleFrom);
     let handlePosition = this.getHandlePositionFromValue(this.model.state.from, ratio);
     this.drawView(this.view.handleFrom, handlePosition);
 
     if (this.model.state.range === true) {
-      ratio = this.getRatio(this.view.handleTo, this.model.state.vertical);
+      ratio = this.getRatio(this.view.handleTo);
       handlePosition = this.getHandlePositionFromValue(this.model.state.to, ratio);
       this.drawView(this.view.handleTo, handlePosition);
     }

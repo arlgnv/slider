@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 /* global document describe it assert mocha */
-import App from '../../app/app.js';
+import App from '../../js/app.js';
 
 describe('App', () => {
   it('template is initialized on the page', () => {

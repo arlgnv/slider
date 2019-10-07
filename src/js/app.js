@@ -1,18 +1,18 @@
 /* eslint-disable import/extensions */
 
-import { correctSettings } from './utilities.js';
-import templateFunction from './template.hbs';
-import Model from './mvp/model.js';
-import View from './mvp/view.js';
-import Presenter from './mvp/presenter.js';
+import correctSettings from './utilities.js';
+import templateFunction from '../templates/sliderTemplate.hbs';
+import Model from './model.js';
+import View from './view.js';
+import Presenter from './presenter.js';
 
 export default class App {
   constructor(input, settings) {
-    this.settings = correctSettings(settings);
-    this.template = templateFunction(settings);
+    input.classList.add('hidden-input');
+    input.insertAdjacentHTML('beforeBegin', templateFunction(settings));
 
-    this.model = new Model(this.settings);
-    this.view = new View(input, this.template);
+    this.model = new Model(correctSettings(settings));
+    this.view = new View(input);
     this.presenter = new Presenter(this.model, this.view);
   }
 
@@ -92,11 +92,11 @@ export default class App {
 
     if (correctedSettings.vertical !== this.model.state.vertical) {
       if (correctedSettings.vertical) {
-        this.view.slider.classList.add('lrs_theme_vertical');
+        this.view.slider.classList.add('lrs_direction_vertical');
       }
 
       if (!correctedSettings.vertical) {
-        this.view.slider.classList.remove('lrs_theme_vertical');
+        this.view.slider.classList.remove('lrs_direction_vertical');
       }
     }
 

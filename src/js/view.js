@@ -2,15 +2,13 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable import/extensions */
 
-import EventEmitter from '../event-emitter.js';
+import EventEmitter from './event-emitter.js';
 
 export default class View extends EventEmitter {
-  constructor(input, template) {
+  constructor(input) {
     super();
 
     this.input = input;
-    this.input.classList.add('hidden-input');
-    this.input.insertAdjacentHTML('beforeBegin', template);
     this.slider = input.previousElementSibling;
     this.handleFrom = this.slider.querySelector('.lrs__handle_from');
     this.tipFrom = this.slider.querySelector('.lrs__tip_from');
@@ -18,8 +16,12 @@ export default class View extends EventEmitter {
     this.handleTo = this.slider.querySelector('.lrs__handle_to');
     this.tipTo = this.slider.querySelector('.lrs__tip_to');
 
-    this.setHandlerToHandle(this.handleFrom, this.handleDragStart.bind(this));
-    if (this.handleTo) this.setHandlerToHandle(this.handleTo, this.handleDragStart.bind(this));
+    this.addEventListeners();
+  }
+
+  addEventListeners() {
+    this.handleFrom.addEventListener('mousedown', this.handleDragStart.bind(this));
+    if (this.handleTo) this.handleTo.addEventListener('mousedown', this.handleDragStart.bind(this));
   }
 
   handleDragStart(evt) {
@@ -32,10 +34,6 @@ export default class View extends EventEmitter {
     evt.target.classList.add('lrs__handle_grabbed');
 
     this.notify('dragStart', evt);
-  }
-
-  setHandlerToHandle(handle, callback) {
-    handle.addEventListener('mousedown', callback);
   }
 
   changeHandlePosition(handle, value, direction) {
@@ -54,9 +52,7 @@ export default class View extends EventEmitter {
     this.bar.style.cssText = `${directions[0]}: ${from}px; ${directions[1]}: ${to}px;`;
   }
 
-  changeValue(valueFrom, valueTo) {
-    this.input.value = valueFrom;
-
-    if (valueTo !== undefined) this.input.value += ` - ${valueTo}`;
+  changeValue(value) {
+    this.input.value = value.join(' - ');
   }
 }

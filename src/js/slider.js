@@ -3,7 +3,7 @@
 /* eslint-disable no-param-reassign */
 /* global jQuery */
 
-import App from './app/app.js';
+import App from './app';
 
 (function ($) {
   $.fn.rangeSlider = function (parameters) {

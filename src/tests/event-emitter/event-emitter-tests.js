@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 /* global describe it assert mocha */
-import EventEmitter from '../../app/event-emitter.js';
+import EventEmitter from '../../js/event-emitter.js';
 
 describe('EventEmitter', () => {
   it('attach callback to event', () => {
