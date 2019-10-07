@@ -50,7 +50,7 @@ $thirdSlider.rangeSlider({
   step: 1,
   tip: true,
   theme: 'aqua',
-  view: 'vertical',
+  vertical: true,
   onChange(value) {
     const values = value.split(' - ');
     const $valueFrom = $thirdSlider.closest('.slider').find('.js-slider-from-value');
@@ -142,7 +142,7 @@ $('.js-slider-view').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('change', () => {
-    if ($field.val() === 'horizontal') sliderData.update({ view: 'horizontal' });
-    if ($field.val() === 'vertical') sliderData.update({ view: 'vertical' });
+    if ($field.val() === 'horizontal') sliderData.update({ vertical: false });
+    if ($field.val() === 'vertical') sliderData.update({ vertical: true });
   });
 });

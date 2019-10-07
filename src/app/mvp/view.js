@@ -38,26 +38,20 @@ export default class View extends EventEmitter {
     handle.addEventListener('mousedown', callback);
   }
 
-  changeHandlePosition(handle, value, sliderView) {
-    if (sliderView === 'vertical') {
-      handle.style.cssText = `bottom: ${value}px`;
-    } else handle.style.cssText = `left: ${value}px`;
+  changeHandlePosition(handle, value, direction) {
+    handle.style.cssText = `${direction}: ${value}px`;
   }
 
-  changeTipPosition(tip, value, sliderView) {
-    if (sliderView === 'vertical') {
-      tip.style.cssText = `bottom: ${value}px`;
-    } else tip.style.cssText = `left: ${value}px`;
+  changeTipPosition(tip, value, direction) {
+    tip.style.cssText = `${direction}: ${value}px`;
   }
 
   changeTipText(tip, text) {
     tip.textContent = text;
   }
 
-  changeBarFilling(from, to, sliderView) {
-    if (sliderView === 'vertical') {
-      this.bar.style.cssText = `bottom: ${from}px; top: ${to}px;`;
-    } else this.bar.style.cssText = `left: ${from}px; right: ${to}px;`;
+  changeBarFilling(from, to, directions) {
+    this.bar.style.cssText = `${directions[0]}: ${from}px; ${directions[1]}: ${to}px;`;
   }
 
   changeValue(valueFrom, valueTo) {

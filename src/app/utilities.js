@@ -35,14 +35,13 @@ function correctSettings(settings) {
   if (Number.isNaN(parameters.step)) parameters.step = 1;
   if (parameters.step < 1) parameters.step = 1;
 
-  if (parameters.theme !== 'aqua' && parameters.theme !== 'red') parameters.theme = 'aqua';
+  parameters.theme = parameters.theme !== 'aqua' && parameters.theme !== 'red' ? 'aqua' : parameters.theme;
 
-  if (parameters.view !== 'horizontal'
-    && parameters.view !== 'vertical') parameters.view = 'horizontal';
+  parameters.vertical = parameters.vertical !== false && parameters.vertical !== true ? false : parameters.vertical;
 
-  if (parameters.tip !== false && parameters.tip !== true) parameters.tip = false;
+  parameters.tip = parameters.tip !== false && parameters.tip !== true ? false : parameters.tip;
 
-  if (parameters.range !== true && parameters.range !== false) parameters.range = false;
+  parameters.range = parameters.range !== true && parameters.range !== false ? false : parameters.range;
 
   if (parameters.range === true) {
     parameters.to = parseFloat(parameters.to);
@@ -66,7 +65,7 @@ function correctSettings(settings) {
     if (parameters.from > parameters.max) parameters.from = parameters.max;
   }
 
-  if (typeof parameters.onChange !== 'function') parameters.onChange = null;
+  parameters.onChange = typeof parameters.onChange !== 'function' ? null : parameters.onChange;
 
   return parameters;
 }

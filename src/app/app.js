@@ -1,6 +1,7 @@
 /* eslint-disable import/extensions */
 
-import { createSliderTemplate, correctSettings } from './utilities.js';
+import { correctSettings } from './utilities.js';
+import templateFunction from './template.hbs';
 import Model from './mvp/model.js';
 import View from './mvp/view.js';
 import Presenter from './mvp/presenter.js';
@@ -8,7 +9,7 @@ import Presenter from './mvp/presenter.js';
 export default class App {
   constructor(input, settings) {
     this.settings = correctSettings(settings);
-    this.template = createSliderTemplate(this.settings);
+    this.template = templateFunction(settings);
 
     this.model = new Model(this.settings);
     this.view = new View(input, this.template);
@@ -89,13 +90,13 @@ export default class App {
       }
     }
 
-    if (correctedSettings.view !== this.model.state.view) {
-      if (correctedSettings.view === 'horizontal') {
-        this.view.slider.classList.remove('lrs_theme_vertical');
+    if (correctedSettings.vertical !== this.model.state.vertical) {
+      if (correctedSettings.vertical) {
+        this.view.slider.classList.add('lrs_theme_vertical');
       }
 
-      if (correctedSettings.view === 'vertical') {
-        this.view.slider.classList.add('lrs_theme_vertical');
+      if (!correctedSettings.vertical) {
+        this.view.slider.classList.remove('lrs_theme_vertical');
       }
     }
 

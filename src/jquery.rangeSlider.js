@@ -15,7 +15,7 @@ import App from './app/app.js';
         from: 0,
         range: false,
         to: null,
-        view: 'horizontal',
+        vertical: false,
         tip: false,
         theme: 'aqua',
 

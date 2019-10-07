@@ -14,7 +14,7 @@ export default class Presenter {
   dragStart(event) {
     const handle = event.target;
     const cursorPosition = this.getCursorPosition(handle, event.clientX, event.clientY);
-    const ratio = this.getRatio(handle, this.model.state.view);
+    const ratio = this.getRatio(handle, this.model.state.vertical);
 
     window.onmousemove = (evt) => {
       let handlePosition = this.getHandlePosition(evt.clientX, evt.clientY, cursorPosition);
@@ -46,25 +46,25 @@ export default class Presenter {
   getCursorPosition(target, clientX, clientY) {
     let cursorPosition;
 
-    if (this.model.state.view === 'vertical') {
+    if (this.model.state.vertical) {
       cursorPosition = clientY + (parseFloat(target.style.bottom) || 0);
     }
 
-    if (this.model.state.view === 'horizontal') {
+    if (!this.model.state.vertical) {
       cursorPosition = clientX - (parseFloat(target.style.left) || 0);
     }
 
     return cursorPosition;
   }
 
-  getRatio(handle, sliderView) {
+  getRatio(handle, isVertical) {
     let ratio;
 
-    if (sliderView === 'vertical') {
+    if (isVertical) {
       ratio = (this.view.slider.offsetHeight - handle.offsetWidth) / (this.model.state.max - this.model.state.min);
     }
 
-    if (sliderView === 'horizontal') {
+    if (!isVertical) {
       ratio = (this.view.slider.offsetWidth - handle.offsetWidth) / (this.model.state.max - this.model.state.min);
     }
 
@@ -74,11 +74,11 @@ export default class Presenter {
   getHandlePosition(clientX, clientY, position) {
     let handlePosition;
 
-    if (this.model.state.view === 'vertical') {
+    if (this.model.state.vertical) {
       handlePosition = position - clientY;
     }
 
-    if (this.model.state.view === 'horizontal') {
+    if (!this.model.state.vertical) {
       handlePosition = clientX - position;
     }
 
@@ -88,7 +88,7 @@ export default class Presenter {
   correctExtremeHandlePositions(position, handle) {
     let newPosition = position;
 
-    if (this.model.state.view === 'vertical') {
+    if (this.model.state.vertical) {
       if (this.model.state.range === true) {
         if (handle.classList.contains('lrs__handle_from')) {
           const maxHandlePosition = parseFloat(this.view.handleTo.style.bottom);
@@ -114,7 +114,7 @@ export default class Presenter {
       }
     }
 
-    if (this.model.state.view === 'horizontal') {
+    if (!this.model.state.vertical) {
       if (this.model.state.range === true) {
         if (handle.classList.contains('lrs__handle_from')) {
           const maxHandlePosition = parseFloat(this.view.handleTo.style.left);
@@ -162,29 +162,29 @@ export default class Presenter {
   }
 
   drawView(handle, handlePosition) {
-    if (this.model.state.view === 'vertical') {
+    if (this.model.state.vertical) {
       if (this.model.state.range === true) {
         this.view.changeValue(this.model.state.from, this.model.state.to);
 
-        this.view.changeHandlePosition(handle, handlePosition, this.model.state.view);
+        this.view.changeHandlePosition(handle, handlePosition, 'bottom');
 
         const barLeftEdge = parseFloat(this.view.handleFrom.style.bottom) + this.view.handleFrom.offsetHeight / 2;
         const barRightEdge = this.view.slider.offsetHeight - (parseFloat(this.view.handleTo.style.bottom) + this.view.handleTo.offsetHeight / 2);
-        this.view.changeBarFilling(barLeftEdge, barRightEdge, this.model.state.view);
+        this.view.changeBarFilling(barLeftEdge, barRightEdge, ['bottom', 'top']);
 
         if (this.model.state.tip === true) {
           if (handle === this.view.handleFrom) {
             this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
             const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetHeight - handle.offsetHeight) / 2);
-            this.view.changeTipPosition(this.view.tipFrom, tipPosition, this.model.state.view);
+            this.view.changeTipPosition(this.view.tipFrom, tipPosition, 'bottom');
           }
 
           if (handle === this.view.handleTo) {
             this.view.changeTipText(this.view.tipTo, this.model.state.to);
 
             const tipPosition = handlePosition - Math.round((this.view.tipTo.offsetHeight - handle.offsetHeight) / 2);
-            this.view.changeTipPosition(this.view.tipTo, tipPosition, this.model.state.view);
+            this.view.changeTipPosition(this.view.tipTo, tipPosition, 'bottom');
           }
         }
       }
@@ -192,43 +192,43 @@ export default class Presenter {
       if (this.model.state.range === false) {
         this.view.changeValue(this.model.state.from);
 
-        this.view.changeHandlePosition(handle, handlePosition, this.model.state.view);
+        this.view.changeHandlePosition(handle, handlePosition, 'bottom');
 
         const barRightEdge = this.view.slider.offsetHeight - (handlePosition + handle.offsetHeight / 2);
-        this.view.changeBarFilling(0, barRightEdge, this.model.state.view);
+        this.view.changeBarFilling(0, barRightEdge, ['bottom', 'top']);
 
         if (this.model.state.tip === true) {
           this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
           const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetHeight - handle.offsetHeight) / 2);
-          this.view.changeTipPosition(this.view.tipFrom, tipPosition, this.model.state.view);
+          this.view.changeTipPosition(this.view.tipFrom, tipPosition, 'bottom');
         }
       }
     }
 
-    if (this.model.state.view === 'horizontal') {
+    if (!this.model.state.vertical) {
       if (this.model.state.range === true) {
         this.view.changeValue(this.model.state.from, this.model.state.to);
 
-        this.view.changeHandlePosition(handle, handlePosition);
+        this.view.changeHandlePosition(handle, handlePosition, 'left');
 
         const barLeftEdge = parseFloat(this.view.handleFrom.style.left) + this.view.handleFrom.offsetWidth / 2;
         const barRightEdge = this.view.slider.offsetWidth - (parseFloat(this.view.handleTo.style.left) + this.view.handleTo.offsetWidth / 2);
-        this.view.changeBarFilling(barLeftEdge, barRightEdge);
+        this.view.changeBarFilling(barLeftEdge, barRightEdge, ['left', 'right']);
 
         if (this.model.state.tip === true) {
           if (handle === this.view.handleFrom) {
             this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
             const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetWidth - handle.offsetWidth) / 2);
-            this.view.changeTipPosition(this.view.tipFrom, tipPosition);
+            this.view.changeTipPosition(this.view.tipFrom, tipPosition, 'left');
           }
 
           if (handle === this.view.handleTo) {
             this.view.changeTipText(this.view.tipTo, this.model.state.to);
 
             const tipPosition = handlePosition - Math.round((this.view.tipTo.offsetWidth - handle.offsetWidth) / 2);
-            this.view.changeTipPosition(this.view.tipTo, tipPosition);
+            this.view.changeTipPosition(this.view.tipTo, tipPosition, 'left');
           }
         }
       }
@@ -236,16 +236,16 @@ export default class Presenter {
       if (this.model.state.range === false) {
         this.view.changeValue(this.model.state.from);
 
-        this.view.changeHandlePosition(handle, handlePosition);
+        this.view.changeHandlePosition(handle, handlePosition, 'left');
 
         const barRightEdge = this.view.slider.offsetWidth - (handlePosition + handle.offsetWidth / 2);
-        this.view.changeBarFilling(0, barRightEdge);
+        this.view.changeBarFilling(0, barRightEdge, ['left', 'right']);
 
         if (this.model.state.tip === true) {
           this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
           const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetWidth - handle.offsetWidth) / 2);
-          this.view.changeTipPosition(this.view.tipFrom, tipPosition);
+          this.view.changeTipPosition(this.view.tipFrom, tipPosition, 'left');
         }
       }
     }
@@ -254,12 +254,12 @@ export default class Presenter {
   }
 
   onStart() {
-    let ratio = this.getRatio(this.view.handleFrom, this.model.state.view);
+    let ratio = this.getRatio(this.view.handleFrom, this.model.state.vertical);
     let handlePosition = this.getHandlePositionFromValue(this.model.state.from, ratio);
     this.drawView(this.view.handleFrom, handlePosition);
 
     if (this.model.state.range === true) {
-      ratio = this.getRatio(this.view.handleTo, this.model.state.view);
+      ratio = this.getRatio(this.view.handleTo, this.model.state.vertical);
       handlePosition = this.getHandlePositionFromValue(this.model.state.to, ratio);
       this.drawView(this.view.handleTo, handlePosition);
     }

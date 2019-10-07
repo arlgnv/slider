@@ -1,0 +1,29 @@
+{{#if vertical}}
+  <span class="lrs lrs_theme_{{theme}} lrs_theme_vertical">
+    <span class="lrs__handle lrs__handle_from"></span>
+    {{#if tip}}
+      <span class="lrs__tip lrs__tip_from"></span>
+    {{/if}}
+    <span class="lrs__bar"></span>
+    {{#if range}}
+      <span class="lrs__handle lrs__handle_to"></span>
+      {{#if tip}}
+        <span class="lrs__tip lrs__tip_to"></span>
+      {{/if}}
+    {{/if}}
+  </span>
+{{else}}
+  <span class="lrs lrs_theme_{{theme}}">
+    <span class="lrs__handle lrs__handle_from"></span>
+    {{#if tip}}
+      <span class="lrs__tip lrs__tip_from"></span>
+    {{/if}}
+    <span class="lrs__bar"></span>
+    {{#if range}}
+      <span class="lrs__handle lrs__handle_to"></span>
+      {{#if tip}}
+        <span class="lrs__tip lrs__tip_to"></span>
+      {{/if}}
+    {{/if}}
+  </span>
+{{/if}}
