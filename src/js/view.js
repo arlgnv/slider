@@ -10,11 +10,9 @@ export default class View extends EventEmitter {
 
     this.input = input;
     this.slider = input.previousElementSibling;
-    this.handleFrom = this.slider.querySelector('.lrs__handle_from');
-    this.tipFrom = this.slider.querySelector('.lrs__tip_from');
     this.bar = this.slider.querySelector('.lrs__bar');
-    this.handleTo = this.slider.querySelector('.lrs__handle_to');
-    this.tipTo = this.slider.querySelector('.lrs__tip_to');
+    [this.handleFrom, this.handleTo] = this.slider.querySelectorAll('.lrs__handle');
+    [this.tipFrom, this.tipTo] = this.slider.querySelectorAll('.lrs__tip');
 
     this.addEventListeners();
   }

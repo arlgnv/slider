@@ -46,11 +46,11 @@ export default class Presenter {
   getCursorPosition(target, clientX, clientY) {
     let cursorPosition;
 
-    if (this.model.state.vertical) {
+    if (this.model.state.isVertical) {
       cursorPosition = clientY + (parseFloat(target.style.bottom) || 0);
     }
 
-    if (!this.model.state.vertical) {
+    if (!this.model.state.isVertical) {
       cursorPosition = clientX - (parseFloat(target.style.left) || 0);
     }
 
@@ -58,7 +58,7 @@ export default class Presenter {
   }
 
   getRatio(handle) {
-    return this.model.state.vertical
+    return this.model.state.isVertical
       ? (this.view.slider.offsetHeight - handle.offsetWidth) / (this.model.state.max - this.model.state.min)
       : (this.view.slider.offsetWidth - handle.offsetWidth) / (this.model.state.max - this.model.state.min);
   }
@@ -66,11 +66,11 @@ export default class Presenter {
   getHandlePosition(clientX, clientY, position) {
     let handlePosition;
 
-    if (this.model.state.vertical) {
+    if (this.model.state.isVertical) {
       handlePosition = position - clientY;
     }
 
-    if (!this.model.state.vertical) {
+    if (!this.model.state.isVertical) {
       handlePosition = clientX - position;
     }
 
@@ -80,16 +80,16 @@ export default class Presenter {
   correctExtremeHandlePositions(position, handle) {
     let newPosition = position;
 
-    if (this.model.state.vertical) {
-      if (this.model.state.range === true) {
-        if (handle.classList.contains('lrs__handle_from')) {
+    if (this.model.state.isVertical) {
+      if (this.model.state.hasInterval) {
+        if (handle === this.view.handleFrom) {
           const maxHandlePosition = parseFloat(this.view.handleTo.style.bottom);
 
           if (position < 0) newPosition = 0;
           if (position > maxHandlePosition) newPosition = maxHandlePosition;
         }
 
-        if (handle.classList.contains('lrs__handle_to')) {
+        if (handle === this.view.handleTo) {
           const maxHandlePosition = this.view.slider.offsetHeight - handle.offsetHeight;
           const minHandlePosition = parseFloat(this.view.handleFrom.style.bottom);
 
@@ -98,7 +98,7 @@ export default class Presenter {
         }
       }
 
-      if (this.model.state.range === false) {
+      if (!this.model.state.hasInterval) {
         const maxHandlePosition = this.view.slider.offsetHeight - handle.offsetHeight;
 
         if (position < 0) newPosition = 0;
@@ -106,16 +106,16 @@ export default class Presenter {
       }
     }
 
-    if (!this.model.state.vertical) {
-      if (this.model.state.range === true) {
-        if (handle.classList.contains('lrs__handle_from')) {
+    if (!this.model.state.isVertical) {
+      if (this.model.state.hasInterval) {
+        if (handle === this.view.handleFrom) {
           const maxHandlePosition = parseFloat(this.view.handleTo.style.left);
 
           if (position < 0) newPosition = 0;
           if (position > maxHandlePosition) newPosition = maxHandlePosition;
         }
 
-        if (handle.classList.contains('lrs__handle_to')) {
+        if (handle === this.view.handleTo) {
           const maxHandlePosition = this.view.slider.offsetWidth - handle.offsetWidth;
           const minHandlePosition = parseFloat(this.view.handleFrom.style.left);
 
@@ -124,7 +124,7 @@ export default class Presenter {
         }
       }
 
-      if (this.model.state.range === false) {
+      if (!this.model.state.hasInterval) {
         const maxHandlePosition = this.view.slider.offsetWidth - handle.offsetWidth;
 
         if (position < 0) newPosition = 0;
@@ -154,8 +154,8 @@ export default class Presenter {
   }
 
   drawView(handle, handlePosition) {
-    if (this.model.state.vertical) {
-      if (this.model.state.range === true) {
+    if (this.model.state.isVertical) {
+      if (this.model.state.hasInterval) {
         this.view.changeValue([this.model.state.from, this.model.state.to]);
 
         this.view.changeHandlePosition(handle, handlePosition, 'bottom');
@@ -164,7 +164,7 @@ export default class Presenter {
         const barRightEdge = this.view.slider.offsetHeight - (parseFloat(this.view.handleTo.style.bottom) + this.view.handleTo.offsetHeight / 2);
         this.view.changeBarFilling(barLeftEdge, barRightEdge, ['bottom', 'top']);
 
-        if (this.model.state.tip === true) {
+        if (this.model.state.hasTip) {
           if (handle === this.view.handleFrom) {
             this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
@@ -181,7 +181,7 @@ export default class Presenter {
         }
       }
 
-      if (this.model.state.range === false) {
+      if (!this.model.state.hasInterval) {
         this.view.changeValue([this.model.state.from]);
 
         this.view.changeHandlePosition(handle, handlePosition, 'bottom');
@@ -189,7 +189,7 @@ export default class Presenter {
         const barRightEdge = this.view.slider.offsetHeight - (handlePosition + handle.offsetHeight / 2);
         this.view.changeBarFilling(0, barRightEdge, ['bottom', 'top']);
 
-        if (this.model.state.tip === true) {
+        if (this.model.state.hasTip) {
           this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
           const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetHeight - handle.offsetHeight) / 2);
@@ -198,8 +198,8 @@ export default class Presenter {
       }
     }
 
-    if (!this.model.state.vertical) {
-      if (this.model.state.range === true) {
+    if (!this.model.state.isVertical) {
+      if (this.model.state.hasInterval) {
         this.view.changeValue([this.model.state.from, this.model.state.to]);
 
         this.view.changeHandlePosition(handle, handlePosition, 'left');
@@ -208,7 +208,7 @@ export default class Presenter {
         const barRightEdge = this.view.slider.offsetWidth - (parseFloat(this.view.handleTo.style.left) + this.view.handleTo.offsetWidth / 2);
         this.view.changeBarFilling(barLeftEdge, barRightEdge, ['left', 'right']);
 
-        if (this.model.state.tip === true) {
+        if (this.model.state.hasTip) {
           if (handle === this.view.handleFrom) {
             this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
@@ -225,7 +225,7 @@ export default class Presenter {
         }
       }
 
-      if (this.model.state.range === false) {
+      if (!this.model.state.hasInterval) {
         this.view.changeValue([this.model.state.from]);
 
         this.view.changeHandlePosition(handle, handlePosition, 'left');
@@ -233,7 +233,7 @@ export default class Presenter {
         const barRightEdge = this.view.slider.offsetWidth - (handlePosition + handle.offsetWidth / 2);
         this.view.changeBarFilling(0, barRightEdge, ['left', 'right']);
 
-        if (this.model.state.tip === true) {
+        if (this.model.state.hasTip) {
           this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
           const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetWidth - handle.offsetWidth) / 2);
@@ -250,7 +250,7 @@ export default class Presenter {
     let handlePosition = this.getHandlePositionFromValue(this.model.state.from, ratio);
     this.drawView(this.view.handleFrom, handlePosition);
 
-    if (this.model.state.range === true) {
+    if (this.model.state.hasInterval) {
       ratio = this.getRatio(this.view.handleTo);
       handlePosition = this.getHandlePositionFromValue(this.model.state.to, ratio);
       this.drawView(this.view.handleTo, handlePosition);

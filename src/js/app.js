@@ -19,61 +19,61 @@ export default class App {
   update(obj) {
     const correctedSettings = correctSettings({ ...this.model.state, ...obj });
 
-    if (correctedSettings.range !== this.model.state.range) {
-      if (!this.view.handleTo && correctedSettings.range === true) {
+    if (correctedSettings.hasInterval !== this.model.state.hasInterval) {
+      if (!this.view.handleTo && correctedSettings.hasInterval) {
         this.view.slider.insertAdjacentHTML('beforeend', '<span class="lrs__handle lrs__handle_to"></span>');
         this.view.handleTo = this.view.slider.querySelector('.lrs__handle_to');
-        this.view.setHandlerToHandle(this.view.handleTo, this.view.handleDragStart.bind(this.view));
+        this.view.addEventListeners();
       }
 
-      if (!this.view.tipTo && correctedSettings.range === true && correctedSettings.tip === true) {
+      if (!this.view.tipTo && correctedSettings.hasInterval && correctedSettings.hasTip) {
         this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip lrs__tip_to"></span>');
         this.view.tipTo = this.view.slider.querySelector('.lrs__tip_to');
       }
 
-      if (correctedSettings.range === true) {
+      if (correctedSettings.hasInterval) {
         this.view.handleTo.classList.remove('lrs__handle_hidden');
 
-        if (correctedSettings.tip === true) {
+        if (correctedSettings.hasTip) {
           this.view.tipTo.classList.remove('lrs__tip_hidden');
         }
       }
 
-      if (correctedSettings.range === false) {
+      if (!correctedSettings.hasInterval) {
         this.view.handleTo.classList.add('lrs__handle_hidden');
 
-        if (correctedSettings.tip === true) {
+        if (correctedSettings.hasTip) {
           this.view.tipTo.classList.add('lrs__tip_hidden');
         }
       }
 
-      this.model.state.range = correctedSettings.range;
+      this.model.state.hasInterval = correctedSettings.hasInterval;
     }
 
-    if (correctedSettings.tip !== this.model.state.tip) {
-      if (correctedSettings.tip === true && !this.view.tipFrom) {
+    if (correctedSettings.hasTip !== this.model.state.hasTip) {
+      if (correctedSettings.hasTip && !this.view.tipFrom) {
         this.view.handleFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip lrs__tip_from"></span>');
         this.view.tipFrom = this.view.slider.querySelector('.lrs__tip_from');
       }
 
-      if (correctedSettings.tip === false && this.view.tipFrom) {
+      if (!correctedSettings.hasTip && this.view.tipFrom) {
         this.view.tipFrom.classList.add('lrs__tip_hidden');
       }
 
-      if (correctedSettings.tip === true && this.view.tipFrom) {
+      if (correctedSettings.hasTip && this.view.tipFrom) {
         this.view.tipFrom.classList.remove('lrs__tip_hidden');
       }
 
-      if (correctedSettings.tip === true && correctedSettings.range === true && !this.view.tipTo) {
+      if (correctedSettings.hasTip && correctedSettings.hasInterval && !this.view.tipTo) {
         this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip lrs__tip_to"></span>');
         this.view.tipTo = this.view.slider.querySelector('.lrs__tip_to');
       }
 
-      if (correctedSettings.tip === false && correctedSettings.range === true && this.view.tipTo) {
+      if (!correctedSettings.hasTip && correctedSettings.hasInterval && this.view.tipTo) {
         this.view.tipTo.classList.add('lrs__tip_hidden');
       }
 
-      if (correctedSettings.tip === true && correctedSettings.range === true && this.view.tipTo) {
+      if (correctedSettings.hasTip && correctedSettings.hasInterval && this.view.tipTo) {
         this.view.tipTo.classList.remove('lrs__tip_hidden');
       }
     }
@@ -90,12 +90,12 @@ export default class App {
       }
     }
 
-    if (correctedSettings.vertical !== this.model.state.vertical) {
-      if (correctedSettings.vertical) {
+    if (correctedSettings.isVertical !== this.model.state.isVertical) {
+      if (correctedSettings.isVertical) {
         this.view.slider.classList.add('lrs_direction_vertical');
       }
 
-      if (!correctedSettings.vertical) {
+      if (!correctedSettings.isVertical) {
         this.view.slider.classList.remove('lrs_direction_vertical');
       }
     }

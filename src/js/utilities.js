@@ -23,13 +23,13 @@ export default function correctSettings(settings) {
 
   parameters.theme = parameters.theme !== 'aqua' && parameters.theme !== 'red' ? 'aqua' : parameters.theme;
 
-  parameters.vertical = parameters.vertical !== false && parameters.vertical !== true ? false : parameters.vertical;
+  parameters.isVertical = parameters.isVertical !== false && parameters.isVertical !== true ? false : parameters.isVertical;
 
-  parameters.tip = parameters.tip !== false && parameters.tip !== true ? false : parameters.tip;
+  parameters.hasTip = parameters.hasTip !== false && parameters.hasTip !== true ? false : parameters.hasTip;
 
-  parameters.range = parameters.range !== true && parameters.range !== false ? false : parameters.range;
+  parameters.hasInterval = parameters.hasInterval !== true && parameters.hasInterval !== false ? false : parameters.hasInterval;
 
-  if (parameters.range === true) {
+  if (parameters.hasInterval) {
     parameters.to = parseFloat(parameters.to);
     if (Number.isNaN(parameters.to)) parameters.to = parameters.max;
 
@@ -46,7 +46,7 @@ export default function correctSettings(settings) {
     }
   }
 
-  if (parameters.range === false) {
+  if (parameters.hasInterval) {
     if (parameters.from < parameters.min) parameters.from = parameters.min;
     if (parameters.from > parameters.max) parameters.from = parameters.max;
   }

@@ -7,7 +7,7 @@ $firstSlider.rangeSlider({
   max: 50,
   from: 0,
   step: 1,
-  tip: true,
+  hasTip: true,
   onChange(value) {
     const values = value.split(' - ');
     const $valueFrom = $firstSlider.closest('.slider').find('.js-slider-from-value');
@@ -26,8 +26,8 @@ $secondSlider.rangeSlider({
   max: 200,
   from: 10,
   step: 1,
-  tip: true,
-  range: true,
+  hasTip: true,
+  hasInterval: true,
   to: 190,
   theme: 'red',
   onChange(value) {
@@ -48,9 +48,9 @@ $thirdSlider.rangeSlider({
   max: 80,
   from: 20,
   step: 1,
-  tip: true,
+  hasTip: true,
   theme: 'aqua',
-  vertical: true,
+  isVertical: true,
   onChange(value) {
     const values = value.split(' - ');
     const $valueFrom = $thirdSlider.closest('.slider').find('.js-slider-from-value');
@@ -112,8 +112,8 @@ $('.js-slider-tip').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('change', () => {
-    if ($field.val() === 'show') sliderData.update({ tip: true });
-    if ($field.val() === 'hide') sliderData.update({ tip: false });
+    if ($field.val() === 'show') sliderData.update({ hasTip: true });
+    if ($field.val() === 'hide') sliderData.update({ hasTip: false });
   });
 });
 
@@ -132,8 +132,8 @@ $('.js-slider-type').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('change', () => {
-    if ($field.val() === 'single') sliderData.update({ range: false });
-    if ($field.val() === 'double') sliderData.update({ range: true });
+    if ($field.val() === 'single') sliderData.update({ hasInterval: false });
+    if ($field.val() === 'double') sliderData.update({ hasInterval: true });
   });
 });
 
@@ -142,7 +142,7 @@ $('.js-slider-view').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('change', () => {
-    if ($field.val() === 'horizontal') sliderData.update({ vertical: false });
-    if ($field.val() === 'vertical') sliderData.update({ vertical: true });
+    if ($field.val() === 'horizontal') sliderData.update({ isVertical: false });
+    if ($field.val() === 'vertical') sliderData.update({ isVertical: true });
   });
 });

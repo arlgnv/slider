@@ -13,10 +13,10 @@ import App from './app';
         max: 100,
         step: 1,
         from: 0,
-        range: false,
+        hasInterval: false,
         to: null,
-        vertical: false,
-        tip: false,
+        isVertical: false,
+        hasTip: false,
         theme: 'aqua',
 
         onChange: null,
