@@ -5,7 +5,8 @@
   "main": "src/index/index.pug",
   "scripts": {
     "start": "rimraf dist && parcel src/index/index.pug",
-    "build": "rimraf dist docs && parcel build src/index/index.pug -d docs --no-cache --public-url /range-slider/"
+    "build": "rimraf dist docs && parcel build src/index/index.pug -d docs --no-cache --public-url /range-slider/",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -14,23 +15,23 @@
   "author": "Artem Lagunov",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "babel-jest": "^24.9.0",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint-plugin-import": "^2.18.2",
+    "handlebars": "^4.4.2",
+    "handlebars-jest": "^0.5.0",
+    "jest": "^24.9.0",
+    "parcel-plugin-handlebars-precompile": "^1.0.1"
   },
   "dependencies": {
-    "autoprefixer": "^9.6.1",
-    "handlebars": "^4.4.2",
-    "parcel-plugin-handlebars-precompile": "^1.0.1",
-    "parcel-bundler": "^1.12.3",
     "postcss-modules": "^1.4.1",
+    "autoprefixer": "^9.6.1",
+    "parcel-bundler": "^1.12.3",
     "pug": "^2.0.3",
     "rimraf": "^2.6.3",
     "sass": "^1.21.0"
   },
-  "browserslist": "> 0.25%, last 4 versions",
-  "bugs": {
-    "url": "https://github.com/madnessJs/range-slider/issues"
-  },
-  "homepage": "https://github.com/madnessJs/range-slider"
+  "browserslist": "> 0.25%, last 4 versions"
 }

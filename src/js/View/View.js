@@ -1,15 +1,14 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-param-reassign */
-/* eslint-disable import/extensions */
 
-import EventEmitter from './event-emitter.js';
+import EventEmitter from '../EventEmitter/EventEmitter';
 
 export default class View extends EventEmitter {
   constructor(input) {
     super();
 
     this.input = input;
-    this.slider = input.previousElementSibling;
+    this.slider = this.input.previousElementSibling;
     this.bar = this.slider.querySelector('.lrs__bar');
     [this.handleFrom, this.handleTo] = this.slider.querySelectorAll('.lrs__handle');
     [this.tipFrom, this.tipTo] = this.slider.querySelectorAll('.lrs__tip');

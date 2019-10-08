@@ -57,7 +57,7 @@ export default function correctSettings(settings) {
     }
   }
 
-  if (parameters.hasInterval) {
+  if (!parameters.hasInterval) {
     if (parameters.from < parameters.min) parameters.from = parameters.min;
     if (parameters.from > parameters.max) parameters.from = parameters.max;
   }

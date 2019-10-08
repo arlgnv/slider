@@ -1,6 +1,9 @@
 /* eslint-disable func-names */
 /* global $ */
 
+import '../js/slider';
+import './index.scss';
+
 const $firstSlider = $('.js-first-slider');
 $firstSlider.rangeSlider({
   min: 0,

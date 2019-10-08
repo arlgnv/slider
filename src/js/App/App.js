@@ -1,11 +1,10 @@
 /* eslint-disable max-len */
-/* eslint-disable import/extensions */
 
-import correctSettings from './utilities.js';
-import templateFunction from '../templates/sliderTemplate.hbs';
-import Model from './model.js';
-import View from './view.js';
-import Presenter from './presenter.js';
+import correctSettings from '../utilities/utilities';
+import templateFunction from '../../templates/sliderTemplate.hbs';
+import Model from '../Model/Model';
+import View from '../View/View';
+import Presenter from '../Presenter/Presenter';
 
 export default class App {
   constructor(input, settings) {
