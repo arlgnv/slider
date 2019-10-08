@@ -140,13 +140,17 @@ export default class Presenter {
   }
 
   correctValueWithStep(value) {
-    if (value === this.model.state.min || value === this.model.state.max) return value;
+    const isValueInRange = value > this.model.state.min && value < this.model.state.max;
 
-    let correctedValue = Math.round((value - this.model.state.min) / this.model.state.step) * this.model.state.step + this.model.state.min;
+    if (isValueInRange) {
+      let correctedValue = Math.round((value - this.model.state.min) / this.model.state.step) * this.model.state.step + this.model.state.min;
 
-    if (correctedValue > this.model.state.max) correctedValue = this.model.state.max;
+      if (correctedValue > this.model.state.max) correctedValue = this.model.state.max;
 
-    return correctedValue;
+      return correctedValue;
+    }
+
+    return value;
   }
 
   getHandlePositionFromValue(value, ratio) {

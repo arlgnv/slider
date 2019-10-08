@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable import/extensions */
 
 import correctSettings from './utilities.js';
@@ -20,15 +21,17 @@ export default class App {
     const correctedSettings = correctSettings({ ...this.model.state, ...obj });
 
     if (correctedSettings.hasInterval !== this.model.state.hasInterval) {
-      if (!this.view.handleTo && correctedSettings.hasInterval) {
-        this.view.slider.insertAdjacentHTML('beforeend', '<span class="lrs__handle lrs__handle_to"></span>');
-        this.view.handleTo = this.view.slider.querySelector('.lrs__handle_to');
+      const isHandleToNotExists = !this.view.handleTo && correctedSettings.hasInterval;
+      if (isHandleToNotExists) {
+        this.view.slider.insertAdjacentHTML('beforeend', '<span class="lrs__handle"></span>');
+        [, this.view.handleTo] = this.view.slider.querySelectorAll('.lrs__handle');
         this.view.addEventListeners();
       }
 
-      if (!this.view.tipTo && correctedSettings.hasInterval && correctedSettings.hasTip) {
-        this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip lrs__tip_to"></span>');
-        this.view.tipTo = this.view.slider.querySelector('.lrs__tip_to');
+      const isTipToNotExists = !this.view.tipTo && correctedSettings.hasInterval && correctedSettings.hasTip;
+      if (isTipToNotExists) {
+        this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+        [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip');
       }
 
       if (correctedSettings.hasInterval) {
@@ -51,31 +54,29 @@ export default class App {
     }
 
     if (correctedSettings.hasTip !== this.model.state.hasTip) {
-      if (correctedSettings.hasTip && !this.view.tipFrom) {
-        this.view.handleFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip lrs__tip_from"></span>');
-        this.view.tipFrom = this.view.slider.querySelector('.lrs__tip_from');
+      const isTipFromNotExists = !this.view.tipFrom && correctedSettings.hasTip;
+      if (isTipFromNotExists) {
+        this.view.handleFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+        [this.view.tipFrom] = this.view.slider.querySelectorAll('.lrs__tip');
       }
 
-      if (!correctedSettings.hasTip && this.view.tipFrom) {
-        this.view.tipFrom.classList.add('lrs__tip_hidden');
+      const isTipFromNeedToBeHidden = this.view.tipFrom && !correctedSettings.hasTip;
+      if (isTipFromNeedToBeHidden) this.view.tipFrom.classList.add('lrs__tip_hidden');
+
+      const isTipFromNeedToBeShowed = this.view.tipFrom && correctedSettings.hasTip;
+      if (isTipFromNeedToBeShowed) this.view.tipFrom.classList.remove('lrs__tip_hidden');
+
+      const isTipToNotExists = !this.view.tipTo && correctedSettings.hasTip && correctedSettings.hasInterval;
+      if (isTipToNotExists) {
+        this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+        [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip_to');
       }
 
-      if (correctedSettings.hasTip && this.view.tipFrom) {
-        this.view.tipFrom.classList.remove('lrs__tip_hidden');
-      }
+      const isTipToNeedToBeHidden = this.view.tipTo && !correctedSettings.hasTip && correctedSettings.hasInterval;
+      if (isTipToNeedToBeHidden) this.view.tipTo.classList.add('lrs__tip_hidden');
 
-      if (correctedSettings.hasTip && correctedSettings.hasInterval && !this.view.tipTo) {
-        this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip lrs__tip_to"></span>');
-        this.view.tipTo = this.view.slider.querySelector('.lrs__tip_to');
-      }
-
-      if (!correctedSettings.hasTip && correctedSettings.hasInterval && this.view.tipTo) {
-        this.view.tipTo.classList.add('lrs__tip_hidden');
-      }
-
-      if (correctedSettings.hasTip && correctedSettings.hasInterval && this.view.tipTo) {
-        this.view.tipTo.classList.remove('lrs__tip_hidden');
-      }
+      const isTipToNeedToBeShowed = this.view.tipTo && correctedSettings.hasTip && correctedSettings.hasInterval;
+      if (isTipToNeedToBeShowed) this.view.tipTo.classList.remove('lrs__tip_hidden');
     }
 
     if (correctedSettings.theme !== this.model.state.theme) {

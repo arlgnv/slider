@@ -2,13 +2,17 @@ export default function correctSettings(settings) {
   const parameters = settings;
 
   parameters.min = parseFloat(parameters.min);
-  if (Number.isNaN(parameters.min)) parameters.min = 0;
+  const isMinInvalid = Number.isNaN(parameters.min);
+  if (isMinInvalid) parameters.min = 0;
 
   parameters.from = parseFloat(parameters.from);
-  if (Number.isNaN(parameters.from)) parameters.from = parameters.min;
+  const isFromInvalid = Number.isNaN(parameters.from);
+  if (isFromInvalid) parameters.from = parameters.min;
 
   parameters.max = parseFloat(parameters.max);
-  if (Number.isNaN(parameters.max)) parameters.max = 100;
+  const isMaxInvalid = Number.isNaN(parameters.max);
+  if (isMaxInvalid) parameters.max = 100;
+
   if (parameters.max < parameters.min) {
     const min = Math.min(parameters.max, parameters.min);
     const max = Math.max(parameters.max, parameters.min);
@@ -18,25 +22,32 @@ export default function correctSettings(settings) {
   }
 
   parameters.step = parseFloat(parameters.step);
-  if (Number.isNaN(parameters.step)) parameters.step = 1;
-  if (parameters.step < 1) parameters.step = 1;
+  const isStepInvalid = Number.isNaN(parameters.step) || parameters.step < 1;
+  if (isStepInvalid) parameters.step = 1;
 
-  parameters.theme = parameters.theme !== 'aqua' && parameters.theme !== 'red' ? 'aqua' : parameters.theme;
+  const isThemeInvalid = parameters.theme !== 'aqua' && parameters.theme !== 'red';
+  if (isThemeInvalid) parameters.theme = 'aqua';
 
-  parameters.isVertical = parameters.isVertical !== false && parameters.isVertical !== true ? false : parameters.isVertical;
+  const isVerticalInvalid = parameters.isVertical !== false && parameters.isVertical !== true;
+  if (isVerticalInvalid) parameters.isVertical = false;
 
-  parameters.hasTip = parameters.hasTip !== false && parameters.hasTip !== true ? false : parameters.hasTip;
+  const isTipInvalid = parameters.hasTip !== false && parameters.hasTip !== true;
+  if (isTipInvalid) parameters.hasTip = false;
 
-  parameters.hasInterval = parameters.hasInterval !== true && parameters.hasInterval !== false ? false : parameters.hasInterval;
+  const isIntervalInvalid = parameters.hasInterval !== true && parameters.hasInterval !== false;
+  if (isIntervalInvalid) parameters.hasInterval = false;
 
   if (parameters.hasInterval) {
     parameters.to = parseFloat(parameters.to);
-    if (Number.isNaN(parameters.to)) parameters.to = parameters.max;
+    const isToInvalid = Number.isNaN(parameters.to);
+    if (isToInvalid) parameters.to = parameters.max;
 
-    if (parameters.from < parameters.min
-      || parameters.from > parameters.max) parameters.from = parameters.min;
-    if (parameters.to < parameters.min
-      || parameters.to > parameters.max) parameters.to = parameters.max;
+    const isFromOutOfRange = parameters.from < parameters.min || parameters.from > parameters.max;
+    if (isFromOutOfRange) parameters.from = parameters.min;
+
+    const isToOutOfRange = parameters.to < parameters.min || parameters.to > parameters.max;
+    if (isToOutOfRange) parameters.to = parameters.max;
+
     if (parameters.from > parameters.to) {
       const max = Math.max(parameters.from, parameters.to);
       const min = Math.min(parameters.from, parameters.to);
@@ -51,7 +62,8 @@ export default function correctSettings(settings) {
     if (parameters.from > parameters.max) parameters.from = parameters.max;
   }
 
-  parameters.onChange = typeof parameters.onChange !== 'function' ? null : parameters.onChange;
+  const isOnChangeInvalid = typeof parameters.onChange !== 'function';
+  if (isOnChangeInvalid) parameters.onChange = null;
 
   return parameters;
 }
