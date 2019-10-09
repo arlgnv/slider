@@ -68,7 +68,7 @@ export default class App {
       const isTipToNotExists = !this.view.tipTo && correctedSettings.hasTip && correctedSettings.hasInterval;
       if (isTipToNotExists) {
         this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
-        [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip_to');
+        [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip');
       }
 
       const isTipToNeedToBeHidden = this.view.tipTo && !correctedSettings.hasTip && correctedSettings.hasInterval;

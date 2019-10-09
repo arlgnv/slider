@@ -1,103 +1,110 @@
-// import Model from '../../js/model.js';
-// import View from '../../js/view.js';
-// import Presenter from '../../js/presenter.js';
+/* eslint-disable max-len */
+/* global document describe test expect */
 
-// const model = new Model({
-//   min: 0,
-//   max: 100,
-//   step: 1,
-//   from: 0,
-//   range: true,
-//   to: 100,
-//   view: 'horizontal',
-//   tip: true,
-//   theme: 'aqua',
-// });
-// const view = new View(document.querySelector('.range'), '<span class="lrs lrs_aqua"><span class="lrs__handle lrs__handle_from"></span><span class="lrs__tip lrs__tip_from"></span><span class="lrs__bar"></span><span class="lrs__handle lrs__handle_to"></span><span class="lrs__tip lrs__tip_to"></span></span>');
-// const presenter = new Presenter(model, view);
+import Model from '../Model/Model';
+import View from '../View/View';
+import Presenter from './Presenter';
 
-// describe('Presenter', () => {
-//   describe('Methods', () => {
-//     describe('correctExtremeHandlePositions', () => {
-//       it('return 0 (handle = handleFrom, handlePosition < 0, range = false, view = horizontal)', () => {
-//         assert.equal(presenter.correctExtremeHandlePositions(-1, view.handleFrom), 0);
-//       });
+const model = new Model({
+  min: 0,
+  max: 100,
+  step: 1,
+  from: 0,
+  hasInterval: true,
+  to: 100,
+  isVertical: true,
+  hasTip: true,
+  theme: 'aqua',
+});
+document.body.innerHTML = `
+<span class="lrs lrs_aqua">
+  <span class="lrs__handle"></span>
+  <span class="lrs__tip"></span>
+  <span class="lrs__bar"></span>
+  <span class="lrs__handle"></span>
+  <span class="lrs__tip"></span>
+</span>
+<input class="range">
+`;
+const view = new View(document.querySelector('.range'));
+const presenter = new Presenter(model, view);
 
-//       it("return max-handle's-position (handle = handleFrom, handlePosition > max-handle's-position, range = false, view = horizontal)", () => {
-//         const maxHandlePosition = view.slider.offsetWidth - view.handleFrom.offsetWidth;
+describe('correctExtremeHandlePositions', () => {
+  test('return 0 (handle = handleFrom, handlePosition < 0, hasInterval = false, isVertical = false)', () => {
+    expect(presenter.correctExtremeHandlePositions(-1, view.handleFrom)).toBe(0);
+  });
 
-//         assert.equal(presenter.correctExtremeHandlePositions(maxHandlePosition + 1, view.handleFrom), maxHandlePosition);
-//       });
+  test("return max-handle's-position (handle = handleFrom, handlePosition > max-handle's-position, hasInterval = false, isVertical= horizontal)", () => {
+    const maxHandlePosition = view.slider.offsetWidth - view.handleFrom.offsetWidth;
 
-//       it("returns handle's position (handle = handleFrom, handlePosition > 0 and < max handle's position, range = false)", () => {
-//         const maxHandlePosition = view.slider.offsetWidth - view.handleFrom.offsetWidth;
-//         const handlePosition = Math.floor(Math.random() * (maxHandlePosition - 0 + 1)) + 0;
+    expect(presenter.correctExtremeHandlePositions(maxHandlePosition + 1, view.handleFrom)).toBe(maxHandlePosition);
+  });
 
-//         assert.equal(presenter.correctExtremeHandlePositions(handlePosition, view.handleFrom), handlePosition);
-//       });
+  test("returns handle's position (handle = handleFrom, handlePosition > 0 and < max handle's position, hasInterval = false)", () => {
+    const maxHandlePosition = view.slider.offsetWidth - view.handleFrom.offsetWidth;
+    const handlePosition = Math.floor(Math.random() * (maxHandlePosition - 0 + 1)) + 0;
 
-//       it('returns 0 (handle = handleFrom, handlePosition < 0, range = true)', () => {
-//         model.state.range = true;
+    expect(presenter.correctExtremeHandlePositions(handlePosition, view.handleFrom)).toBe(handlePosition);
+  });
 
-//         assert.equal(presenter.correctExtremeHandlePositions(-1, view.handleFrom), 0);
-//       });
+  test('returns 0 (handle = handleFrom, handlePosition < 0, hasInterval = true)', () => {
+    model.state.hasInterval = true;
 
-//       it("returns handleTo's position (handle = handleFrom, handlePosition > handleTo's position, range = true)", () => {
-//         model.state.range = true;
-//         const handleToPosition = parseFloat(view.handleTo.style.left);
+    expect(presenter.correctExtremeHandlePositions(-1, view.handleFrom)).toBe(0);
+  });
 
-//         assert.equal(presenter.correctExtremeHandlePositions(handleToPosition + 1, view.handleFrom), handleToPosition);
-//       });
+  test("returns handleTo's position (handle = handleFrom, handlePosition > handleTo's position, hasInterval = true)", () => {
+    model.state.hasInterval = true;
+    const handleToPosition = parseFloat(view.handleTo.style.left);
 
-//       it("returns handle's position (handle = handleFrom, handlePosition > 0 and < handleTo's position, range = true)", () => {
-//         model.state.range = true;
-//         const handleToPosition = parseFloat(view.handleTo.style.left);
-//         const handlePosition = Math.floor(Math.random() * (handleToPosition - 0 + 1)) + 0;
+    expect(presenter.correctExtremeHandlePositions(handleToPosition + 1, view.handleFrom)).toBe(handleToPosition);
+  });
 
-//         assert.equal(presenter.correctExtremeHandlePositions(handlePosition, view.handleFrom), handlePosition);
-//       });
+  test("returns handle's position (handle = handleFrom, handlePosition > 0 and < handleTo's position, hasInterval = true)", () => {
+    model.state.hasInterval = true;
+    const handleToPosition = parseFloat(view.handleTo.style.left);
+    const handlePosition = Math.floor(Math.random() * (handleToPosition - 0 + 1)) + 0;
 
-//       it("returns handleFrom's position (handle = handleTo, handlePosition < handleFrom's position, range = true)", () => {
-//         model.state.range = true;
-//         const minHandlePosition = parseFloat(view.handleFrom.style.left);
+    expect(presenter.correctExtremeHandlePositions(handlePosition, view.handleFrom)).toBe(handlePosition);
+  });
 
-//         assert.equal(presenter.correctExtremeHandlePositions(minHandlePosition - 1, view.handleTo), minHandlePosition);
-//       });
+  test("returns handleFrom's position (handle = handleTo, handlePosition < handleFrom's position, hasInterval = true)", () => {
+    model.state.hasInterval = true;
+    const minHandlePosition = parseFloat(view.handleFrom.style.left);
 
-//       it("returns max handle's position (handle = handleTo, handlePosition > max handle's position, range = true)", () => {
-//         model.state.range = true;
-//         const maxHandlePosition = view.slider.offsetWidth - view.handleTo.offsetWidth;
+    expect(presenter.correctExtremeHandlePositions(minHandlePosition - 1, view.handleTo)).toBe(minHandlePosition);
+  });
 
-//         assert.equal(presenter.correctExtremeHandlePositions(maxHandlePosition + 1, view.handleTo), maxHandlePosition);
-//       });
+  test("returns max handle's position (handle = handleTo, handlePosition > max handle's position, hasInterval = true)", () => {
+    model.state.hasInterval = true;
+    const maxHandlePosition = view.slider.offsetWidth - view.handleTo.offsetWidth;
 
-//       it("returns handle's position (handle = handleTo, handlePosition > handleFrom's position and < max handle's position, range = true)", () => {
-//         model.state.range = true;
-//         const minHandlePosition = parseFloat(view.handleFrom.style.left);
-//         const maxHandlePosition = view.slider.offsetWidth - view.handleTo.offsetWidth;
-//         const handlePosition = Math.floor(Math.random() * (maxHandlePosition - minHandlePosition + 1))
-//           + minHandlePosition;
+    expect(presenter.correctExtremeHandlePositions(maxHandlePosition + 1, view.handleTo)).toBe(maxHandlePosition);
+  });
 
-//         assert.equal(presenter.correctExtremeHandlePositions(handlePosition, view.handleTo), handlePosition);
-//       });
-//     });
+  test("returns handle's position (handle = handleTo, handlePosition > handleFrom's position and < max handle's position, hasInterval = true)", () => {
+    model.state.hasInterval = true;
+    const minHandlePosition = parseFloat(view.handleFrom.style.left);
+    const maxHandlePosition = view.slider.offsetWidth - view.handleTo.offsetWidth;
+    const handlePosition = Math.floor(Math.random() * (maxHandlePosition - minHandlePosition + 1))
+          + minHandlePosition;
 
-//     describe('correctValueWithStep', () => {
-//       it('return value (value = min-value or value = max-value)', () => {
-//         assert.equal(presenter.correctValueWithStep(model.state.min), model.state.min);
-//         assert.equal(presenter.correctValueWithStep(model.state.max), model.state.max);
-//       });
+    expect(presenter.correctExtremeHandlePositions(handlePosition, view.handleTo)).toBe(handlePosition);
+  });
+});
 
-//       it('return correct value (value > min-value and value < max-value)', () => {
-//         model.state.min = 9;
-//         model.state.step = 3;
-//         const value = 11;
-//         const neededValue = 12;
+describe('correctValueWithStep', () => {
+  test('return value (value = min-value or value = max-value)', () => {
+    expect(presenter.correctValueWithStep(model.state.min)).toBe(model.state.min);
+    expect(presenter.correctValueWithStep(model.state.max)).toBe(model.state.max);
+  });
 
-//         assert.equal(presenter.correctValueWithStep(value), neededValue);
-//       });
-//     });
-//   });
-// });
+  test('return correct value (value > min-value and value < max-value)', () => {
+    model.state.min = 9;
+    model.state.step = 3;
+    const value = 11;
+    const neededValue = 12;
 
-// mocha.run();
+    expect(presenter.correctValueWithStep(value)).toBe(neededValue);
+  });
+});
