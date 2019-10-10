@@ -21,7 +21,8 @@ export default class Presenter {
       handlePosition = this.correctExtremeHandlePositions(handlePosition, handle);
 
       let value = this.getValueFromHandlePosition(handlePosition, ratio);
-      value = this.correctValueWithStep(value);
+      if (this.isValueProper(value, handle)) value = this.correctValueWithStep(value, handle);
+      value = this.correctValueWithEdges(value, handle);
 
       if (handle === this.view.handleFrom) {
         this.model.state.from = value;
@@ -44,17 +45,9 @@ export default class Presenter {
   }
 
   getCursorPosition(target, clientX, clientY) {
-    let cursorPosition;
-
-    if (this.model.state.isVertical) {
-      cursorPosition = clientY + (parseFloat(target.style.bottom) || 0);
-    }
-
-    if (!this.model.state.isVertical) {
-      cursorPosition = clientX - (parseFloat(target.style.left) || 0);
-    }
-
-    return cursorPosition;
+    return this.model.state.isVertical
+      ? clientY + (parseFloat(target.style.bottom) || 0)
+      : clientX - (parseFloat(target.style.left) || 0);
   }
 
   getRatio(handle) {
@@ -64,17 +57,7 @@ export default class Presenter {
   }
 
   getHandlePosition(clientX, clientY, position) {
-    let handlePosition;
-
-    if (this.model.state.isVertical) {
-      handlePosition = position - clientY;
-    }
-
-    if (!this.model.state.isVertical) {
-      handlePosition = clientX - position;
-    }
-
-    return handlePosition;
+    return this.model.state.isVertical ? position - clientY : clientX - position;
   }
 
   correctExtremeHandlePositions(position, handle) {
@@ -136,21 +119,54 @@ export default class Presenter {
   }
 
   getValueFromHandlePosition(handlePosition, ratio) {
-    return this.model.state.min + Math.round((handlePosition / ratio));
+    return this.model.state.min + Math.round(handlePosition / ratio);
   }
 
   correctValueWithStep(value) {
-    const isValueInRange = value > this.model.state.min && value < this.model.state.max;
+    return Math.round((value - this.model.state.min) / this.model.state.step) * this.model.state.step + this.model.state.min;
+  }
 
-    if (isValueInRange) {
-      let correctedValue = Math.round((value - this.model.state.min) / this.model.state.step) * this.model.state.step + this.model.state.min;
+  isValueProper(value, handle) {
+    let isValueProper;
 
-      if (correctedValue > this.model.state.max) correctedValue = this.model.state.max;
+    if (this.model.state.hasInterval) {
+      if (handle === this.view.handleFrom) {
+        isValueProper = value > this.model.state.min && value < this.model.state.to;
+      }
 
-      return correctedValue;
+      if (handle === this.view.handleTo) {
+        isValueProper = value > this.model.state.from && value < this.model.state.max;
+      }
     }
 
-    return value;
+    if (!this.model.state.hasInterval) {
+      isValueProper = value > this.model.state.min && value < this.model.state.max;
+    }
+
+    return isValueProper;
+  }
+
+  correctValueWithEdges(value, handle) {
+    let correctedValue = value;
+
+    if (this.model.state.hasInterval) {
+      if (handle === this.view.handleFrom) {
+        if (value < this.model.state.min) correctedValue = this.model.state.min;
+        if (value > this.model.state.to) correctedValue = this.model.state.to;
+      }
+
+      if (handle === this.view.handleTo) {
+        if (value < this.model.state.from) correctedValue = this.model.state.from;
+        if (value > this.model.state.max) correctedValue = this.model.state.max;
+      }
+    }
+
+    if (!this.model.state.hasInterval) {
+      if (value < this.model.state.min) correctedValue = this.model.state.min;
+      if (value > this.model.state.max) correctedValue = this.model.state.max;
+    }
+
+    return correctedValue;
   }
 
   getHandlePositionFromValue(value, ratio) {
