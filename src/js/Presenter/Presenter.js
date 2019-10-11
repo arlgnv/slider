@@ -1,176 +1,28 @@
 /* eslint-disable max-len */
-/* global window */
 
 export default class Presenter {
   constructor(model, view) {
     this.model = model;
     this.view = view;
 
-    this.onStart();
+    this.view.subscribe('click', this.handleClick.bind(this));
+    this.view.subscribe('drag', this.handleDrag.bind(this));
 
-    this.view.subscribe('dragStart', this.dragStart.bind(this));
+    this.model.subscribe('updateState', this.handleChangeValue.bind(this));
   }
 
-  dragStart(event) {
-    const handle = event.target;
-    const cursorPosition = this.getCursorPosition(handle, event.clientX, event.clientY);
-    const ratio = this.getRatio(handle);
-
-    window.onmousemove = (evt) => {
-      let handlePosition = this.getHandlePosition(evt.clientX, evt.clientY, cursorPosition);
-      handlePosition = this.correctExtremeHandlePositions(handlePosition, handle);
-
-      let value = this.getValueFromHandlePosition(handlePosition, ratio);
-      if (this.isValueProper(value, handle)) value = this.correctValueWithStep(value, handle);
-      value = this.correctValueWithEdges(value, handle);
-
-      if (handle === this.view.handleFrom) {
-        this.model.state.from = value;
-        handlePosition = this.getHandlePositionFromValue(this.model.state.from, ratio);
-      }
-
-      if (handle === this.view.handleTo) {
-        this.model.state.to = value;
-        handlePosition = this.getHandlePositionFromValue(this.model.state.to, ratio);
-      }
-
-      this.drawView(handle, handlePosition);
-    };
-
-    window.onmouseup = () => {
-      handle.classList.remove('lrs__handle_grabbed');
-      window.onmousemove = null;
-      window.onmouseup = null;
-    };
+  handleClick({ trackLength }) {
+    this.model.ratio = trackLength;
   }
 
-  getCursorPosition(target, clientX, clientY) {
-    return this.model.state.isVertical
-      ? clientY + (parseFloat(target.style.bottom) || 0)
-      : clientX - (parseFloat(target.style.left) || 0);
+  handleDrag({ handle, handlePosition }) {
+    this.model.transformPositionToValue(handlePosition);
+
+    // this.drawView(handle, handlePosition);
   }
 
-  getRatio(handle) {
-    return this.model.state.isVertical
-      ? (this.view.slider.offsetHeight - handle.offsetWidth) / (this.model.state.max - this.model.state.min)
-      : (this.view.slider.offsetWidth - handle.offsetWidth) / (this.model.state.max - this.model.state.min);
-  }
-
-  getHandlePosition(clientX, clientY, position) {
-    return this.model.state.isVertical ? position - clientY : clientX - position;
-  }
-
-  correctExtremeHandlePositions(position, handle) {
-    let newPosition = position;
-
-    if (this.model.state.isVertical) {
-      if (this.model.state.hasInterval) {
-        if (handle === this.view.handleFrom) {
-          const maxHandlePosition = parseFloat(this.view.handleTo.style.bottom);
-
-          if (position < 0) newPosition = 0;
-          if (position > maxHandlePosition) newPosition = maxHandlePosition;
-        }
-
-        if (handle === this.view.handleTo) {
-          const maxHandlePosition = this.view.slider.offsetHeight - handle.offsetHeight;
-          const minHandlePosition = parseFloat(this.view.handleFrom.style.bottom);
-
-          if (position < minHandlePosition) newPosition = minHandlePosition;
-          if (position > maxHandlePosition) newPosition = maxHandlePosition;
-        }
-      }
-
-      if (!this.model.state.hasInterval) {
-        const maxHandlePosition = this.view.slider.offsetHeight - handle.offsetHeight;
-
-        if (position < 0) newPosition = 0;
-        if (position > maxHandlePosition) newPosition = maxHandlePosition;
-      }
-    }
-
-    if (!this.model.state.isVertical) {
-      if (this.model.state.hasInterval) {
-        if (handle === this.view.handleFrom) {
-          const maxHandlePosition = parseFloat(this.view.handleTo.style.left);
-
-          if (position < 0) newPosition = 0;
-          if (position > maxHandlePosition) newPosition = maxHandlePosition;
-        }
-
-        if (handle === this.view.handleTo) {
-          const maxHandlePosition = this.view.slider.offsetWidth - handle.offsetWidth;
-          const minHandlePosition = parseFloat(this.view.handleFrom.style.left);
-
-          if (position < minHandlePosition) newPosition = minHandlePosition;
-          if (position > maxHandlePosition) newPosition = maxHandlePosition;
-        }
-      }
-
-      if (!this.model.state.hasInterval) {
-        const maxHandlePosition = this.view.slider.offsetWidth - handle.offsetWidth;
-
-        if (position < 0) newPosition = 0;
-        if (position > maxHandlePosition) newPosition = maxHandlePosition;
-      }
-    }
-
-    return newPosition;
-  }
-
-  getValueFromHandlePosition(handlePosition, ratio) {
-    return this.model.state.min + Math.round(handlePosition / ratio);
-  }
-
-  correctValueWithStep(value) {
-    return Math.round((value - this.model.state.min) / this.model.state.step) * this.model.state.step + this.model.state.min;
-  }
-
-  isValueProper(value, handle) {
-    let isValueProper;
-
-    if (this.model.state.hasInterval) {
-      if (handle === this.view.handleFrom) {
-        isValueProper = value > this.model.state.min && value < this.model.state.to;
-      }
-
-      if (handle === this.view.handleTo) {
-        isValueProper = value > this.model.state.from && value < this.model.state.max;
-      }
-    }
-
-    if (!this.model.state.hasInterval) {
-      isValueProper = value > this.model.state.min && value < this.model.state.max;
-    }
-
-    return isValueProper;
-  }
-
-  correctValueWithEdges(value, handle) {
-    let correctedValue = value;
-
-    if (this.model.state.hasInterval) {
-      if (handle === this.view.handleFrom) {
-        if (value < this.model.state.min) correctedValue = this.model.state.min;
-        if (value > this.model.state.to) correctedValue = this.model.state.to;
-      }
-
-      if (handle === this.view.handleTo) {
-        if (value < this.model.state.from) correctedValue = this.model.state.from;
-        if (value > this.model.state.max) correctedValue = this.model.state.max;
-      }
-    }
-
-    if (!this.model.state.hasInterval) {
-      if (value < this.model.state.min) correctedValue = this.model.state.min;
-      if (value > this.model.state.max) correctedValue = this.model.state.max;
-    }
-
-    return correctedValue;
-  }
-
-  getHandlePositionFromValue(value, ratio) {
-    return Math.round((value - this.model.state.min) * ratio);
+  handleChangeValue(value) {
+    const position = this.model.getPositionFromValue(value); console.log(position);
   }
 
   drawView(handle, handlePosition) {
@@ -178,25 +30,25 @@ export default class Presenter {
       if (this.model.state.hasInterval) {
         this.view.changeValue([this.model.state.from, this.model.state.to]);
 
-        this.view.changeHandlePosition(handle, handlePosition, 'bottom');
+        this.view.changeHandlePosition(handle, handlePosition);
 
         const barLeftEdge = parseFloat(this.view.handleFrom.style.bottom) + this.view.handleFrom.offsetHeight / 2;
         const barRightEdge = this.view.slider.offsetHeight - (parseFloat(this.view.handleTo.style.bottom) + this.view.handleTo.offsetHeight / 2);
-        this.view.changeBarFilling(barLeftEdge, barRightEdge, ['bottom', 'top']);
+        this.view.changeBarFilling(barLeftEdge, barRightEdge);
 
         if (this.model.state.hasTip) {
           if (handle === this.view.handleFrom) {
             this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
             const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetHeight - handle.offsetHeight) / 2);
-            this.view.changeTipPosition(this.view.tipFrom, tipPosition, 'bottom');
+            this.view.changeTipPosition(this.view.tipFrom, tipPosition);
           }
 
           if (handle === this.view.handleTo) {
             this.view.changeTipText(this.view.tipTo, this.model.state.to);
 
             const tipPosition = handlePosition - Math.round((this.view.tipTo.offsetHeight - handle.offsetHeight) / 2);
-            this.view.changeTipPosition(this.view.tipTo, tipPosition, 'bottom');
+            this.view.changeTipPosition(this.view.tipTo, tipPosition);
           }
         }
       }
@@ -204,16 +56,16 @@ export default class Presenter {
       if (!this.model.state.hasInterval) {
         this.view.changeValue([this.model.state.from]);
 
-        this.view.changeHandlePosition(handle, handlePosition, 'bottom');
+        this.view.changeHandlePosition(handle, handlePosition);
 
         const barRightEdge = this.view.slider.offsetHeight - (handlePosition + handle.offsetHeight / 2);
-        this.view.changeBarFilling(0, barRightEdge, ['bottom', 'top']);
+        this.view.changeBarFilling(0, barRightEdge);
 
         if (this.model.state.hasTip) {
           this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
           const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetHeight - handle.offsetHeight) / 2);
-          this.view.changeTipPosition(this.view.tipFrom, tipPosition, 'bottom');
+          this.view.changeTipPosition(this.view.tipFrom, tipPosition);
         }
       }
     }
@@ -222,25 +74,25 @@ export default class Presenter {
       if (this.model.state.hasInterval) {
         this.view.changeValue([this.model.state.from, this.model.state.to]);
 
-        this.view.changeHandlePosition(handle, handlePosition, 'left');
+        this.view.changeHandlePosition(handle, handlePosition);
 
         const barLeftEdge = parseFloat(this.view.handleFrom.style.left) + this.view.handleFrom.offsetWidth / 2;
         const barRightEdge = this.view.slider.offsetWidth - (parseFloat(this.view.handleTo.style.left) + this.view.handleTo.offsetWidth / 2);
-        this.view.changeBarFilling(barLeftEdge, barRightEdge, ['left', 'right']);
+        this.view.changeBarFilling(barLeftEdge, barRightEdge);
 
         if (this.model.state.hasTip) {
           if (handle === this.view.handleFrom) {
             this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
             const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetWidth - handle.offsetWidth) / 2);
-            this.view.changeTipPosition(this.view.tipFrom, tipPosition, 'left');
+            this.view.changeTipPosition(this.view.tipFrom, tipPosition);
           }
 
           if (handle === this.view.handleTo) {
             this.view.changeTipText(this.view.tipTo, this.model.state.to);
 
             const tipPosition = handlePosition - Math.round((this.view.tipTo.offsetWidth - handle.offsetWidth) / 2);
-            this.view.changeTipPosition(this.view.tipTo, tipPosition, 'left');
+            this.view.changeTipPosition(this.view.tipTo, tipPosition);
           }
         }
       }
@@ -248,16 +100,16 @@ export default class Presenter {
       if (!this.model.state.hasInterval) {
         this.view.changeValue([this.model.state.from]);
 
-        this.view.changeHandlePosition(handle, handlePosition, 'left');
+        this.view.changeHandlePosition(handle, handlePosition);
 
         const barRightEdge = this.view.slider.offsetWidth - (handlePosition + handle.offsetWidth / 2);
-        this.view.changeBarFilling(0, barRightEdge, ['left', 'right']);
+        this.view.changeBarFilling(0, barRightEdge);
 
         if (this.model.state.hasTip) {
           this.view.changeTipText(this.view.tipFrom, this.model.state.from);
 
           const tipPosition = handlePosition - Math.round((this.view.tipFrom.offsetWidth - handle.offsetWidth) / 2);
-          this.view.changeTipPosition(this.view.tipFrom, tipPosition, 'left');
+          this.view.changeTipPosition(this.view.tipFrom, tipPosition);
         }
       }
     }

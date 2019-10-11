@@ -1,6 +1,6 @@
 /* global test expect describe afterEach document */
 
-import View from './View';
+import View from './MainView';
 
 document.body.innerHTML = `
 <span class="lrs lrs_aqua">

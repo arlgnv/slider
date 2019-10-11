@@ -1,18 +1,16 @@
 /* eslint-disable max-len */
 
 import correctSettings from '../utilities/utilities';
-import templateFunction from '../../templates/sliderTemplate.hbs';
 import Model from '../Model/Model';
-import View from '../View/View';
+import MainView from '../View/MainView';
 import Presenter from '../Presenter/Presenter';
 
 export default class App {
   constructor(input, settings) {
-    input.classList.add('hidden-input');
-    input.insertAdjacentHTML('beforeBegin', templateFunction(settings));
+    this.settings = correctSettings(settings);
 
-    this.model = new Model(correctSettings(settings));
-    this.view = new View(input);
+    this.model = new Model(this.settings);
+    this.view = new MainView(input, this.settings);
     this.presenter = new Presenter(this.model, this.view);
   }
 
