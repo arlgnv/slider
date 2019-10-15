@@ -1,38 +1,38 @@
 /* eslint-disable max-len */
 
-import correctSettings from '../utilities/utilities';
 import Model from '../Model/Model';
-import MainView from '../View/MainView';
+import SliderView from '../View/SliderView';
+import InputView from '../View/InputView';
 import Presenter from '../Presenter/Presenter';
 
 export default class App {
   constructor(input, settings) {
-    this.settings = correctSettings(settings);
-
-    this.model = new Model(this.settings);
-    this.view = new MainView(input, this.settings);
+    this.model = new Model(settings);
+    this.view = new SliderView(new InputView(input), this.model.state);
     this.presenter = new Presenter(this.model, this.view);
+
+    this.presenter.onStart({ runnerFrom: this.view.runnerFrom, runnerTo: this.view.runnerTo });
   }
 
   update(obj) {
-    const correctedSettings = correctSettings({ ...this.model.state, ...obj });
+    const correctedSettings = this.model.correctSettings({ ...this.model.state, ...obj });
 
     if (correctedSettings.hasInterval !== this.model.state.hasInterval) {
-      const isHandleToNotExists = !this.view.handleTo && correctedSettings.hasInterval;
-      if (isHandleToNotExists) {
-        this.view.slider.insertAdjacentHTML('beforeend', '<span class="lrs__handle"></span>');
-        [, this.view.handleTo] = this.view.slider.querySelectorAll('.lrs__handle');
+      const isRunnerToNotExists = !this.view.runnerTo && correctedSettings.hasInterval;
+      if (isRunnerToNotExists) {
+        this.view.slider.insertAdjacentHTML('beforeend', '<span class="lrs__runner"></span>');
+        [, this.view.runnerTo] = this.view.slider.querySelectorAll('.lrs__runner');
         this.view.addEventListeners();
       }
 
       const isTipToNotExists = !this.view.tipTo && correctedSettings.hasInterval && correctedSettings.hasTip;
       if (isTipToNotExists) {
-        this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+        this.view.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
         [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip');
       }
 
       if (correctedSettings.hasInterval) {
-        this.view.handleTo.classList.remove('lrs__handle_hidden');
+        this.view.runnerTo.classList.remove('lrs__runner_hidden');
 
         if (correctedSettings.hasTip) {
           this.view.tipTo.classList.remove('lrs__tip_hidden');
@@ -40,7 +40,7 @@ export default class App {
       }
 
       if (!correctedSettings.hasInterval) {
-        this.view.handleTo.classList.add('lrs__handle_hidden');
+        this.view.runnerTo.classList.add('lrs__runner_hidden');
 
         if (correctedSettings.hasTip) {
           this.view.tipTo.classList.add('lrs__tip_hidden');
@@ -53,7 +53,7 @@ export default class App {
     if (correctedSettings.hasTip !== this.model.state.hasTip) {
       const isTipFromNotExists = !this.view.tipFrom && correctedSettings.hasTip;
       if (isTipFromNotExists) {
-        this.view.handleFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+        this.view.runnerFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
         [this.view.tipFrom] = this.view.slider.querySelectorAll('.lrs__tip');
       }
 
@@ -65,7 +65,7 @@ export default class App {
 
       const isTipToNotExists = !this.view.tipTo && correctedSettings.hasTip && correctedSettings.hasInterval;
       if (isTipToNotExists) {
-        this.view.handleTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+        this.view.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
         [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip');
       }
 
@@ -99,6 +99,6 @@ export default class App {
     }
 
     this.model.state = correctedSettings;
-    this.presenter.onStart();
+    this.presenter.onStart({ runnerFrom: this.view.runnerFrom, runnerTo: this.view.runnerTo });
   }
 }

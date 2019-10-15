@@ -15,7 +15,7 @@
   "author": "Artem Lagunov",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.6.2",
+    "@babel/core": "^7.6.4",
     "babel-jest": "^24.9.0",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "^18.0.1",

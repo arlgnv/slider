@@ -1,19 +1,18 @@
 export default class InputView {
   constructor(input) {
     this.input = input;
-
-    this.hideInput();
-  }
-
-  hideInput() {
     this.input.classList.add('hidden-input');
   }
 
-  get value() {
-    return this.input.value;
+  getInput() {
+    return this.input;
   }
 
-  set value(value) {
-    this.input.value = value.join(' - ');
+  changeValue(value) {
+    this.input.value = value;
+  }
+
+  getValue() {
+    return this.input.value;
   }
 }

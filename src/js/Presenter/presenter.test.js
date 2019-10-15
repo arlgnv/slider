@@ -2,7 +2,7 @@
 /* global document describe test expect */
 
 import Model from '../Model/Model';
-import View from '../View/View';
+import View from '../View/SliderView';
 import Presenter from './Presenter';
 
 const model = new Model({

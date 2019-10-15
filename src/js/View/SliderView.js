@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-param-reassign */
 /* global window */
@@ -11,56 +12,52 @@ export default class SliderView extends EventEmitter {
 
     this.input = input;
 
-    this.render(settings);
+    this.drawView(settings);
     this.findDOMElements();
     this.addEventListeners();
   }
 
-  render(settings) {
-    this.input.insertAdjacentHTML('beforeBegin', templateFunction(settings));
+  drawView(settings) {
+    this.input.getInput().insertAdjacentHTML('beforeBegin', templateFunction(settings));
   }
 
   findDOMElements() {
-    this.slider = this.input.previousElementSibling;
+    this.slider = this.input.getInput().previousElementSibling;
     this.bar = this.slider.querySelector('.lrs__bar');
-    [this.handleFrom, this.handleTo] = this.slider.querySelectorAll('.lrs__handle');
+    [this.runnerFrom, this.runnerTo] = this.slider.querySelectorAll('.lrs__runner');
     [this.tipFrom, this.tipTo] = this.slider.querySelectorAll('.lrs__tip');
   }
 
   addEventListeners() {
-    this.handleFrom.addEventListener('mousedown', this.handleMouseDown.bind(this));
-    if (this.handleTo) this.handleTo.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    this.runnerFrom.addEventListener('mousedown', this.handlerRunnerMouseDown.bind(this));
+    if (this.runnerTo) this.runnerTo.addEventListener('mousedown', this.handlerRunnerMouseDown.bind(this));
   }
 
-  handleMouseDown(evt) {
-    const handle = evt.currentTarget;
-    const cursorPosition = this.getCursorPosition(handle, evt.clientX, evt.clientY);
-    handle.classList.add('lrs__handle_grabbed');
+  handlerRunnerMouseDown(evt) {
+    const runner = evt.currentTarget;
+    const runnerType = runner === this.runnerFrom ? 'from' : 'to';
+    const cursorPosition = this.getCursorPosition(runner, evt.clientX, evt.clientY);
 
-    if (handle === this.handleTo) this.correctAxisZ(handle);
+    this.correctZAxis(runner);
 
-    const handleWindowMouseMove = (event) => {
-      let handlePosition = this.getHandlePosition(cursorPosition, event.clientX, event.clientY);
-      handlePosition = this.correctExtremeHandlePositions(handle, handlePosition);
+    const handlerWindowMouseMove = (event) => {
+      let runnerPosition = this.getRunnerPosition(cursorPosition, event.clientX, event.clientY);
+      runnerPosition = this.correctExtremeRunnerPositions(runner, runnerPosition);
 
-      this.notify('moveHandle', { handle, handlePosition });
+      this.notify('moveRunner', { runnerPosition, runnerType });
     };
 
-    const handleWindowMouseUp = () => {
-      handle.classList.remove('lrs__handle_grabbed');
+    const handlerWindowMouseUp = () => {
+      runner.classList.remove('lrs__runner_grabbed');
 
-      window.removeEventListener('mousemove', handleWindowMouseMove);
-      window.removeEventListener('mouseup', handleWindowMouseUp);
+      window.removeEventListener('mousemove', handlerWindowMouseMove);
+      window.removeEventListener('mouseup', handlerWindowMouseUp);
     };
 
-    window.addEventListener('mousemove', handleWindowMouseMove);
-    window.addEventListener('mouseup', handleWindowMouseUp);
+    window.addEventListener('mousemove', handlerWindowMouseMove);
+    window.addEventListener('mouseup', handlerWindowMouseUp);
 
-    const trackLength = this.slider.classList.contains('lrs_direction_vertical')
-      ? this.slider.offsetHeight - handle.offsetWidth
-      : this.slider.offsetWidth - handle.offsetWidth;
-
-    this.notify('clickHandle', { trackLength });
+    this.notify('clickRunner', this.getTrackLength(runner));
   }
 
   getCursorPosition(target, clientX, clientY) {
@@ -69,83 +66,106 @@ export default class SliderView extends EventEmitter {
       : clientX - (parseFloat(target.style.left) || 0);
   }
 
-  getHandlePosition(position, clientX, clientY) {
+  getRunnerPosition(position, clientX, clientY) {
     return this.slider.classList.contains('lrs_direction_vertical') ? position - clientY : clientX - position;
   }
 
-  correctExtremeHandlePositions(handle, position) {
+  correctExtremeRunnerPositions(runner, position) {
     let newPosition = position;
 
     if (this.slider.classList.contains('lrs_direction_vertical')) {
-      if (this.handleTo) {
-        if (handle === this.handleFrom) {
-          const maxHandlePosition = parseFloat(this.handleTo.style.bottom);
+      if (this.runnerTo) {
+        if (runner === this.runnerFrom) {
+          const maxRunnerPosition = parseFloat(this.runnerTo.style.bottom);
 
           if (position < 0) newPosition = 0;
-          if (position > maxHandlePosition) newPosition = maxHandlePosition;
+          if (position > maxRunnerPosition) newPosition = maxRunnerPosition;
         }
 
-        if (handle === this.handleTo) {
-          const maxHandlePosition = this.slider.offsetHeight - handle.offsetHeight;
-          const minHandlePosition = parseFloat(this.handleFrom.style.bottom);
+        if (runner === this.runnerTo) {
+          const maxRunnerPosition = this.slider.offsetHeight - runner.offsetHeight;
+          const minRunnerPosition = parseFloat(this.runnerFrom.style.bottom);
 
-          if (position < minHandlePosition) newPosition = minHandlePosition;
-          if (position > maxHandlePosition) newPosition = maxHandlePosition;
+          if (position < minRunnerPosition) newPosition = minRunnerPosition;
+          if (position > maxRunnerPosition) newPosition = maxRunnerPosition;
         }
       }
 
-      if (!this.handleTo) {
-        const maxHandlePosition = this.slider.offsetHeight - handle.offsetHeight;
+      if (!this.runnerTo) {
+        const maxRunnerPosition = this.slider.offsetHeight - runner.offsetHeight;
 
         if (position < 0) newPosition = 0;
-        if (position > maxHandlePosition) newPosition = maxHandlePosition;
+        if (position > maxRunnerPosition) newPosition = maxRunnerPosition;
       }
     }
 
     if (!this.slider.classList.contains('lrs_direction_vertical')) {
-      if (this.handleTo) {
-        if (handle === this.handleFrom) {
-          const maxHandlePosition = parseFloat(this.handleTo.style.left);
+      if (this.runnerTo) {
+        if (runner === this.runnerFrom) {
+          const maxRunnerPosition = parseFloat(this.runnerTo.style.left);
 
           if (position < 0) newPosition = 0;
-          if (position > maxHandlePosition) newPosition = maxHandlePosition;
+          if (position > maxRunnerPosition) newPosition = maxRunnerPosition;
         }
 
-        if (handle === this.handleTo) {
-          const maxHandlePosition = this.slider.offsetWidth - handle.offsetWidth;
-          const minHandlePosition = parseFloat(this.handleFrom.style.left);
+        if (runner === this.runnerTo) {
+          const maxRunnerPosition = this.slider.offsetWidth - runner.offsetWidth;
+          const minRunnerPosition = parseFloat(this.runnerFrom.style.left);
 
-          if (position < minHandlePosition) newPosition = minHandlePosition;
-          if (position > maxHandlePosition) newPosition = maxHandlePosition;
+          if (position < minRunnerPosition) newPosition = minRunnerPosition;
+          if (position > maxRunnerPosition) newPosition = maxRunnerPosition;
         }
       }
 
-      if (!this.handleTo) {
-        const maxHandlePosition = this.slider.offsetWidth - handle.offsetWidth;
+      if (!this.runnerTo) {
+        const maxRunnerPosition = this.slider.offsetWidth - runner.offsetWidth;
 
         if (position < 0) newPosition = 0;
-        if (position > maxHandlePosition) newPosition = maxHandlePosition;
+        if (position > maxRunnerPosition) newPosition = maxRunnerPosition;
       }
     }
 
     return newPosition;
   }
 
-  correctAxisZ(handle) {
-    this.handleFrom.classList.remove('lrs__handle_last-grabbed');
-    this.handleTo.classList.remove('lrs__handle_last-grabbed');
-    handle.classList.add('lrs__handle_last-grabbed');
+  correctZAxis(runner) {
+    runner.classList.add('lrs__runner_grabbed');
+
+    if (this.runnerTo) {
+      this.runnerFrom.classList.remove('lrs__runner_last-grabbed');
+      this.runnerTo.classList.remove('lrs__runner_last-grabbed');
+      runner.classList.add('lrs__runner_last-grabbed');
+    }
   }
 
-  changeHandlePosition(handle, value) {
-    handle.style.cssText = this.slider.classList.contains('lrs_direction_vertical') ? `bottom: ${value}px` : `left: ${value}px`;
+  reDrawView(runnerPosition, runnerType, data) {
+    const inputText = data.hasInterval ? `${data.from} - ${data.to}` : data.from;
+    const runner = runnerType === 'from' ? this.runnerFrom : this.runnerTo;
+    const tip = runnerType === 'from' ? this.tipFrom : this.tipTo;
+    const tipText = runnerType === 'from' ? data.from : data.to;
+
+    this.input.changeValue(inputText);
+    this.changeRunnerPosition(runnerPosition, runner);
+    this.changeTipText(tipText, tip);
+    this.changeTipPosition(runnerPosition, tip, runner);
+
+    const { left: barLeftEdge, right: barRightEdge } = this.getBarEdges(data.hasInterval);
+    this.changeBarFilling(barLeftEdge, barRightEdge);
   }
 
-  changeTipPosition(tip, value) {
-    tip.style.cssText = this.slider.classList.contains('lrs_direction_vertical') ? `bottom: ${value}px` : `left: ${value}px`;
+  changeRunnerPosition(position, runner) {
+    runner.style.cssText = this.slider.classList.contains('lrs_direction_vertical') ? `bottom: ${position}px` : `left: ${position}px`;
   }
 
-  changeTipText(tip, text) {
+  changeTipPosition(position, tip, runner) {
+    const tipPosition = this.slider.classList.contains('lrs_direction_vertical')
+      ? position - Math.round((tip.offsetHeight - runner.offsetHeight) / 2)
+      : position - Math.round((tip.offsetWidth - runner.offsetWidth) / 2);
+
+    tip.style.cssText = this.slider.classList.contains('lrs_direction_vertical') ? `bottom: ${tipPosition}px` : `left: ${tipPosition}px`;
+  }
+
+  changeTipText(text, tip) {
     tip.textContent = text;
   }
 
@@ -153,5 +173,37 @@ export default class SliderView extends EventEmitter {
     this.bar.style.cssText = this.slider.classList.contains('lrs_direction_vertical')
       ? `bottom: ${from}px; top: ${to}px;`
       : `left: ${from}px; right: ${to}px;`;
+  }
+
+  getBarEdges(isInterval) {
+    const barEdges = {
+      left: 0,
+      right: 0,
+    };
+
+    if (isInterval) {
+      barEdges.left = this.slider.classList.contains('lrs_direction_vertical')
+        ? parseFloat(this.runnerFrom.style.bottom) + this.runnerFrom.offsetHeight / 2
+        : parseFloat(this.runnerFrom.style.left) + this.runnerFrom.offsetWidth / 2;
+
+      barEdges.right = this.slider.classList.contains('lrs_direction_vertical')
+        ? this.slider.offsetHeight - (parseFloat(this.runnerTo.style.bottom) + this.runnerTo.offsetHeight / 2)
+        : this.slider.offsetWidth - (parseFloat(this.runnerTo.style.left) + this.runnerTo.offsetWidth / 2);
+    }
+
+    if (!isInterval) {
+      barEdges.left = 0;
+      barEdges.right = this.slider.classList.contains('lrs_direction_vertical')
+        ? this.slider.offsetHeight - (parseFloat(this.runnerFrom.style.bottom) + this.runnerFrom.offsetHeight / 2)
+        : this.slider.offsetWidth - (parseFloat(this.runnerFrom.style.left) + this.runnerFrom.offsetWidth / 2);
+    }
+
+    return barEdges;
+  }
+
+  getTrackLength(runner) {
+    return this.slider.classList.contains('lrs_direction_vertical')
+      ? this.slider.offsetHeight - runner.offsetWidth
+      : this.slider.offsetWidth - runner.offsetWidth;
   }
 }
