@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-
 export default class Presenter {
   constructor(model, view) {
     this.model = model;
@@ -9,42 +7,41 @@ export default class Presenter {
     this.view.subscribe('moveRunner', this.handlerRunnerMove.bind(this));
 
     this.model.subscribe('updateState', this.handlerModelUpdateState.bind(this));
+    this.model.subscribe('start', this.handlerModelStart.bind(this));
+
+    this.onStart();
   }
 
-  handlerRunnerClick(trackLength) {
-    this.model.ratio = trackLength;
+  handlerRunnerClick({ dividend, runnerType }) {
+    this.model.setRatio(dividend, runnerType);
   }
 
   handlerRunnerMove({ runnerPosition, runnerType }) {
-    let value = this.model.getValueFromPosition(runnerPosition);
-
-    if (this.model.isValueProper(value)) value = this.model.correctValueWithStep(value);
-
-    value = this.model.correctValueWithEdges(value, runnerType);
-
-    this.model.updateState({ [runnerType]: value });
+    this.model.updateState({ [runnerType]: runnerPosition });
   }
 
   handlerModelUpdateState(data) {
-    const runnerType = 'from' in data ? 'from' : 'to';
-    const position = this.model.getPositionFromValue(this.model.state[runnerType]);
+    if (data.onChange) {
+      data.onChange(data.hasInterval ? `${data.from} - ${data.to}` : `${data.from}`);
+    }
 
-    this.view.reDrawView(position, runnerType, this.model.state);
+    this.view.reDrawView(data);
   }
 
-  onStart({ runnerFrom, runnerTo }) {
-    this.model.ratio = this.view.getTrackLength(runnerFrom);
+  handlerModelStart(positions) {
+    const data = { ...this.model.getState() };
+    data.positions = positions;
 
-    let position = this.model.getPositionFromValue(this.model.state.from);
+    this.view.reDrawView(data);
+  }
 
-    this.view.reDrawView(position, 'from', this.model.state);
+  onStart() {
+    const dividends = { fromRatioDividend: this.view.getTrackLength('from') };
 
-    if (this.model.state.hasInterval) {
-      this.model.ratio = this.view.getTrackLength(runnerTo);
-
-      position = this.model.getPositionFromValue(this.model.state.to);
-
-      this.view.reDrawView(position, 'to', this.model.state);
+    if (this.view.getSliderType() === 'interval') {
+      dividends.toRatioDividend = this.view.getTrackLength('to');
     }
+
+    this.model.onStart(dividends);
   }
 }

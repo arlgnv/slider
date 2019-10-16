@@ -16,14 +16,16 @@
   &__bar {
     position: absolute;
     height: 100%;
+
+    border-radius: 0.3571rem;
   }
 
   &__runner {
     position: absolute;
     left: 0;
     top: 50%;
-    height: 1.2857rem;
-    width: 1.2857rem;
+    height: 1.1857rem;
+    width: 1.1857rem;
     border-radius: 50%;
     transform: translateY(-50%);
     cursor: grab;
@@ -52,7 +54,7 @@
 
   &__tip {
     position: absolute;
-    top: -3.0571rem;
+    top: -3.1571rem;
     padding: 0.3571rem 0.5714rem;
     color: $white-color-100;
     font-size: 1rem;
@@ -95,7 +97,7 @@
 
     #{$root}__tip {
       top: auto;
-      left: 1.5286rem;
+      left: 1.7286rem;
       padding: 0.2857rem 0.5714rem;
 
       &::before {
@@ -112,9 +114,6 @@
     #{$root}__tip,
     #{$root}__tip::before {
       background-color: $aqua-theme-color-100;
-    }
-
-    #{$root}__tip {
       box-shadow: 0 0 0 0.0714rem $white-color-100, 0 0 0 0.1429rem $aqua-theme-color-100;
     }
 
@@ -130,9 +129,6 @@
     #{$root}__tip,
     #{$root}__tip::before {
       background-color: $red-theme-color-100;
-    }
-
-    #{$root}__tip {
       box-shadow: 0 0 0 0.0714rem $white-color-100, 0 0 0 0.1429rem $red-theme-color-100;
     }
 

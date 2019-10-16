@@ -69,7 +69,7 @@ $('.js-slider-from-value').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('blur', () => {
-    sliderData.update({ from: $field.val() });
+    sliderData.update({ from: +$field.val() });
   });
 });
 
@@ -78,7 +78,7 @@ $('.js-slider-to-value').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('blur', () => {
-    sliderData.update({ to: $field.val() });
+    sliderData.update({ to: +$field.val() });
   });
 });
 
@@ -87,7 +87,7 @@ $('.js-slider-min-value').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('blur', () => {
-    sliderData.update({ min: $field.val() });
+    sliderData.update({ min: +$field.val() });
   });
 });
 
@@ -96,7 +96,7 @@ $('.js-slider-max-value').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('blur', () => {
-    sliderData.update({ max: $field.val() });
+    sliderData.update({ max: +$field.val() });
   });
 });
 
@@ -105,7 +105,7 @@ $('.js-slider-step').each(function () {
   const sliderData = $field.closest('.slider').find('input[name$=slider]').data('rangeSlider');
 
   $field.on('blur', () => {
-    sliderData.update({ step: $field.val() });
+    sliderData.update({ step: +$field.val() });
   });
 });
 

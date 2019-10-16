@@ -11,8 +11,4 @@ export default class InputView {
   changeValue(value) {
     this.input.value = value;
   }
-
-  getValue() {
-    return this.input.value;
-  }
 }

@@ -7,31 +7,96 @@ export default class Model extends EventEmitter {
   constructor(settings = {}) {
     super();
 
-    this.state = this.correctSettings(settings);
+    this._state = this._correctSettings(settings);
+    this._ratio = { from: null, to: null };
   }
 
-  get ratio() {
-    return this._ratio;
+  onStart({ fromRatioDividend, toRatioDividend = null }) {
+    this.setRatio(fromRatioDividend, 'from');
+    const positions = { from: this._getPositionFromValue(this._state.from, 'from') };
+
+    if (toRatioDividend) {
+      this.setRatio(toRatioDividend, 'to');
+      positions.to = this._getPositionFromValue(this._state.to, 'to');
+    }
+
+    this.notify('start', positions);
   }
 
-  set ratio(dividend) {
-    this._ratio = dividend / (this.state.max - this.state.min);
+  setRatio(dividend, type) {
+    this._ratio[type] = dividend / (this._state.max - this._state.min);
   }
 
-  correctSettings(settings) {
+  updateState(data) {
+    const valueType = 'from' in data ? 'from' : 'to';
+    const position = data[valueType];
+
+    let value = this._getValueFromPosition(position, valueType);
+    if (this._isValueProper(value)) value = this._correctValueWithStep(value);
+    value = this._correctValueWithEdges(value, valueType);
+
+    this._state[valueType] = value;
+
+    const positions = { [valueType]: this._getPositionFromValue(value, valueType) };
+    const newData = { ...this._state };
+    newData.positions = positions;
+
+    this.notify('updateState', newData);
+  }
+
+  getState() {
+    return this._state;
+  }
+
+  _getValueFromPosition(position, ratioType) {
+    return this._state.min + Math.round(position / this._ratio[ratioType]);
+  }
+
+  _isValueProper(value) {
+    return value !== this._state.min
+      && value !== this._state.max
+      && value !== this._state.from
+      && value !== this._state.to;
+  }
+
+  _correctValueWithStep(value) {
+    return Math.round((value - this._state.min) / this._state.step)
+      * this._state.step + this._state.min;
+  }
+
+  _correctValueWithEdges(value, type) {
+    let correctedValue = value;
+
+    if (this._state.hasInterval) {
+      if (type === 'from') {
+        if (value < this._state.min) correctedValue = this._state.min;
+        if (value > this._state.to) correctedValue = this._state.to;
+      }
+
+      if (type === 'to') {
+        if (value > this._state.max) correctedValue = this._state.max;
+        if (value < this._state.from) correctedValue = this._state.from;
+      }
+    }
+
+    if (!this._state.hasInterval) {
+      if (value < this._state.min) correctedValue = this._state.min;
+      if (value > this._state.max) correctedValue = this._state.max;
+    }
+
+    return correctedValue;
+  }
+
+  _getPositionFromValue(value, ratioType) {
+    return Math.round((value - this._state.min) * this._ratio[ratioType]);
+  }
+
+  _correctSettings(settings) {
     const parameters = settings;
 
-    parameters.min = parseFloat(parameters.min);
-    const isMinInvalid = Number.isNaN(parameters.min);
-    if (isMinInvalid) parameters.min = 0;
-
-    parameters.from = parseFloat(parameters.from);
-    const isFromInvalid = Number.isNaN(parameters.from);
-    if (isFromInvalid) parameters.from = parameters.min;
-
-    parameters.max = parseFloat(parameters.max);
-    const isMaxInvalid = Number.isNaN(parameters.max);
-    if (isMaxInvalid) parameters.max = 100;
+    if (this._isNumValueInvalid(parameters.min)) parameters.min = 0;
+    if (this._isNumValueInvalid(parameters.from)) parameters.from = parameters.min;
+    if (this._isNumValueInvalid(parameters.max)) parameters.max = 100;
 
     if (parameters.max < parameters.min) {
       const min = Math.min(parameters.max, parameters.min);
@@ -41,26 +106,17 @@ export default class Model extends EventEmitter {
       parameters.max = max;
     }
 
-    parameters.step = parseFloat(parameters.step);
-    const isStepInvalid = Number.isNaN(parameters.step) || parameters.step < 1;
-    if (isStepInvalid) parameters.step = 1;
+    if (this._isStepInvalid(parameters.step)) parameters.step = 1;
+
+    if (this._isBooleanValueInvalid(parameters.isVertical)) parameters.isVertical = false;
+    if (this._isBooleanValueInvalid(parameters.hasTip)) parameters.hasTip = false;
+    if (this._isBooleanValueInvalid(parameters.hasInterval)) parameters.hasInterval = false;
 
     const isThemeInvalid = parameters.theme !== 'aqua' && parameters.theme !== 'red';
     if (isThemeInvalid) parameters.theme = 'aqua';
 
-    const isVerticalInvalid = parameters.isVertical !== false && parameters.isVertical !== true;
-    if (isVerticalInvalid) parameters.isVertical = false;
-
-    const isTipInvalid = parameters.hasTip !== false && parameters.hasTip !== true;
-    if (isTipInvalid) parameters.hasTip = false;
-
-    const isIntervalInvalid = parameters.hasInterval !== true && parameters.hasInterval !== false;
-    if (isIntervalInvalid) parameters.hasInterval = false;
-
     if (parameters.hasInterval) {
-      parameters.to = parseFloat(parameters.to);
-      const isToInvalid = Number.isNaN(parameters.to);
-      if (isToInvalid) parameters.to = parameters.max;
+      if (this._isNumValueInvalid(parameters.to)) parameters.to = parameters.max;
 
       const isFromOutOfRange = parameters.from < parameters.min || parameters.from > parameters.max;
       if (isFromOutOfRange) parameters.from = parameters.min;
@@ -82,60 +138,24 @@ export default class Model extends EventEmitter {
       if (parameters.from > parameters.max) parameters.from = parameters.max;
     }
 
-    const isOnChangeInvalid = typeof parameters.onChange !== 'function';
-    if (isOnChangeInvalid) parameters.onChange = null;
+    if (this._isFunctionValueInvalid(parameters.onChange)) parameters.onChange = null;
 
     return parameters;
   }
 
-  updateState(data) {
-    this.state = { ...this.state, ...data };
-
-    if (this.state.onChange) this.state.onChange(this.state.hasInterval ? `${this.state.from} - ${this.state.to}` : `${this.state.from}`);
-
-    this.notify('updateState', data);
+  _isNumValueInvalid(value) {
+    return typeof value !== 'number';
   }
 
-  getValueFromPosition(position) {
-    return this.state.min + Math.round(position / this.ratio);
+  _isStepInvalid(value) {
+    return typeof value !== 'number' || value < 1;
   }
 
-  isValueProper(value) {
-    return value !== this.state.min
-      && value !== this.state.max
-      && value !== this.state.from
-      && value !== this.state.to;
+  _isBooleanValueInvalid(value) {
+    return typeof value !== 'boolean';
   }
 
-  correctValueWithStep(value) {
-    return Math.round((value - this.state.min) / this.state.step)
-      * this.state.step + this.state.min;
-  }
-
-  correctValueWithEdges(value, type) {
-    let correctedValue = value;
-
-    if (this.state.hasInterval) {
-      if (type === 'from') {
-        if (value < this.state.min) correctedValue = this.state.min;
-        if (value > this.state.to) correctedValue = this.state.to;
-      }
-
-      if (type === 'to') {
-        if (value > this.state.max) correctedValue = this.state.max;
-        if (value < this.state.from) correctedValue = this.state.from;
-      }
-    }
-
-    if (!this.state.hasInterval) {
-      if (value < this.state.min) correctedValue = this.state.min;
-      if (value > this.state.max) correctedValue = this.state.max;
-    }
-
-    return correctedValue;
-  }
-
-  getPositionFromValue(value) {
-    return Math.round((value - this.state.min) * this.ratio);
+  _isFunctionValueInvalid(value) {
+    return typeof value !== 'function';
   }
 }
