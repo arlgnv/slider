@@ -6,8 +6,8 @@
 import App from './App/App';
 
 (function ($) {
-  $.fn.rangeSlider = function (parameters) {
-    const settings = $.extend(
+  $.fn.rangeSlider = function (options) {
+    const parameters = $.extend(
       {
         min: 0,
         max: 100,
@@ -21,11 +21,11 @@ import App from './App/App';
 
         onChange: null,
       },
-      parameters,
+      options,
     );
 
     return this.each(function () {
-      $.data(this, { rangeSlider: new App(this, settings) });
+      $.data(this, { rangeSlider: new App(this, parameters) });
     });
   };
 }(jQuery));

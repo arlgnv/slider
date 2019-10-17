@@ -1,48 +1,168 @@
 /* eslint-disable max-len */
+/* eslint-disable no-underscore-dangle */
 /* global window */
 
 import EventEmitter from '../EventEmitter/EventEmitter';
 import templateFunction from '../../templates/sliderTemplate.hbs';
 
 export default class SliderView extends EventEmitter {
-  constructor(input, settings) {
+  constructor(input, parameters) {
     super();
 
     this.input = input;
 
-    this.drawView(settings);
-    this.findDOMElements();
-    this.addEventListeners();
+    this._init(parameters);
   }
 
-  drawView(settings) {
-    this.input.getInput().insertAdjacentHTML('beforeBegin', templateFunction(settings));
+  reDrawView(data) {
+    const inputText = data.hasInterval ? `${data.from} - ${data.to}` : `${data.from}`;
+    this.input.changeValue(inputText);
+
+    this._changeTheme(data.theme);
+    this._changeDirection(data.isVertical);
+    this._changeRunnerPosition(data);
+    this._changeTipText(data);
+    this._changeTipPosition(data);
+    const { left: barLeftEdge, right: barRightEdge } = this._getBarEdges(data);
+    this._changeBarFilling(barLeftEdge, barRightEdge, data);
   }
 
-  findDOMElements() {
-    this.slider = this.input.getInput().previousElementSibling;
+  getRunnersRangeMovements() {
+    const range = {};
+
+    range.from = this.slider.classList.contains('lrs_direction_vertical')
+      ? this.slider.offsetHeight - this.runnerFrom.offsetWidth
+      : this.slider.offsetWidth - this.runnerFrom.offsetWidth;
+
+    if (this.runnerTo) {
+      range.to = this.slider.classList.contains('lrs_direction_vertical')
+        ? this.slider.offsetHeight - this.runnerTo.offsetWidth
+        : this.slider.offsetWidth - this.runnerTo.offsetWidth;
+    }
+
+    return range;
+  }
+
+  _init(parameters) {
+    this._drawView(parameters);
+    this._findDOMElements(parameters);
+    this._addEventListeners();
+  }
+
+  // _reInit(data) {
+  //   if (correctedSettings.hasInterval !== currentState.hasInterval) {
+  //     const isRunnerToNotExists = !this.view.runnerTo && correctedSettings.hasInterval;
+
+  //     if (isRunnerToNotExists) {
+  //       this.view.slider.insertAdjacentHTML('beforeend', '<span class="lrs__runner"></span>');
+  //       [, this.view.runnerTo] = this.view.slider.querySelectorAll('.lrs__runner');
+  //       this.view._addEventListeners();
+  //     }
+
+  //     const isTipToNotExists = !this.view.tipTo
+  //       && correctedSettings.hasInterval
+  //       && correctedSettings.hasTip;
+
+  //     if (isTipToNotExists) {
+  //       this.view.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+  //       [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip');
+  //     }
+
+  //     if (correctedSettings.hasInterval) {
+  //       this.view.runnerTo.classList.remove('lrs__runner_hidden');
+
+  //       if (correctedSettings.hasTip) {
+  //         this.view.tipTo.classList.remove('lrs__tip_hidden');
+  //       }
+  //     }
+
+  //     if (!correctedSettings.hasInterval) {
+  //       this.view.runnerTo.classList.add('lrs__runner_hidden');
+
+  //       if (correctedSettings.hasTip) {
+  //         this.view.tipTo.classList.add('lrs__tip_hidden');
+  //       }
+  //     }
+
+  //     currentState.hasInterval = correctedSettings.hasInterval;
+  //   }
+
+  //   if (correctedSettings.hasTip !== currentState.hasTip) {
+  //     const isTipFromNotExists = !this.view.tipFrom && correctedSettings.hasTip;
+  //     if (isTipFromNotExists) {
+  //       this.view.runnerFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+  //       [this.view.tipFrom] = this.view.slider.querySelectorAll('.lrs__tip');
+  //     }
+
+  //     const isTipFromNeedToBeHidden = this.view.tipFrom && !correctedSettings.hasTip;
+  //     if (isTipFromNeedToBeHidden) this.view.tipFrom.classList.add('lrs__tip_hidden');
+
+  //     const isTipFromNeedToBeShowed = this.view.tipFrom && correctedSettings.hasTip;
+  //     if (isTipFromNeedToBeShowed) this.view.tipFrom.classList.remove('lrs__tip_hidden');
+
+  //     const isTipToNotExists = !this.view.tipTo
+  //       && correctedSettings.hasTip
+  //       && correctedSettings.hasInterval;
+  //     if (isTipToNotExists) {
+  //       this.view.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+  //       [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip');
+  //     }
+
+  //     const isTipToNeedToBeHidden = this.view.tipTo
+  //       && !correctedSettings.hasTip
+  //       && correctedSettings.hasInterval;
+  //     if (isTipToNeedToBeHidden) this.view.tipTo.classList.add('lrs__tip_hidden');
+
+  //     const isTipToNeedToBeShowed = this.view.tipTo
+  //       && correctedSettings.hasTip
+  //       && correctedSettings.hasInterval;
+  //     if (isTipToNeedToBeShowed) this.view.tipTo.classList.remove('lrs__tip_hidden');
+  //   }
+  // }
+
+  _drawView(parameters) {
+    const input = this.input.getInput();
+
+    input.insertAdjacentHTML('beforeBegin', templateFunction(parameters));
+  }
+
+  _findDOMElements(parameters) {
+    const input = this.input.getInput();
+
+    this.slider = input.previousElementSibling;
+    this.runnerFrom = this.slider.firstElementChild;
     this.bar = this.slider.querySelector('.lrs__bar');
-    [this.runnerFrom, this.runnerTo] = this.slider.querySelectorAll('.lrs__runner');
-    [this.tipFrom, this.tipTo] = this.slider.querySelectorAll('.lrs__tip');
+
+    if (parameters.hasInterval) {
+      this.runnerTo = this.bar.nextElementSibling;
+    }
+
+    if (parameters.hasTip) {
+      this.tipFrom = this.runnerFrom.nextElementSibling;
+
+      if (this.runnerTo) {
+        this.tipTo = this.runnerTo.nextElementSibling;
+      }
+    }
   }
 
-  addEventListeners() {
-    this.runnerFrom.addEventListener('mousedown', this.handlerRunnerMouseDown.bind(this));
-    if (this.runnerTo) this.runnerTo.addEventListener('mousedown', this.handlerRunnerMouseDown.bind(this));
+  _addEventListeners() {
+    this.runnerFrom.addEventListener('mousedown', this._handlerRunnerMouseDown.bind(this));
+    if (this.runnerTo) this.runnerTo.addEventListener('mousedown', this._handlerRunnerMouseDown.bind(this));
   }
 
-  handlerRunnerMouseDown(evt) {
+  _handlerRunnerMouseDown(evt) {
     const runner = evt.currentTarget;
     const runnerType = runner === this.runnerFrom ? 'from' : 'to';
-    const cursorPosition = this.getCursorPosition(runner, evt.clientX, evt.clientY);
+    const cursorPosition = this._getCursorPosition(runner, evt.clientX, evt.clientY);
 
-    this.correctZAxis(runner);
+    this._correctZAxis(runner);
 
     const handlerWindowMouseMove = (event) => {
-      let runnerPosition = this.getRunnerShift(cursorPosition, event.clientX, event.clientY);
-      runnerPosition = this.correctExtremeRunnerPositions(runner, runnerPosition);
+      let runnerPosition = this._getRunnerShift(cursorPosition, event.clientX, event.clientY);
+      runnerPosition = this._correctExtremeRunnerPositions(runner, runnerPosition);
 
-      this.notify('moveRunner', { runnerPosition, runnerType });
+      this.notify('tryToUpdateModel', { data: { [runnerType]: runnerPosition }, onMouseMove: true });
     };
 
     const handlerWindowMouseUp = () => {
@@ -54,21 +174,19 @@ export default class SliderView extends EventEmitter {
 
     window.addEventListener('mousemove', handlerWindowMouseMove);
     window.addEventListener('mouseup', handlerWindowMouseUp);
-
-    this.notify('clickRunner', { dividend: this.getTrackLength(runnerType), runnerType });
   }
 
-  getCursorPosition(target, clientX, clientY) {
+  _getCursorPosition(target, clientX, clientY) {
     return this.slider.classList.contains('lrs_direction_vertical')
       ? clientY + (parseFloat(target.style.bottom) || 0)
       : clientX - (parseFloat(target.style.left) || 0);
   }
 
-  getRunnerShift(position, clientX, clientY) {
+  _getRunnerShift(position, clientX, clientY) {
     return this.slider.classList.contains('lrs_direction_vertical') ? position - clientY : clientX - position;
   }
 
-  correctExtremeRunnerPositions(runner, position) {
+  _correctExtremeRunnerPositions(runner, position) {
     let newPosition = position;
 
     if (this.slider.classList.contains('lrs_direction_vertical')) {
@@ -126,7 +244,7 @@ export default class SliderView extends EventEmitter {
     return newPosition;
   }
 
-  correctZAxis(runner) {
+  _correctZAxis(runner) {
     runner.classList.add('lrs__runner_grabbed');
 
     if (this.runnerTo) {
@@ -136,19 +254,8 @@ export default class SliderView extends EventEmitter {
     }
   }
 
-  reDrawView(data) {
-    const inputText = data.hasInterval ? `${data.from} - ${data.to}` : data.from;
-
-    this.input.changeValue(inputText);
-    this.changeRunnerPosition(data);
-    this.changeTipText(data);
-    this.changeTipPosition(data);
-    const { left: barLeftEdge, right: barRightEdge } = this.getBarEdges(data);
-    this.changeBarFilling(barLeftEdge, barRightEdge, data);
-  }
-
-  changeRunnerPosition(data) {
-    if (Object.keys(data.positions).length > 1) {
+  _changeRunnerPosition(data) {
+    if (Object.keys(data.positions).length === 2) {
       this.runnerFrom.style.cssText = data.isVertical ? `bottom: ${data.positions.from}px` : `left: ${data.positions.from}px`;
       this.runnerTo.style.cssText = data.isVertical ? `bottom: ${data.positions.to}px` : `left: ${data.positions.to}px`;
     } else {
@@ -159,9 +266,9 @@ export default class SliderView extends EventEmitter {
     }
   }
 
-  changeTipText(data) {
+  _changeTipText(data) {
     if (data.hasTip) {
-      if (Object.keys(data.positions).length > 1) {
+      if (Object.keys(data.positions).length === 2) {
         this.tipFrom.textContent = data.from;
         this.tipTo.textContent = data.to;
       } else {
@@ -173,38 +280,38 @@ export default class SliderView extends EventEmitter {
     }
   }
 
-  changeTipPosition(data) {
+  _changeTipPosition(data) {
     if (data.hasTip) {
-      if (Object.keys(data.positions).length > 1) {
+      if (Object.keys(data.positions).length === 2) {
         const tipFromPosition = data.isVertical
-          ? data.positions.from - Math.round((this.tipFrom.offsetHeight - this.runnerFrom.offsetHeight) / 2)
-          : data.positions.from - Math.round((this.tipFrom.offsetWidth - this.runnerFrom.offsetWidth) / 2);
+          ? data.positions.from - Math.trunc((this.tipFrom.offsetHeight - this.runnerFrom.offsetHeight) / 2)
+          : data.positions.from - Math.trunc((this.tipFrom.offsetWidth - this.runnerFrom.offsetWidth) / 2);
         this.tipFrom.style.cssText = data.isVertical ? `bottom: ${tipFromPosition}px` : `left: ${tipFromPosition}px`;
 
         const tipToPosition = data.isVertical
-          ? data.positions.to - Math.round((this.tipTo.offsetHeight - this.runnerTo.offsetHeight) / 2)
-          : data.positions.to - Math.round((this.tipTo.offsetWidth - this.runnerTo.offsetWidth) / 2);
+          ? data.positions.to - Math.trunc((this.tipTo.offsetHeight - this.runnerTo.offsetHeight) / 2)
+          : data.positions.to - Math.trunc((this.tipTo.offsetWidth - this.runnerTo.offsetWidth) / 2);
         this.tipTo.style.cssText = data.isVertical ? `bottom: ${tipToPosition}px` : `left: ${tipToPosition}px`;
       } else {
         const tip = 'from' in data.positions ? this.tipFrom : this.tipTo;
         const runner = tip.previousElementSibling;
         const tipType = 'from' in data.positions ? 'from' : 'to';
         const tipFromPosition = data.isVertical
-          ? data.positions[tipType] - Math.round((tip.offsetHeight - runner.offsetHeight) / 2)
-          : data.positions[tipType] - Math.round((tip.offsetWidth - runner.offsetWidth) / 2);
+          ? data.positions[tipType] - Math.trunc((tip.offsetHeight - runner.offsetHeight) / 2)
+          : data.positions[tipType] - Math.trunc((tip.offsetWidth - runner.offsetWidth) / 2);
 
         tip.style.cssText = data.isVertical ? `bottom: ${tipFromPosition}px` : `left: ${tipFromPosition}px`;
       }
     }
   }
 
-  changeBarFilling(from, to, data) {
+  _changeBarFilling(from, to, data) {
     this.bar.style.cssText = data.isVertical
       ? `bottom: ${from}px; top: ${to}px;`
       : `left: ${from}px; right: ${to}px;`;
   }
 
-  getBarEdges(data) {
+  _getBarEdges(data) {
     const barEdges = {
       left: 0,
       right: 0,
@@ -230,15 +337,25 @@ export default class SliderView extends EventEmitter {
     return barEdges;
   }
 
-  getTrackLength(runnerType) {
-    const runner = runnerType === 'from' ? this.runnerFrom : this.runnerTo;
+  _changeTheme(theme) {
+    if (theme === 'aqua') {
+      this.slider.classList.remove('lrs_theme_red');
+      this.slider.classList.add('lrs_theme_aqua');
+    }
 
-    return this.slider.classList.contains('lrs_direction_vertical')
-      ? this.slider.offsetHeight - runner.offsetWidth
-      : this.slider.offsetWidth - runner.offsetWidth;
+    if (theme === 'red') {
+      this.slider.classList.remove('lrs_theme_aqua');
+      this.slider.classList.add('lrs_theme_red');
+    }
   }
 
-  getSliderType() {
-    return this.runnerTo ? 'interval' : 'single';
+  _changeDirection(isVertical) {
+    if (isVertical) {
+      this.slider.classList.add('lrs_direction_vertical');
+    }
+
+    if (!isVertical) {
+      this.slider.classList.remove('lrs_direction_vertical');
+    }
   }
 }

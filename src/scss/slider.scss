@@ -30,12 +30,9 @@
     transform: translateY(-50%);
     cursor: grab;
 
-    &:nth-of-type(1) {
+    &:first-child,
+    &:first-child + #{$root}__tip {
       z-index: 1;
-    }
-
-    &:nth-of-type(2) {
-      z-index: 2;
     }
 
     &_grabbed {
@@ -44,7 +41,7 @@
 
     &_last-grabbed,
     &_last-grabbed + #{$root}__tip {
-      z-index: 3;
+      z-index: 2;
     }
 
     &_hidden {

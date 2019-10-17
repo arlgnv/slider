@@ -1,55 +1,72 @@
+/* eslint-disable no-return-assign */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
 
 import EventEmitter from '../EventEmitter/EventEmitter';
 
 export default class Model extends EventEmitter {
-  constructor(settings = {}) {
+  constructor(parameters = {}) {
     super();
 
-    this._state = this._correctSettings(settings);
+    this._state = this._correctParameters(parameters);
     this._ratio = { from: null, to: null };
   }
 
-  onStart({ fromRatioDividend, toRatioDividend = null }) {
-    this.setRatio(fromRatioDividend, 'from');
-    const positions = { from: this._getPositionFromValue(this._state.from, 'from') };
+  updateState(data = {}, onMouseMove) {
+    let outcomingData;
 
-    if (toRatioDividend) {
-      this.setRatio(toRatioDividend, 'to');
-      positions.to = this._getPositionFromValue(this._state.to, 'to');
+    if (onMouseMove) {
+      this._setRatio(data.ratio);
+
+      const valueType = Object.keys(data)[0];
+      const position = Object.values(data)[0]; // console.log(data);
+
+      this._state[valueType] = this._transformPositionToValue(position, valueType);
+
+      outcomingData = { ...this.getState() };
+      outcomingData.positions = {};
+
+      outcomingData.positions[valueType] = this._getPositionFromValue(outcomingData[valueType], valueType);
     }
 
-    this.notify('start', positions);
-  }
+    if (!onMouseMove) {
+      this._state = this._correctParameters({ ...this.getState(), ...data });
+      this._setRatio(data.ratio);
 
-  setRatio(dividend, type) {
-    this._ratio[type] = dividend / (this._state.max - this._state.min);
-  }
+      outcomingData = { ...this.getState() };
+      outcomingData.positions = {};
 
-  updateState(data) {
-    const valueType = 'from' in data ? 'from' : 'to';
-    const position = data[valueType];
+      if (this._state.hasInterval) {
+        outcomingData.positions.from = this._getPositionFromValue(this._state.from, 'from');
+        outcomingData.positions.to = this._getPositionFromValue(this._state.to, 'to');
+      }
 
-    let value = this._getValueFromPosition(position, valueType);
-    if (this._isValueProper(value)) value = this._correctValueWithStep(value);
-    value = this._correctValueWithEdges(value, valueType);
+      if (!this._state.hasInterval) {
+        outcomingData.positions.from = this._getPositionFromValue(this._state.from, 'from');
+      }
+    }
 
-    this._state[valueType] = value;
-
-    const positions = { [valueType]: this._getPositionFromValue(value, valueType) };
-    const newData = { ...this._state };
-    newData.positions = positions;
-
-    this.notify('updateState', newData);
+    this.notify('updateState', outcomingData);
   }
 
   getState() {
     return this._state;
   }
 
-  _getValueFromPosition(position, ratioType) {
-    return this._state.min + Math.round(position / this._ratio[ratioType]);
+  _setRatio(data) {
+    Object.entries(data).forEach((it) => this._ratio[it[0]] = it[1] / (this._state.max - this._state.min));
+  }
+
+  _transformPositionToValue(position, type) {
+    let value = this._getValueFromPosition(position, type);
+    if (this._isValueProper(value)) value = this._correctValueWithStep(value);
+    value = this._correctValueWithEdges(value, type);
+
+    return value;
+  }
+
+  _getValueFromPosition(position, type) {
+    return this._state.min + Math.ceil(position / this._ratio[type]);
   }
 
   _isValueProper(value) {
@@ -87,60 +104,60 @@ export default class Model extends EventEmitter {
     return correctedValue;
   }
 
-  _getPositionFromValue(value, ratioType) {
-    return Math.round((value - this._state.min) * this._ratio[ratioType]);
+  _getPositionFromValue(value, type) {
+    return Math.trunc((value - this._state.min) * this._ratio[type]);
   }
 
-  _correctSettings(settings) {
-    const parameters = settings;
+  _correctParameters(parameters) {
+    const fixedParameters = parameters;
 
-    if (this._isNumValueInvalid(parameters.min)) parameters.min = 0;
-    if (this._isNumValueInvalid(parameters.from)) parameters.from = parameters.min;
-    if (this._isNumValueInvalid(parameters.max)) parameters.max = 100;
+    if (this._isNumValueInvalid(fixedParameters.min)) fixedParameters.min = 0;
+    if (this._isNumValueInvalid(fixedParameters.from)) fixedParameters.from = fixedParameters.min;
+    if (this._isNumValueInvalid(fixedParameters.max)) fixedParameters.max = 100;
 
-    if (parameters.max < parameters.min) {
-      const min = Math.min(parameters.max, parameters.min);
-      const max = Math.max(parameters.max, parameters.min);
+    if (fixedParameters.max < fixedParameters.min) {
+      const min = Math.min(fixedParameters.max, fixedParameters.min);
+      const max = Math.max(fixedParameters.max, fixedParameters.min);
 
-      parameters.min = min;
-      parameters.max = max;
+      fixedParameters.min = min;
+      fixedParameters.max = max;
     }
 
-    if (this._isStepInvalid(parameters.step)) parameters.step = 1;
+    if (this._isStepInvalid(fixedParameters.step)) fixedParameters.step = 1;
 
-    if (this._isBooleanValueInvalid(parameters.isVertical)) parameters.isVertical = false;
-    if (this._isBooleanValueInvalid(parameters.hasTip)) parameters.hasTip = false;
-    if (this._isBooleanValueInvalid(parameters.hasInterval)) parameters.hasInterval = false;
+    if (this._isBooleanValueInvalid(fixedParameters.isVertical)) fixedParameters.isVertical = false;
+    if (this._isBooleanValueInvalid(fixedParameters.hasTip)) fixedParameters.hasTip = false;
+    if (this._isBooleanValueInvalid(fixedParameters.hasInterval)) fixedParameters.hasInterval = false;
 
-    const isThemeInvalid = parameters.theme !== 'aqua' && parameters.theme !== 'red';
-    if (isThemeInvalid) parameters.theme = 'aqua';
+    const isThemeInvalid = fixedParameters.theme !== 'aqua' && fixedParameters.theme !== 'red';
+    if (isThemeInvalid) fixedParameters.theme = 'aqua';
 
-    if (parameters.hasInterval) {
-      if (this._isNumValueInvalid(parameters.to)) parameters.to = parameters.max;
+    if (fixedParameters.hasInterval) {
+      if (this._isNumValueInvalid(fixedParameters.to)) fixedParameters.to = fixedParameters.max;
 
-      const isFromOutOfRange = parameters.from < parameters.min || parameters.from > parameters.max;
-      if (isFromOutOfRange) parameters.from = parameters.min;
+      const isFromOutOfRange = fixedParameters.from < fixedParameters.min || fixedParameters.from > fixedParameters.max;
+      if (isFromOutOfRange) fixedParameters.from = fixedParameters.min;
 
-      const isToOutOfRange = parameters.to < parameters.min || parameters.to > parameters.max;
-      if (isToOutOfRange) parameters.to = parameters.max;
+      const isToOutOfRange = fixedParameters.to < fixedParameters.min || fixedParameters.to > fixedParameters.max;
+      if (isToOutOfRange) fixedParameters.to = fixedParameters.max;
 
-      if (parameters.from > parameters.to) {
-        const max = Math.max(parameters.from, parameters.to);
-        const min = Math.min(parameters.from, parameters.to);
+      if (fixedParameters.from > fixedParameters.to) {
+        const max = Math.max(fixedParameters.from, fixedParameters.to);
+        const min = Math.min(fixedParameters.from, fixedParameters.to);
 
-        parameters.from = min;
-        parameters.to = max;
+        fixedParameters.from = min;
+        fixedParameters.to = max;
       }
     }
 
-    if (!parameters.hasInterval) {
-      if (parameters.from < parameters.min) parameters.from = parameters.min;
-      if (parameters.from > parameters.max) parameters.from = parameters.max;
+    if (!fixedParameters.hasInterval) {
+      if (fixedParameters.from < fixedParameters.min) fixedParameters.from = fixedParameters.min;
+      if (fixedParameters.from > fixedParameters.max) fixedParameters.from = fixedParameters.max;
     }
 
-    if (this._isFunctionValueInvalid(parameters.onChange)) parameters.onChange = null;
+    if (this._isFunctionValueInvalid(fixedParameters.onChange)) fixedParameters.onChange = null;
 
-    return parameters;
+    return fixedParameters;
   }
 
   _isNumValueInvalid(value) {
