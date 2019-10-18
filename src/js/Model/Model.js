@@ -1,4 +1,5 @@
-/* eslint-disable no-return-assign */
+/* eslint-disable max-len */
+/* eslint-disable no-param-reassign */
 /* eslint-disable class-methods-use-this */
 /* eslint-disable no-underscore-dangle */
 
@@ -9,71 +10,39 @@ export default class Model extends EventEmitter {
     super();
 
     this._state = this._correctParameters(parameters);
-    this._ratio = { from: null, to: null };
   }
 
-  updateState(data = {}, onMouseMove) {
-    let outcomingData;
+  updateState(data) {
+    if (data.isPercent) {
+      const valueType = 'from' in data ? 'from' : 'to';
 
-    if (onMouseMove) {
-      this._setRatio(data.ratio);
-
-      const valueType = Object.keys(data)[0];
-      const position = Object.values(data)[0]; // console.log(data);
-
-      this._state[valueType] = this._transformPositionToValue(position, valueType);
-
-      outcomingData = { ...this.getState() };
-      outcomingData.positions = {};
-
-      outcomingData.positions[valueType] = this._getPositionFromValue(outcomingData[valueType], valueType);
+      data[valueType] = Math.round((this._state.min + (data[valueType] * (this._state.max - this._state.min)) / 100));
     }
 
-    if (!onMouseMove) {
-      this._state = this._correctParameters({ ...this.getState(), ...data });
-      this._setRatio(data.ratio);
+    this._state = this._correctParameters({ ...this._state, ...data });
 
-      outcomingData = { ...this.getState() };
-      outcomingData.positions = {};
-
-      if (this._state.hasInterval) {
-        outcomingData.positions.from = this._getPositionFromValue(this._state.from, 'from');
-        outcomingData.positions.to = this._getPositionFromValue(this._state.to, 'to');
-      }
-
-      if (!this._state.hasInterval) {
-        outcomingData.positions.from = this._getPositionFromValue(this._state.from, 'from');
-      }
+    if (this._isValueInRange(this._state.from)) {
+      this._state.from = this._correctValueWithStep(this._state.from);
     }
 
-    this.notify('updateState', outcomingData);
+    if (this._isValueInRange(this._state.to)) {
+      this._state.to = this._correctValueWithStep(this._state.to);
+    }
+
+    this._state = this._correctParameters(this._state);
+
+    const newData = { ...this._state };
+    this._convertValuesToPercents(newData);
+
+    this.notify('updateState', newData);
   }
 
   getState() {
     return this._state;
   }
 
-  _setRatio(data) {
-    Object.entries(data).forEach((it) => this._ratio[it[0]] = it[1] / (this._state.max - this._state.min));
-  }
-
-  _transformPositionToValue(position, type) {
-    let value = this._getValueFromPosition(position, type);
-    if (this._isValueProper(value)) value = this._correctValueWithStep(value);
-    value = this._correctValueWithEdges(value, type);
-
-    return value;
-  }
-
-  _getValueFromPosition(position, type) {
-    return this._state.min + Math.ceil(position / this._ratio[type]);
-  }
-
-  _isValueProper(value) {
-    return value !== this._state.min
-      && value !== this._state.max
-      && value !== this._state.from
-      && value !== this._state.to;
+  _isValueInRange(value) {
+    return value > this._state.min && value < this._state.max;
   }
 
   _correctValueWithStep(value) {
@@ -81,31 +50,12 @@ export default class Model extends EventEmitter {
       * this._state.step + this._state.min;
   }
 
-  _correctValueWithEdges(value, type) {
-    let correctedValue = value;
+  _convertValuesToPercents(data) {
+    data.from = ((data.from - this._state.min) * 100) / (this._state.max - this._state.min);
 
     if (this._state.hasInterval) {
-      if (type === 'from') {
-        if (value < this._state.min) correctedValue = this._state.min;
-        if (value > this._state.to) correctedValue = this._state.to;
-      }
-
-      if (type === 'to') {
-        if (value > this._state.max) correctedValue = this._state.max;
-        if (value < this._state.from) correctedValue = this._state.from;
-      }
+      data.to = ((data.to - this._state.min) * 100) / (this._state.max - this._state.min);
     }
-
-    if (!this._state.hasInterval) {
-      if (value < this._state.min) correctedValue = this._state.min;
-      if (value > this._state.max) correctedValue = this._state.max;
-    }
-
-    return correctedValue;
-  }
-
-  _getPositionFromValue(value, type) {
-    return Math.trunc((value - this._state.min) * this._ratio[type]);
   }
 
   _correctParameters(parameters) {
@@ -153,6 +103,8 @@ export default class Model extends EventEmitter {
     if (!fixedParameters.hasInterval) {
       if (fixedParameters.from < fixedParameters.min) fixedParameters.from = fixedParameters.min;
       if (fixedParameters.from > fixedParameters.max) fixedParameters.from = fixedParameters.max;
+
+      fixedParameters.to = null;
     }
 
     if (this._isFunctionValueInvalid(fixedParameters.onChange)) fixedParameters.onChange = null;

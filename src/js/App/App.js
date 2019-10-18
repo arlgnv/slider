@@ -13,6 +13,6 @@ export default class App {
   }
 
   update(data = {}) {
-    this.presenter._handlerTryToUpdateModel({ data });
+    this.presenter.onStart(data);
   }
 }

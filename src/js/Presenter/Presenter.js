@@ -5,27 +5,24 @@ export default class Presenter {
     this.model = model;
     this.view = view;
 
-    this.view.subscribe('tryToUpdateModel', this._handlerTryToUpdateModel.bind(this));
+    this.view.subscribe('moveRunner', this._handlerMoveRunner.bind(this));
 
     this.model.subscribe('updateState', this._handlerModelUpdateState.bind(this));
 
-    this._handlerTryToUpdateModel();
+    this.onStart();
   }
 
-  _handlerTryToUpdateModel({ data = {}, onMouseMove = false } = {}) {
-    const newData = data;
-    const ratio = { ...this.view.getRunnersRangeMovements() };
-
-    newData.ratio = ratio;
-
-    this.model.updateState(newData, onMouseMove);
+  _handlerMoveRunner(data) {
+    const newData = { ...data };
+    newData.isPercent = true;
+    this.model.updateState(newData);
   }
 
   _handlerModelUpdateState(data) {
-    if (data.onChange) {
-      data.onChange(data.hasInterval ? `${data.from} - ${data.to}` : `${data.from}`);
-    }
-
     this.view.reDrawView(data);
+  }
+
+  onStart(data = {}) {
+    this.model.updateState(data);
   }
 }
