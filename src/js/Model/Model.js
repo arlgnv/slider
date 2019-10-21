@@ -21,18 +21,21 @@ export default class Model extends EventEmitter {
 
     this._state = this._correctParameters({ ...this._state, ...data });
 
-    if (this._isValueInRange(this._state.from)) {
-      this._state.from = this._correctValueWithStep(this._state.from);
-    }
+    const isFromInRange = this._state.from > this._state.min && this._state.from < this._state.max;
+    if (isFromInRange) this._state.from = this._correctValueWithStep(this._state.from);
 
-    if (this._isValueInRange(this._state.to)) {
-      this._state.to = this._correctValueWithStep(this._state.to);
-    }
+    const isToInRange = (this._state.to > this._state.min && this._state.to < this._state.max)
+      && typeof this._state.to === 'number';
+    if (isToInRange) this._state.to = this._correctValueWithStep(this._state.to);
 
     this._state = this._correctParameters(this._state);
 
     const newData = { ...this._state };
-    this._convertValuesToPercents(newData);
+    newData.from = this._convertValueToPercent(newData.from, newData.min, newData.max);
+
+    if (typeof newData.to === 'number') {
+      newData.to = this._convertValueToPercent(newData.to, newData.min, newData.max);
+    }
 
     this.notify('updateState', newData);
   }
@@ -41,21 +44,13 @@ export default class Model extends EventEmitter {
     return this._state;
   }
 
-  _isValueInRange(value) {
-    return value > this._state.min && value < this._state.max;
-  }
-
   _correctValueWithStep(value) {
     return Math.round((value - this._state.min) / this._state.step)
       * this._state.step + this._state.min;
   }
 
-  _convertValuesToPercents(data) {
-    data.from = ((data.from - this._state.min) * 100) / (this._state.max - this._state.min);
-
-    if (this._state.hasInterval) {
-      data.to = ((data.to - this._state.min) * 100) / (this._state.max - this._state.min);
-    }
+  _convertValueToPercent(value, min, max) {
+    return ((value - min) * 100) / (max - min);
   }
 
   _correctParameters(parameters) {

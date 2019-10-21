@@ -1,7 +1,7 @@
 export default class InputView {
   constructor(input) {
     this.input = input;
-    this.input.classList.add('hidden-input');
+    this.input.classList.add('lrs-hidden-input');
   }
 
   getInput() {

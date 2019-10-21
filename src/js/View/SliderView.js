@@ -24,6 +24,8 @@ export default class SliderView extends EventEmitter {
     this._changeTheme(data.theme);
     this._changeDirection(data.isVertical);
 
+    if (this._isNeedToReinit(data)) this._reinit(data);
+
     this._changeRunnerPosition(data);
     this._changeTipText(data);
     this._changeTipPosition(data);
@@ -38,76 +40,57 @@ export default class SliderView extends EventEmitter {
     this._addEventListeners();
   }
 
-  // _reInit(data) {
-  //   if (correctedSettings.hasInterval !== currentState.hasInterval) {
-  //     const isRunnerToNotExists = !this.view.runnerTo && correctedSettings.hasInterval;
+  _reinit(data) {
+    const isNeedToShowRunnerTo = !this.runnerTo && data.hasInterval;
+    if (isNeedToShowRunnerTo) {
+      this.bar.insertAdjacentHTML('afterend', '<span class="lrs__runner"></span>');
 
-  //     if (isRunnerToNotExists) {
-  //       this.view.slider.insertAdjacentHTML('beforeend', '<span class="lrs__runner"></span>');
-  //       [, this.view.runnerTo] = this.view.slider.querySelectorAll('.lrs__runner');
-  //       this.view._addEventListeners();
-  //     }
+      this._findDOMElements(data);
+      this._addEventListeners();
+    }
 
-  //     const isTipToNotExists = !this.view.tipTo
-  //       && correctedSettings.hasInterval
-  //       && correctedSettings.hasTip;
+    const isNeedToHideRunnerTo = this.runnerTo && !data.hasInterval;
+    if (isNeedToHideRunnerTo) {
+      this.slider.removeChild(this.runnerTo);
 
-  //     if (isTipToNotExists) {
-  //       this.view.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
-  //       [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip');
-  //     }
+      delete this.runnerTo;
+    }
 
-  //     if (correctedSettings.hasInterval) {
-  //       this.view.runnerTo.classList.remove('lrs__runner_hidden');
+    const isNeedToShowTipFrom = !this.tipFrom && data.hasTip;
+    if (isNeedToShowTipFrom) {
+      this.runnerFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
 
-  //       if (correctedSettings.hasTip) {
-  //         this.view.tipTo.classList.remove('lrs__tip_hidden');
-  //       }
-  //     }
+      this._findDOMElements(data);
+    }
 
-  //     if (!correctedSettings.hasInterval) {
-  //       this.view.runnerTo.classList.add('lrs__runner_hidden');
+    const isNeedToHideTipFrom = this.tipFrom && !data.hasTip;
+    if (isNeedToHideTipFrom) {
+      this.slider.removeChild(this.tipFrom);
 
-  //       if (correctedSettings.hasTip) {
-  //         this.view.tipTo.classList.add('lrs__tip_hidden');
-  //       }
-  //     }
+      delete this.tipFrom;
+    }
 
-  //     currentState.hasInterval = correctedSettings.hasInterval;
-  //   }
+    const isNeedToShowTipTo = !this.tipTo && data.hasTip && data.hasInterval;
+    if (isNeedToShowTipTo) {
+      this.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
 
-  //   if (correctedSettings.hasTip !== currentState.hasTip) {
-  //     const isTipFromNotExists = !this.view.tipFrom && correctedSettings.hasTip;
-  //     if (isTipFromNotExists) {
-  //       this.view.runnerFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
-  //       [this.view.tipFrom] = this.view.slider.querySelectorAll('.lrs__tip');
-  //     }
+      this._findDOMElements(data);
+    }
 
-  //     const isTipFromNeedToBeHidden = this.view.tipFrom && !correctedSettings.hasTip;
-  //     if (isTipFromNeedToBeHidden) this.view.tipFrom.classList.add('lrs__tip_hidden');
+    const isNeedToHideTipTo = (this.tipTo && !data.hasTip) || (this.tipTo && !data.hasInterval);
+    if (isNeedToHideTipTo) {
+      this.slider.removeChild(this.tipTo);
 
-  //     const isTipFromNeedToBeShowed = this.view.tipFrom && correctedSettings.hasTip;
-  //     if (isTipFromNeedToBeShowed) this.view.tipFrom.classList.remove('lrs__tip_hidden');
+      delete this.tipTo;
+    }
+  }
 
-  //     const isTipToNotExists = !this.view.tipTo
-  //       && correctedSettings.hasTip
-  //       && correctedSettings.hasInterval;
-  //     if (isTipToNotExists) {
-  //       this.view.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
-  //       [, this.view.tipTo] = this.view.slider.querySelectorAll('.lrs__tip');
-  //     }
-
-  //     const isTipToNeedToBeHidden = this.view.tipTo
-  //       && !correctedSettings.hasTip
-  //       && correctedSettings.hasInterval;
-  //     if (isTipToNeedToBeHidden) this.view.tipTo.classList.add('lrs__tip_hidden');
-
-  //     const isTipToNeedToBeShowed = this.view.tipTo
-  //       && correctedSettings.hasTip
-  //       && correctedSettings.hasInterval;
-  //     if (isTipToNeedToBeShowed) this.view.tipTo.classList.remove('lrs__tip_hidden');
-  //   }
-  // }
+  _isNeedToReinit(data) {
+    return (!this.tipFrom && data.hasTip)
+    || (this.tipFrom && !data.hasTip)
+    || (!this.runnerTo && data.hasInterval)
+    || (this.runnerTo && !data.hasInterval);
+  }
 
   _drawView(parameters) {
     const input = this.input.getInput();
@@ -145,7 +128,9 @@ export default class SliderView extends EventEmitter {
     const runnerType = runner === this.runnerFrom ? 'from' : 'to';
     const cursorPosition = this._getCursorPosition(runner, evt.clientX, evt.clientY);
 
-    this._correctZAxis(runner);
+    runner.classList.add('lrs__runner_grabbed');
+
+    if (this.runnerTo) this._correctZAxis(runner);
 
     const handlerWindowMouseMove = (event) => {
       let runnerPosition = this._getRunnerShift(cursorPosition, event.clientX, event.clientY);
@@ -245,13 +230,10 @@ export default class SliderView extends EventEmitter {
   }
 
   _correctZAxis(runner) {
-    runner.classList.add('lrs__runner_grabbed');
+    this.runnerFrom.classList.remove('lrs__runner_last-grabbed');
+    this.runnerTo.classList.remove('lrs__runner_last-grabbed');
 
-    if (this.runnerTo) {
-      this.runnerFrom.classList.remove('lrs__runner_last-grabbed');
-      this.runnerTo.classList.remove('lrs__runner_last-grabbed');
-      runner.classList.add('lrs__runner_last-grabbed');
-    }
+    runner.classList.add('lrs__runner_last-grabbed');
   }
 
   _changeRunnerPosition(data) {

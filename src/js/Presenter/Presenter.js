@@ -15,6 +15,7 @@ export default class Presenter {
   _handlerMoveRunner(data) {
     const newData = { ...data };
     newData.isPercent = true;
+
     this.model.updateState(newData);
   }
 
