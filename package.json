@@ -15,23 +15,25 @@
   "author": "Artem Lagunov",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.6.4",
     "babel-jest": "^24.9.0",
-    "eslint": "5.16.0",
-    "eslint-config-airbnb": "^18.0.1",
-    "eslint-plugin-import": "^2.18.2",
     "handlebars": "^4.4.2",
     "handlebars-jest": "^0.5.0",
     "jest": "^24.9.0",
-    "parcel-plugin-handlebars-precompile": "^1.0.1"
+    "parcel-plugin-handlebars-precompile": "^1.0.1",
+    "tslint": "^5.20.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "tslint-config-prettier": "^1.18.0"
   },
   "dependencies": {
+    "@babel/core": "^7.6.4",
     "autoprefixer": "^9.6.1",
+    "jquery": "^3.4.1",
     "parcel-bundler": "^1.12.4",
     "postcss-modules": "^1.4.1",
     "pug": "^2.0.3",
     "rimraf": "^2.6.3",
-    "sass": "^1.21.0"
+    "sass": "^1.21.0",
+    "typescript": "^3.6.4"
   },
   "browserslist": "> 0.25%, last 4 versions"
 }

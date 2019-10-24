@@ -1,8 +1,3 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable max-len */
-/* eslint-disable no-underscore-dangle */
-/* global window */
-
 import EventEmitter from '../EventEmitter/EventEmitter';
 import templateFunction from '../../templates/sliderTemplate.hbs';
 
@@ -16,7 +11,7 @@ export default class SliderView extends EventEmitter {
   }
 
   reDrawView(data) {
-    const value = this._getSliderValue(data); // console.log(data);
+    const value = this._getSliderValue(data);
     this.input.changeValue(value);
 
     if (data.onChange) data.onChange(this.input.getValue());
@@ -86,10 +81,12 @@ export default class SliderView extends EventEmitter {
   }
 
   _isNeedToReinit(data) {
-    return (!this.tipFrom && data.hasTip)
-    || (this.tipFrom && !data.hasTip)
-    || (!this.runnerTo && data.hasInterval)
-    || (this.runnerTo && !data.hasInterval);
+    return (
+      (!this.tipFrom && data.hasTip) ||
+      (this.tipFrom && !data.hasTip) ||
+      (!this.runnerTo && data.hasInterval) ||
+      (this.runnerTo && !data.hasInterval)
+    );
   }
 
   _drawView(parameters) {
@@ -120,7 +117,8 @@ export default class SliderView extends EventEmitter {
 
   _addEventListeners() {
     this.runnerFrom.addEventListener('mousedown', this._handlerRunnerMouseDown.bind(this));
-    if (this.runnerTo) this.runnerTo.addEventListener('mousedown', this._handlerRunnerMouseDown.bind(this));
+    if (this.runnerTo)
+      this.runnerTo.addEventListener('mousedown', this._handlerRunnerMouseDown.bind(this));
   }
 
   _handlerRunnerMouseDown(evt) {
@@ -132,7 +130,7 @@ export default class SliderView extends EventEmitter {
 
     if (this.runnerTo) this._correctZAxis(runner);
 
-    const handlerWindowMouseMove = (event) => {
+    const handlerWindowMouseMove = event => {
       let runnerPosition = this._getRunnerShift(cursorPosition, event.clientX, event.clientY);
       runnerPosition = this._correctExtremeRunnerPositions(runner, runnerPosition);
       runnerPosition = this.slider.classList.contains('lrs_direction_vertical')
@@ -155,8 +153,10 @@ export default class SliderView extends EventEmitter {
 
   _getSliderValue(data) {
     const value = data.hasInterval
-      ? `${Math.round((data.min + (data.from * (data.max - data.min)) / 100))} - ${Math.round((data.min + ((data.to * (data.max - data.min)) / 100)))}`
-      : `${Math.round((data.min + (data.from * (data.max - data.min)) / 100))}`;
+      ? `${Math.round(data.min + (data.from * (data.max - data.min)) / 100)} - ${Math.round(
+          data.min + (data.to * (data.max - data.min)) / 100
+        )}`
+      : `${Math.round(data.min + (data.from * (data.max - data.min)) / 100)}`;
 
     return value;
   }
@@ -168,7 +168,9 @@ export default class SliderView extends EventEmitter {
   }
 
   _getRunnerShift(position, clientX, clientY) {
-    return this.slider.classList.contains('lrs_direction_vertical') ? position - clientY : clientX - position;
+    return this.slider.classList.contains('lrs_direction_vertical')
+      ? position - clientY
+      : clientX - position;
   }
 
   _correctExtremeRunnerPositions(runner, position) {
@@ -241,14 +243,18 @@ export default class SliderView extends EventEmitter {
       ? ((this.slider.offsetHeight - this.runnerFrom.offsetHeight) * data.from) / 100
       : ((this.slider.offsetWidth - this.runnerFrom.offsetWidth) * data.from) / 100;
 
-    this.runnerFrom.style.cssText = data.isVertical ? `bottom: ${position}px` : `left: ${position}px`;
+    this.runnerFrom.style.cssText = data.isVertical
+      ? `bottom: ${position}px`
+      : `left: ${position}px`;
 
     if (data.hasInterval) {
       position = data.isVertical
         ? ((this.slider.offsetHeight - this.runnerTo.offsetHeight) * data.to) / 100
         : ((this.slider.offsetWidth - this.runnerTo.offsetWidth) * data.to) / 100;
 
-      this.runnerTo.style.cssText = data.isVertical ? `bottom: ${position}px` : `left: ${position}px`;
+      this.runnerTo.style.cssText = data.isVertical
+        ? `bottom: ${position}px`
+        : `left: ${position}px`;
     }
   }
 
@@ -270,23 +276,31 @@ export default class SliderView extends EventEmitter {
   _changeTipPosition(data) {
     if (data.hasTip) {
       let runner = this.runnerFrom;
-      let runnerPosition = data.isVertical ? parseFloat(runner.style.bottom) : parseFloat(runner.style.left);
+      let runnerPosition = data.isVertical
+        ? parseFloat(runner.style.bottom)
+        : parseFloat(runner.style.left);
       let tip = this.tipFrom;
       let tipPosition = data.isVertical
         ? runnerPosition - (tip.offsetHeight - runner.offsetHeight) / 2
         : runnerPosition - (tip.offsetWidth - runner.offsetWidth) / 2;
 
-      this.tipFrom.style.cssText = data.isVertical ? `bottom: ${tipPosition}px` : `left: ${tipPosition}px`;
+      this.tipFrom.style.cssText = data.isVertical
+        ? `bottom: ${tipPosition}px`
+        : `left: ${tipPosition}px`;
 
       if (data.hasInterval) {
         runner = this.runnerTo;
-        runnerPosition = data.isVertical ? parseFloat(runner.style.bottom) : parseFloat(runner.style.left);
+        runnerPosition = data.isVertical
+          ? parseFloat(runner.style.bottom)
+          : parseFloat(runner.style.left);
         tip = this.tipTo;
         tipPosition = data.isVertical
           ? runnerPosition - (tip.offsetHeight - runner.offsetHeight) / 2
           : runnerPosition - (tip.offsetWidth - runner.offsetWidth) / 2;
 
-        this.tipTo.style.cssText = data.isVertical ? `bottom: ${tipPosition}px` : `left: ${tipPosition}px`;
+        this.tipTo.style.cssText = data.isVertical
+          ? `bottom: ${tipPosition}px`
+          : `left: ${tipPosition}px`;
       }
     }
   }
@@ -303,15 +317,19 @@ export default class SliderView extends EventEmitter {
         : parseFloat(this.runnerFrom.style.left) + this.runnerFrom.offsetWidth / 2;
 
       barEdges.right = data.isVertical
-        ? this.slider.offsetHeight - (parseFloat(this.runnerTo.style.bottom) + this.runnerTo.offsetHeight / 2)
-        : this.slider.offsetWidth - (parseFloat(this.runnerTo.style.left) + this.runnerTo.offsetWidth / 2);
+        ? this.slider.offsetHeight -
+          (parseFloat(this.runnerTo.style.bottom) + this.runnerTo.offsetHeight / 2)
+        : this.slider.offsetWidth -
+          (parseFloat(this.runnerTo.style.left) + this.runnerTo.offsetWidth / 2);
     }
 
     if (!data.hasInterval) {
       barEdges.left = 0;
       barEdges.right = data.isVertical
-        ? this.slider.offsetHeight - (parseFloat(this.runnerFrom.style.bottom) + this.runnerFrom.offsetHeight / 2)
-        : this.slider.offsetWidth - (parseFloat(this.runnerFrom.style.left) + this.runnerFrom.offsetWidth / 2);
+        ? this.slider.offsetHeight -
+          (parseFloat(this.runnerFrom.style.bottom) + this.runnerFrom.offsetHeight / 2)
+        : this.slider.offsetWidth -
+          (parseFloat(this.runnerFrom.style.left) + this.runnerFrom.offsetWidth / 2);
     }
 
     return barEdges;
