@@ -9,14 +9,15 @@
 * Посмотреть демо страницу со слайдером - [посмотреть](https://madnessjs.github.io/range-slider/)
 
 ### Клонирование репозитория
-* По ssh ```git@github.com:madnessJs/range-slider.git```
-* По https ```https://github.com/madnessJs/range-slider.git```
+| ssh | https |
+| --- | --- |
+| ```git@github.com:madnessJs/range-slider.git``` | ```https://github.com/madnessJs/range-slider.git``` |
 
-### Сборка dev
-```npm run start```
+### Npm
+| Сборка dev | Сборка prod | Тест |
+| --- | --- | --- |
+| ```npm run start``` | ``` npm run build``` | ``` npm run test``` |
 
-### Сборка prod
-``` npm run build```
 
 ## Подключение слайдера на страницу
 Подключаем следующие файлы:
