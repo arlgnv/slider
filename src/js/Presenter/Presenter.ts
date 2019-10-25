@@ -3,10 +3,7 @@ import SliderView from '../View/SliderView';
 import IParameters from '../IParameters';
 
 export default class Presenter {
-  private model: Model;
-  private view: SliderView;
-
-  constructor(model: Model, view: SliderView) {
+  constructor(private model: Model, private view: SliderView) {
     this.model = model;
     this.view = view;
 
@@ -22,7 +19,7 @@ export default class Presenter {
   }
 
   private handlerMoveRunner(data: any): void {
-    this.model.updateState(data, 'moveRunner');
+    this.model.updateState(data, true);
   }
 
   private handlerModelUpdateState(data: IParameters): void {

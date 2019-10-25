@@ -1,47 +1,58 @@
 import EventEmitter from '../EventEmitter/EventEmitter';
-import templateFunction from '../../templates/sliderTemplate.hbs';
+import InputView from './InputView';
+import IParameters from '../IParameters';
+
+// @ts-ignore
+import sliderTemplateHbs from '../../templates/sliderTemplate.hbs';
 
 export default class SliderView extends EventEmitter {
-  constructor(input, parameters) {
+  private slider: HTMLSpanElement;
+  private runnerFrom: HTMLSpanElement;
+  private tipFrom?: HTMLSpanElement;
+  private bar: HTMLSpanElement;
+  private runnerTo?: HTMLSpanElement;
+  private tipTo?: HTMLSpanElement;
+
+  constructor(private input: InputView, parameters: IParameters) {
     super();
 
     this.input = input;
 
-    this._init(parameters);
+    this.init(parameters);
   }
 
-  reDrawView(data) {
-    const value = this._getSliderValue(data);
+  reDrawView(data: IParameters): void {
+    const value = this.getSliderValue(data);
     this.input.changeValue(value);
 
     if (data.onChange) data.onChange(this.input.getValue());
 
-    this._changeTheme(data.theme);
-    this._changeDirection(data.isVertical);
+    this.changeTheme(data.theme);
+    this.changeDirection(data.isVertical);
 
-    if (this._isNeedToReinit(data)) this._reinit(data);
+    if (this.isNeedToReinit(data)) this.reinit(data);
 
-    this._changeRunnerPosition(data);
-    this._changeTipText(data);
-    this._changeTipPosition(data);
+    this.changeRunnerPosition(data);
+    this.changeTipText(data);
+    this.changeTipPosition(data);
 
-    const { left: barLeftEdge, right: barRightEdge } = this._getBarEdges(data);
-    this._changeBarFilling(barLeftEdge, barRightEdge, data);
+    const { left: barLeftEdge, right: barRightEdge } = this.getBarEdges(data);
+    this.changeBarFilling(barLeftEdge, barRightEdge, data);
   }
 
-  _init(parameters) {
-    this._drawView(parameters);
-    this._findDOMElements(parameters);
-    this._addEventListeners();
+  private init(parameters: IParameters): void {
+    this.drawView(parameters);
+    this.findDOMElements(parameters);
+    this.addEventListeners();
   }
 
-  _reinit(data) {
+  private reinit(data: IParameters): void {
     const isNeedToShowRunnerTo = !this.runnerTo && data.hasInterval;
     if (isNeedToShowRunnerTo) {
       this.bar.insertAdjacentHTML('afterend', '<span class="lrs__runner"></span>');
 
-      this._findDOMElements(data);
-      this._addEventListeners();
+      this.findDOMElements(data);
+      this.addEventListeners();
     }
 
     const isNeedToHideRunnerTo = this.runnerTo && !data.hasInterval;
@@ -55,7 +66,7 @@ export default class SliderView extends EventEmitter {
     if (isNeedToShowTipFrom) {
       this.runnerFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
 
-      this._findDOMElements(data);
+      this.findDOMElements(data);
     }
 
     const isNeedToHideTipFrom = this.tipFrom && !data.hasTip;
@@ -69,7 +80,7 @@ export default class SliderView extends EventEmitter {
     if (isNeedToShowTipTo) {
       this.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
 
-      this._findDOMElements(data);
+      this.findDOMElements(data);
     }
 
     const isNeedToHideTipTo = (this.tipTo && !data.hasTip) || (this.tipTo && !data.hasInterval);
@@ -80,7 +91,7 @@ export default class SliderView extends EventEmitter {
     }
   }
 
-  _isNeedToReinit(data) {
+  private isNeedToReinit(data: IParameters): boolean {
     return (
       (!this.tipFrom && data.hasTip) ||
       (this.tipFrom && !data.hasTip) ||
@@ -89,50 +100,52 @@ export default class SliderView extends EventEmitter {
     );
   }
 
-  _drawView(parameters) {
+  private drawView(parameters: IParameters): void {
     const input = this.input.getInput();
 
-    input.insertAdjacentHTML('beforeBegin', templateFunction(parameters));
+    input.insertAdjacentHTML('beforebegin', sliderTemplateHbs(parameters));
   }
 
-  _findDOMElements(parameters) {
+  private findDOMElements(parameters: IParameters): void {
     const input = this.input.getInput();
 
-    this.slider = input.previousElementSibling;
-    this.runnerFrom = this.slider.firstElementChild;
-    this.bar = this.slider.querySelector('.lrs__bar');
+    this.slider = input.previousElementSibling as HTMLSpanElement;
+    this.runnerFrom = this.slider.firstElementChild as HTMLSpanElement;
+    this.bar = this.slider.querySelector('.lrs__bar') as HTMLSpanElement;
 
     if (parameters.hasInterval) {
-      this.runnerTo = this.bar.nextElementSibling;
+      this.runnerTo = this.bar.nextElementSibling as HTMLSpanElement;
     }
 
     if (parameters.hasTip) {
-      this.tipFrom = this.runnerFrom.nextElementSibling;
+      this.tipFrom = this.runnerFrom.nextElementSibling as HTMLSpanElement;
 
       if (this.runnerTo) {
-        this.tipTo = this.runnerTo.nextElementSibling;
+        this.tipTo = this.runnerTo.nextElementSibling as HTMLSpanElement;
       }
     }
   }
 
-  _addEventListeners() {
-    this.runnerFrom.addEventListener('mousedown', this._handlerRunnerMouseDown.bind(this));
-    if (this.runnerTo)
-      this.runnerTo.addEventListener('mousedown', this._handlerRunnerMouseDown.bind(this));
+  private addEventListeners(): void {
+    this.runnerFrom.addEventListener('mousedown', this.handlerRunnerMouseDown.bind(this));
+
+    if (this.runnerTo) {
+      this.runnerTo.addEventListener('mousedown', this.handlerRunnerMouseDown.bind(this));
+    }
   }
 
-  _handlerRunnerMouseDown(evt) {
-    const runner = evt.currentTarget;
+  private handlerRunnerMouseDown(evt: MouseEvent): void {
+    const runner: HTMLSpanElement = evt.currentTarget as HTMLSpanElement;
     const runnerType = runner === this.runnerFrom ? 'from' : 'to';
-    const cursorPosition = this._getCursorPosition(runner, evt.clientX, evt.clientY);
+    const cursorPosition = this.getCursorPosition(runner, evt.clientX, evt.clientY);
 
     runner.classList.add('lrs__runner_grabbed');
 
-    if (this.runnerTo) this._correctZAxis(runner);
+    if (this.runnerTo) this.correctZAxis(runner);
 
-    const handlerWindowMouseMove = event => {
-      let runnerPosition = this._getRunnerShift(cursorPosition, event.clientX, event.clientY);
-      runnerPosition = this._correctExtremeRunnerPositions(runner, runnerPosition);
+    const handlerWindowMouseMove = (event: MouseEvent): void => {
+      let runnerPosition = this.getRunnerShift(cursorPosition, event.clientX, event.clientY);
+      runnerPosition = this.correctExtremeRunnerPositions(runner, runnerPosition);
       runnerPosition = this.slider.classList.contains('lrs_direction_vertical')
         ? (runnerPosition * 100) / (this.slider.offsetHeight - runner.offsetHeight)
         : (runnerPosition * 100) / (this.slider.offsetWidth - runner.offsetWidth);
@@ -140,7 +153,7 @@ export default class SliderView extends EventEmitter {
       this.notify('moveRunner', { [runnerType]: runnerPosition });
     };
 
-    const handlerWindowMouseUp = () => {
+    const handlerWindowMouseUp = (): void => {
       runner.classList.remove('lrs__runner_grabbed');
 
       window.removeEventListener('mousemove', handlerWindowMouseMove);
@@ -151,29 +164,29 @@ export default class SliderView extends EventEmitter {
     window.addEventListener('mouseup', handlerWindowMouseUp);
   }
 
-  _getSliderValue(data) {
+  private getSliderValue(data: IParameters): string {
     const value = data.hasInterval
       ? `${Math.round(data.min + (data.from * (data.max - data.min)) / 100)} - ${Math.round(
-          data.min + (data.to * (data.max - data.min)) / 100
+          data.min + (data.to * (data.max - data.min)) / 100,
         )}`
       : `${Math.round(data.min + (data.from * (data.max - data.min)) / 100)}`;
 
     return value;
   }
 
-  _getCursorPosition(target, clientX, clientY) {
+  private getCursorPosition(target: HTMLSpanElement, clientX: number, clientY: number): number {
     return this.slider.classList.contains('lrs_direction_vertical')
       ? clientY + (parseFloat(target.style.bottom) || 0)
       : clientX - (parseFloat(target.style.left) || 0);
   }
 
-  _getRunnerShift(position, clientX, clientY) {
+  private getRunnerShift(position: number, clientX: number, clientY: number): number {
     return this.slider.classList.contains('lrs_direction_vertical')
       ? position - clientY
       : clientX - position;
   }
 
-  _correctExtremeRunnerPositions(runner, position) {
+  private correctExtremeRunnerPositions(runner: HTMLElement, position: number): number {
     let newPosition = position;
 
     if (this.slider.classList.contains('lrs_direction_vertical')) {
@@ -231,14 +244,14 @@ export default class SliderView extends EventEmitter {
     return newPosition;
   }
 
-  _correctZAxis(runner) {
+  private correctZAxis(runner: HTMLElement): void {
     this.runnerFrom.classList.remove('lrs__runner_last-grabbed');
     this.runnerTo.classList.remove('lrs__runner_last-grabbed');
 
     runner.classList.add('lrs__runner_last-grabbed');
   }
 
-  _changeRunnerPosition(data) {
+  private changeRunnerPosition(data: IParameters): void {
     let position = data.isVertical
       ? ((this.slider.offsetHeight - this.runnerFrom.offsetHeight) * data.from) / 100
       : ((this.slider.offsetWidth - this.runnerFrom.offsetWidth) * data.from) / 100;
@@ -258,7 +271,7 @@ export default class SliderView extends EventEmitter {
     }
   }
 
-  _changeTipText(data) {
+  private changeTipText(data: IParameters): void {
     if (data.hasTip) {
       if (data.hasInterval) {
         const [textFrom, textTo] = this.input.getValue().split(' - ');
@@ -273,7 +286,7 @@ export default class SliderView extends EventEmitter {
     }
   }
 
-  _changeTipPosition(data) {
+  private changeTipPosition(data: IParameters): void {
     if (data.hasTip) {
       let runner = this.runnerFrom;
       let runnerPosition = data.isVertical
@@ -305,7 +318,7 @@ export default class SliderView extends EventEmitter {
     }
   }
 
-  _getBarEdges(data) {
+  private getBarEdges(data: IParameters): any {
     const barEdges = {
       left: 0,
       right: 0,
@@ -335,13 +348,13 @@ export default class SliderView extends EventEmitter {
     return barEdges;
   }
 
-  _changeBarFilling(from, to, data) {
+  private changeBarFilling(from: number, to: number, data: IParameters): void {
     this.bar.style.cssText = data.isVertical
       ? `bottom: ${from}px; top: ${to}px;`
       : `left: ${from}px; right: ${to}px;`;
   }
 
-  _changeTheme(theme) {
+  private changeTheme(theme: string): void {
     if (theme === 'aqua') {
       this.slider.classList.remove('lrs_theme_red');
       this.slider.classList.add('lrs_theme_aqua');
@@ -353,7 +366,7 @@ export default class SliderView extends EventEmitter {
     }
   }
 
-  _changeDirection(isVertical) {
+  private changeDirection(isVertical: boolean): void {
     if (isVertical) {
       this.slider.classList.add('lrs_direction_vertical');
     }

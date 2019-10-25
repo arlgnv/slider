@@ -1,6 +1,3 @@
-/* eslint-disable func-names */
-/* global $ */
-
 import './index.scss';
 
 const $firstSlider = $('.js-first-slider');
@@ -10,7 +7,7 @@ $firstSlider.rangeSlider({
   from: 0,
   step: 1,
   hasTip: true,
-  onChange(value) {
+  onChange(value: string): void {
     const values = value.split(' - ');
     const $valueFrom = $firstSlider.closest('.slider').find('.js-slider-from-value');
     const $valueTo = $firstSlider.closest('.slider').find('.js-slider-to-value');
@@ -32,7 +29,7 @@ $secondSlider.rangeSlider({
   hasInterval: true,
   to: 190,
   theme: 'red',
-  onChange(value) {
+  onChange(value: string): void {
     const values = value.split(' - ');
     const $valueFrom = $secondSlider.closest('.slider').find('.js-slider-from-value');
     const $valueTo = $secondSlider.closest('.slider').find('.js-slider-to-value');
@@ -53,7 +50,7 @@ $thirdSlider.rangeSlider({
   hasTip: true,
   theme: 'aqua',
   isVertical: true,
-  onChange(value) {
+  onChange(value: string): void {
     const values = value.split(' - ');
     const $valueFrom = $thirdSlider.closest('.slider').find('.js-slider-from-value');
     const $valueTo = $thirdSlider.closest('.slider').find('.js-slider-to-value');

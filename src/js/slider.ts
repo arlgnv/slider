@@ -1,10 +1,13 @@
 import App from './App/App';
 import IParameters from './IParameters';
 
-declare var jQuery: any;
+declare global {
+  const jQuery: any;
+  const $: any;
+}
 
 (function ($) {
-  $.fn.rangeSlider = function (parameters: IParameters = {}) {
+  $.fn.rangeSlider = function (parameters: any = {}) {
     const basicParameters: IParameters = {
       min: 0,
       max: 100,

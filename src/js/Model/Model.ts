@@ -10,8 +10,8 @@ export default class Model extends EventEmitter {
     this.state = this.correctParameters(parameters);
   }
 
-  updateState(data: IParameters, eventType?: string): void {
-    if (eventType === 'moveRunner') {
+  updateState(data: IParameters, onMouseMove?: boolean): void {
+    if (onMouseMove) {
       const valueType = 'from' in data ? 'from' : 'to';
 
       data[valueType] = Math.round(

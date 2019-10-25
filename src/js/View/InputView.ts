@@ -1,18 +1,19 @@
 export default class InputView {
-  constructor(input) {
+  constructor(private input: HTMLInputElement) {
     this.input = input;
+
     this.input.classList.add('lrs-hidden-input');
   }
 
-  getInput() {
+  getInput(): HTMLInputElement {
     return this.input;
   }
 
-  changeValue(value) {
+  changeValue(value: string): void {
     this.input.value = value;
   }
 
-  getValue() {
+  getValue(): string {
     return this.input.value;
   }
 }
