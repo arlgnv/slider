@@ -1,18 +1,19 @@
-/* global test expect */
-
 import Model from './Model';
+import IParameters from '../IParameters';
 
 test("Model's state is an empty object by default", () => {
-  const model = new Model();
+  const model: Model = new Model();
+  const state: IParameters = model.getState();
 
-  expect(Object.keys(model.state).length).toBe(0);
+  expect(Object.keys(state).length).toBe(0);
 });
 
 test("Model's state equals to parameters", () => {
   const parameters = { theme: 'aqua', lala: 'lala' };
   const model = new Model(parameters);
+  const state: IParameters = model.getState();
 
-  expect(model.state).toBe(parameters);
+  expect(state).toEqual(parameters);
 });
 
 // import correctSettings from './utilities';

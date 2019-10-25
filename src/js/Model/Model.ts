@@ -4,7 +4,7 @@ import IParameters from '../IParameters';
 export default class Model extends EventEmitter {
   private state: IParameters;
 
-  constructor(parameters: IParameters) {
+  constructor(parameters: IParameters = {}) {
     super();
 
     this.state = this.correctParameters(parameters);
@@ -27,7 +27,7 @@ export default class Model extends EventEmitter {
     const isToInRange =
       this.state.to > this.state.min &&
       this.state.to < this.state.max &&
-      typeof this.state.to === 'number';
+      this.state.hasInterval;
     if (isToInRange) this.state.to = this.correctValueWithStep(this.state.to);
 
     this.state = this.correctParameters(this.state);
@@ -35,7 +35,7 @@ export default class Model extends EventEmitter {
     const newData = { ...this.state };
     newData.from = this.convertValueToPercent(newData.from, newData.min, newData.max);
 
-    if (typeof newData.to === 'number') {
+    if (newData.hasInterval) {
       newData.to = this.convertValueToPercent(newData.to, newData.min, newData.max);
     }
 

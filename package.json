@@ -15,11 +15,13 @@
   "author": "Artem Lagunov",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^24.0.19",
     "babel-jest": "^24.9.0",
     "handlebars": "^4.4.2",
     "handlebars-jest": "^0.5.0",
     "jest": "^24.9.0",
     "parcel-plugin-handlebars-precompile": "^1.0.1",
+    "ts-jest": "^24.1.0",
     "tslint": "^5.20.0",
     "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0"

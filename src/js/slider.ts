@@ -2,11 +2,10 @@ import App from './App/App';
 import IParameters from './IParameters';
 
 declare global {
-  const jQuery: any;
   const $: any;
 }
 
-(function ($) {
+(function ($: any): void {
   $.fn.rangeSlider = function (parameters: any = {}) {
     const basicParameters: IParameters = {
       min: 0,
@@ -25,4 +24,4 @@ declare global {
       $.data(this, { rangeSlider: new App(this, { ...basicParameters, ...parameters }) });
     });
   };
-})(jQuery);
+})($);

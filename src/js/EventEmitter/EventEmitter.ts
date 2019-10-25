@@ -1,7 +1,7 @@
-import IEventEmitter from './IEventEmitter';
+import IEvents from './IEvents';
 
 export default class EventEmitter {
-  private events: IEventEmitter = {};
+  private events: IEvents = {};
 
   subscribe(type: string, callback: Function): void {
     this.events[type] = this.events[type] || [];

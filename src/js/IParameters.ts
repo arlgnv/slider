@@ -11,5 +11,5 @@ export default interface IParameters {
 
   theme?: string;
 
-  onChange?: Function;
+  onChange?: null | Function;
 }
