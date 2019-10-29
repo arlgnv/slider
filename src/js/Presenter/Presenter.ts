@@ -1,28 +1,27 @@
 import Model from '../Model/Model';
 import SliderView from '../View/SliderView';
-import IParameters from '../IParameters';
+import IPresenter from '../Interfaces/Presenter/IPresenter';
+import IParameters from '../Interfaces/IParameters';
+import IPositionsPercent from '../Interfaces/IPositionsPercent';
 
-export default class Presenter {
+export default class Presenter implements IPresenter {
   constructor(private model: Model, private view: SliderView) {
     this.model = model;
     this.view = view;
 
-    this.view.subscribe('moveRunner', this.handlerMoveRunner.bind(this));
+    this.subscribeForUpdates();
 
-    this.model.subscribe('updateState', this.handlerModelUpdateState.bind(this));
-
-    this.onStart();
+    this.view.reDrawView(this.model.getState());
   }
 
-  onStart(data: IParameters = {}): void {
-    this.model.updateState(data);
+  public subscribeForUpdates(): void {
+    this.view.subscribe('moveRunner', this.handleRunnerMove);
+    this.model.subscribe('updateState', this.handleModelUpdate);
   }
 
-  private handlerMoveRunner(data: any): void {
-    this.model.updateState(data, true);
-  }
+  private handleRunnerMove =
+    (parameters: IPositionsPercent): void => this.model.updateState(parameters)
 
-  private handlerModelUpdateState(data: IParameters): void {
-    this.view.reDrawView(data);
-  }
+  private handleModelUpdate =
+    (parameters: IParameters): void => this.view.reDrawView(parameters)
 }

@@ -1,5 +1,5 @@
 import Model from './Model';
-import IParameters from '../IParameters';
+import IParameters from '../Interfaces/IParameters';
 
 test("Model's state is an empty object by default", () => {
   const model: Model = new Model();

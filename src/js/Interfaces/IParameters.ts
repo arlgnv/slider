@@ -1,6 +1,9 @@
 export default interface IParameters {
-  from?: number;
-  to?: null | number;
+  firstValue?: number;
+  firstValuePercent?: number | null;
+  secondValue?: number | null;
+  secondValuePercent?: number | null;
+
   min?: number;
   max?: number;
   step?: number;

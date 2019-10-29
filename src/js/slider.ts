@@ -1,19 +1,21 @@
 import App from './App/App';
-import IParameters from './IParameters';
+import IParameters from './Interfaces/IParameters';
 
 declare global {
   const $: any;
 }
 
 (function ($: any): void {
-  $.fn.rangeSlider = function (parameters: any = {}) {
+  $.fn.rangeSlider = function (parameters: object = {}) {
     const basicParameters: IParameters = {
+      firstValue: 0,
+      firstValuePercent: null,
       min: 0,
       max: 100,
       step: 1,
-      from: 0,
       hasInterval: false,
-      to: null,
+      secondValue: null,
+      secondValuePercent: null,
       isVertical: false,
       hasTip: false,
       theme: 'aqua',

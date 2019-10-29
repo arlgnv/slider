@@ -1,16 +1,22 @@
-import IEvents from './IEvents';
+import IEventEmitter from '../Interfaces/EventEmitter/IEventEmitter';
+import IEvents from '../Interfaces/EventEmitter/IEvents';
 
-export default class EventEmitter {
+export default class EventEmitter implements IEventEmitter {
   private events: IEvents = {};
 
-  subscribe(type: string, callback: Function): void {
+  public subscribe(type: string, cb: Function): void {
     this.events[type] = this.events[type] || [];
-    this.events[type].push(callback);
+
+    this.events[type] = [...this.events[type], cb];
   }
 
-  notify(type: string, arg: any): void {
+  public unsubscribe(type: string, cb: Function): void {
     if (this.events[type]) {
-      this.events[type].forEach(callback => callback(arg));
+      this.events[type] = this.events[type].filter(callback => callback !== cb);
     }
+  }
+
+  public notify(type: string, arg: object): void {
+    if (this.events[type]) this.events[type].forEach(cb => cb(arg));
   }
 }

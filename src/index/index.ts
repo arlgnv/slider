@@ -4,7 +4,7 @@ const $firstSlider = $('.js-first-slider');
 $firstSlider.rangeSlider({
   min: 0,
   max: 50,
-  from: 0,
+  firstValue: 10,
   step: 1,
   hasTip: true,
   onChange(value: string): void {
@@ -23,7 +23,7 @@ const $secondSlider = $('.js-second-slider');
 $secondSlider.rangeSlider({
   min: 0,
   max: 200,
-  from: 10,
+  firstValue: 10,
   step: 1,
   hasTip: true,
   hasInterval: true,
@@ -45,7 +45,7 @@ const $thirdSlider = $('.js-third-slider');
 $thirdSlider.rangeSlider({
   min: 10,
   max: 80,
-  from: 20,
+  firstValue: 20,
   step: 1,
   hasTip: true,
   theme: 'aqua',
@@ -68,7 +68,7 @@ $('.js-slider-from-value').each(function () {
     .data('rangeSlider');
 
   $field.on('blur', () => {
-    sliderData.update({ from: +$field.val() });
+    sliderData.update({ firstValue: +$field.val() });
   });
 });
 
@@ -80,7 +80,7 @@ $('.js-slider-to-value').each(function () {
     .data('rangeSlider');
 
   $field.on('blur', () => {
-    sliderData.update({ to: +$field.val() });
+    sliderData.update({ secondValue: +$field.val() });
   });
 });
 

@@ -2,7 +2,7 @@ import Model from '../Model/Model';
 import SliderView from '../View/SliderView';
 import InputView from '../View/InputView';
 import Presenter from '../Presenter/Presenter';
-import IParameters from '../IParameters';
+import IParameters from '../Interfaces/IParameters';
 
 export default class App {
   private model: Model;
@@ -16,6 +16,6 @@ export default class App {
   }
 
   update(data: IParameters = {}): void {
-    this.presenter.onStart(data);
+    this.model.updateState(data);
   }
 }

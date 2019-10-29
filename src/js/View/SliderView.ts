@@ -1,6 +1,6 @@
 import EventEmitter from '../EventEmitter/EventEmitter';
 import InputView from './InputView';
-import IParameters from '../IParameters';
+import IParameters from '../Interfaces/IParameters';
 
 // @ts-ignore
 import sliderTemplateHbs from '../../templates/sliderTemplate.hbs';
@@ -22,8 +22,7 @@ export default class SliderView extends EventEmitter {
   }
 
   reDrawView(data: IParameters): void {
-    const value = this.getSliderValue(data);
-    this.input.changeValue(value);
+    this.input.changeValue(this.getSliderValue(data)); // console.log(data);
 
     if (data.onChange) data.onChange(this.input.getValue());
 
@@ -136,7 +135,6 @@ export default class SliderView extends EventEmitter {
 
   private handlerRunnerMouseDown(evt: MouseEvent): void {
     const runner: HTMLSpanElement = evt.currentTarget as HTMLSpanElement;
-    const runnerType = runner === this.runnerFrom ? 'from' : 'to';
     const cursorPosition = this.getCursorPosition(runner, evt.clientX, evt.clientY);
 
     runner.classList.add('lrs__runner_grabbed');
@@ -150,7 +148,9 @@ export default class SliderView extends EventEmitter {
         ? (runnerPosition * 100) / (this.slider.offsetHeight - runner.offsetHeight)
         : (runnerPosition * 100) / (this.slider.offsetWidth - runner.offsetWidth);
 
-      this.notify('moveRunner', { [runnerType]: runnerPosition });
+      const positionType = runner === this.runnerFrom ? 'firstPositionPercent' : 'secondPositionPercent';
+
+      this.notify('moveRunner', {  [positionType]: runnerPosition });
     };
 
     const handlerWindowMouseUp = (): void => {
@@ -166,10 +166,8 @@ export default class SliderView extends EventEmitter {
 
   private getSliderValue(data: IParameters): string {
     const value = data.hasInterval
-      ? `${Math.round(data.min + (data.from * (data.max - data.min)) / 100)} - ${Math.round(
-          data.min + (data.to * (data.max - data.min)) / 100,
-        )}`
-      : `${Math.round(data.min + (data.from * (data.max - data.min)) / 100)}`;
+      ? `${data.firstValue} - ${data.secondValue}`
+      : `${data.firstValue}`;
 
     return value;
   }
@@ -253,8 +251,8 @@ export default class SliderView extends EventEmitter {
 
   private changeRunnerPosition(data: IParameters): void {
     let position = data.isVertical
-      ? ((this.slider.offsetHeight - this.runnerFrom.offsetHeight) * data.from) / 100
-      : ((this.slider.offsetWidth - this.runnerFrom.offsetWidth) * data.from) / 100;
+      ? ((this.slider.offsetHeight - this.runnerFrom.offsetHeight) * data.firstValuePercent) / 100
+      : ((this.slider.offsetWidth - this.runnerFrom.offsetWidth) * data.firstValuePercent) / 100;
 
     this.runnerFrom.style.cssText = data.isVertical
       ? `bottom: ${position}px`
@@ -262,8 +260,8 @@ export default class SliderView extends EventEmitter {
 
     if (data.hasInterval) {
       position = data.isVertical
-        ? ((this.slider.offsetHeight - this.runnerTo.offsetHeight) * data.to) / 100
-        : ((this.slider.offsetWidth - this.runnerTo.offsetWidth) * data.to) / 100;
+        ? ((this.slider.offsetHeight - this.runnerTo.offsetHeight) * data.secondValuePercent) / 100
+        : ((this.slider.offsetWidth - this.runnerTo.offsetWidth) * data.secondValuePercent) / 100;
 
       this.runnerTo.style.cssText = data.isVertical
         ? `bottom: ${position}px`
