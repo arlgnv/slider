@@ -1,5 +1,4 @@
 import EventEmitter from '../EventEmitter/EventEmitter';
-import InputView from './InputView';
 import IParameters from '../Interfaces/IParameters';
 
 // @ts-ignore
@@ -13,18 +12,18 @@ export default class SliderView extends EventEmitter {
   private runnerTo?: HTMLSpanElement;
   private tipTo?: HTMLSpanElement;
 
-  constructor(private input: InputView, parameters: IParameters) {
+  constructor(private anchorElement: HTMLElement, parameters: IParameters) {
     super();
 
-    this.input = input;
+    this.anchorElement = anchorElement;
 
     this.init(parameters);
   }
 
   reDrawView(data: IParameters): void {
-    this.input.changeValue(this.getSliderValue(data)); // console.log(data);
+    const valueText = data.hasInterval ? `${data.firstValue} - ${data.secondValue}` : `${data.firstValue}`;
 
-    if (data.onChange) data.onChange(this.input.getValue());
+    if (data.onChange) data.onChange(valueText); // console.log(data);
 
     this.changeTheme(data.theme);
     this.changeDirection(data.isVertical);
@@ -100,15 +99,11 @@ export default class SliderView extends EventEmitter {
   }
 
   private drawView(parameters: IParameters): void {
-    const input = this.input.getInput();
-
-    input.insertAdjacentHTML('beforebegin', sliderTemplateHbs(parameters));
+    this.anchorElement.insertAdjacentHTML('beforebegin', sliderTemplateHbs(parameters));
   }
 
   private findDOMElements(parameters: IParameters): void {
-    const input = this.input.getInput();
-
-    this.slider = input.previousElementSibling as HTMLSpanElement;
+    this.slider = this.anchorElement.previousElementSibling as HTMLSpanElement;
     this.runnerFrom = this.slider.firstElementChild as HTMLSpanElement;
     this.bar = this.slider.querySelector('.lrs__bar') as HTMLSpanElement;
 
@@ -162,14 +157,6 @@ export default class SliderView extends EventEmitter {
 
     window.addEventListener('mousemove', handlerWindowMouseMove);
     window.addEventListener('mouseup', handlerWindowMouseUp);
-  }
-
-  private getSliderValue(data: IParameters): string {
-    const value = data.hasInterval
-      ? `${data.firstValue} - ${data.secondValue}`
-      : `${data.firstValue}`;
-
-    return value;
   }
 
   private getCursorPosition(target: HTMLSpanElement, clientX: number, clientY: number): number {
@@ -271,15 +258,10 @@ export default class SliderView extends EventEmitter {
 
   private changeTipText(data: IParameters): void {
     if (data.hasTip) {
+      this.tipFrom.textContent = String(data.firstValue);
+
       if (data.hasInterval) {
-        const [textFrom, textTo] = this.input.getValue().split(' - ');
-
-        this.tipFrom.textContent = textFrom;
-        this.tipTo.textContent = textTo;
-      }
-
-      if (!data.hasInterval) {
-        this.tipFrom.textContent = this.input.getValue();
+        this.tipTo.textContent = String(data.secondValue);
       }
     }
   }

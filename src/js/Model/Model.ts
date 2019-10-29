@@ -58,8 +58,7 @@ export default class Model extends EventEmitter implements IModel {
     values.max = typeof maxValue !== 'number' ? 100 : Math.round(maxValue);
 
     if (values.min > values.max) {
-      const min = Math.min(values.max, values.min);
-      const max = Math.max(values.max, values.min);
+      const [min, max] = [Math.min(values.max, values.min), Math.max(values.max, values.min)];
 
       values.min = min;
       values.max = max;
@@ -72,31 +71,33 @@ export default class Model extends EventEmitter implements IModel {
     const { firstValue, secondValue, min, max, step } = parameters;
     const values: IParameters = {};
 
-    if (parameters.hasInterval) {
-      values.firstValue = typeof firstValue !== 'number' ? min : firstValue;
-      values.secondValue = typeof secondValue !== 'number' ? max : secondValue;
+    values.firstValue = typeof firstValue !== 'number' ? min : Math.round(firstValue);
 
-      values.firstValue = 'firstPositionPercent' in parameters
-        ? this.convertValueFromPercentToNum(parameters.firstPositionPercent, min, max)
-        : values.firstValue;
+    values.firstValue = 'firstPositionPercent' in parameters
+      ? this.convertValueFromPercentToNum(parameters.firstPositionPercent, min, max)
+      : values.firstValue;
+
+    values.firstValue = values.firstValue !== min && values.firstValue !== max
+      ? this.correctValueWithStep(values.firstValue, step, min)
+      : values.firstValue;
+
+    values.firstValue = values.firstValue < min ? min : values.firstValue;
+    values.firstValue = values.firstValue > max ? max : values.firstValue;
+
+    values.secondValue = null;
+
+    if (parameters.hasInterval) {
+      values.secondValue = typeof secondValue !== 'number' ? max : secondValue;
 
       values.secondValue = 'secondPositionPercent' in parameters
         ? this.convertValueFromPercentToNum(parameters.secondPositionPercent, min, max)
         : values.secondValue;
 
-      if (values.firstValue > min && values.firstValue < max) {
-        values.firstValue = this.correctValueWithStep(values.firstValue, step, min);
-      }
+      values.secondValue = values.secondValue !== max
+        ? this.correctValueWithStep(values.secondValue, step, min) : values.secondValue;
 
-      if (values.firstValue < min) values.firstValue = min;
-      if (values.firstValue > values.secondValue) values.firstValue = values.secondValue;
-
-      if (values.secondValue > min && values.secondValue < max) {
-        values.secondValue = this.correctValueWithStep(values.secondValue, step, min);
-      }
-
-      if (values.secondValue < values.firstValue) values.secondValue = values.firstValue;
-      if (values.secondValue > max) values.secondValue = max;
+      values.secondValue = values.secondValue < min ? min : values.secondValue;
+      values.secondValue = values.secondValue > max ? max : values.secondValue;
 
       if (values.firstValue > values.secondValue) {
         const min = Math.min(values.firstValue, values.secondValue);
@@ -107,32 +108,13 @@ export default class Model extends EventEmitter implements IModel {
       }
     }
 
-    if (!parameters.hasInterval) {
-      values.firstValue = typeof firstValue !== 'number' ? min : firstValue;
-
-      if ('firstPositionPercent' in parameters) {
-        values.firstValue =
-          this.convertValueFromPercentToNum(parameters.firstPositionPercent, min, max);
-      }
-
-      const isValueInRange = values.firstValue > min && values.firstValue < max;
-      if (isValueInRange) {
-        values.firstValue = this.correctValueWithStep(values.firstValue, step, min);
-      }
-
-      if (values.firstValue < min) values.firstValue = min;
-      if (values.firstValue > max) values.firstValue = max;
-
-      values.secondValue = null;
-    }
-
     return values;
   }
 
   private validateStepValue(value: number): number {
     const isStepInvalid = typeof value !== 'number' || value < 1;
 
-    return isStepInvalid ? 1 : value;
+    return isStepInvalid ? 1 : Math.round(value);
   }
 
   private validateThemeValue(theme: string): string {
@@ -150,7 +132,7 @@ export default class Model extends EventEmitter implements IModel {
   }
 
   private correctValueWithStep(value: number, step: number, min: number): number {
-    return (Math.round((value - min) / step) * step + min);
+    return Math.round((Math.round((value - min) / step) * step + min));
   }
 
   private convertValueToPercent(value: number, min: number, max: number): number {

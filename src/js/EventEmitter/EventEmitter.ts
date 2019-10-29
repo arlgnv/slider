@@ -5,9 +5,7 @@ export default class EventEmitter implements IEventEmitter {
   private events: IEvents = {};
 
   public subscribe(type: string, cb: Function): void {
-    this.events[type] = this.events[type] || [];
-
-    this.events[type] = [...this.events[type], cb];
+    this.events[type] = this.events[type] ? [...this.events[type], cb] : [cb];
   }
 
   public unsubscribe(type: string, cb: Function): void {

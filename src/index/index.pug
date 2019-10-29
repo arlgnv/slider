@@ -79,7 +79,7 @@ html(lang="ru")
             h2.slider__title= slider.title
             .slider__preview
               form.slider__form(action="/mock-address/change-me" method="post")
-                input.slider__field(class= slider.class type="text" name= slider.name)
+                input.slider__field.slider__field_hidden(class= slider.class type="text" name= slider.name)
             .slider__configuration
               form.slider__form(action="/mock-address/change-me" method="post")
                 p.slider__group
@@ -121,6 +121,5 @@ html(lang="ru")
                     input.slider__field.js-slider-view(type="radio" name="view" value="horizontal" checked= view.horizontal)
                   label.slider__group-title Вертикальный
                     input.slider__field.js-slider-view(type="radio" name="view" value="vertical" checked= view.vertical)
-    script(src="https://code.jquery.com/jquery-3.4.1.min.js")
     script(src="../js/slider.ts")
     script(src="./index.ts")

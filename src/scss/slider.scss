@@ -111,8 +111,7 @@
     }
 
     #{$root}__tip::before {
-      box-shadow: 0.0714rem 0.0714rem 0 0 $white-color-100,
-        0.1429rem 0.1429rem 0 0 $aqua-theme-color-100;
+      box-shadow: 0.0714rem 0.0714rem 0 0 $white-color-100, 0.1429rem 0.1429rem 0 0 $aqua-theme-color-100;
     }
   }
 
@@ -126,20 +125,7 @@
     }
 
     #{$root}__tip::before {
-      box-shadow: 0.0714rem 0.0714rem 0 0 $white-color-100,
-        0.1429rem 0.1429rem 0 0 $red-theme-color-100;
+      box-shadow: 0.0714rem 0.0714rem 0 0 $white-color-100, 0.1429rem 0.1429rem 0 0 $red-theme-color-100;
     }
-  }
-
-  &-hidden-input {
-    position: absolute;
-    width: 0.0714rem;
-    height: 0.0714rem;
-    margin: -0.0714rem;
-    border: 0;
-    padding: 0;
-    clip-path: inset(100%);
-    clip: rect(0 0 0 0);
-    overflow: hidden;
   }
 }

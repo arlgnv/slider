@@ -2,16 +2,17 @@ import Model from '../Model/Model';
 import SliderView from '../View/SliderView';
 import InputView from '../View/InputView';
 import Presenter from '../Presenter/Presenter';
+import IApp from '../Interfaces/App/IApp';
 import IParameters from '../Interfaces/IParameters';
 
-export default class App {
+export default class App implements IApp {
   private model: Model;
   private view: SliderView;
   private presenter: Presenter;
 
-  constructor(input: HTMLInputElement, parameters: IParameters) {
+  constructor(anchorElement: HTMLElement, parameters: IParameters) {
     this.model = new Model(parameters);
-    this.view = new SliderView(new InputView(input), this.model.getState());
+    this.view = new SliderView(anchorElement, this.model.getState());
     this.presenter = new Presenter(this.model, this.view);
   }
 

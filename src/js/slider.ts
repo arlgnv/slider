@@ -1,12 +1,19 @@
+window.$ = require('jquery');
 import App from './App/App';
 import IParameters from './Interfaces/IParameters';
 
 declare global {
-  const $: any;
+  interface Window {
+    $: JQueryStatic;
+  }
+
+  interface JQuery {
+    rangeSlider(parameters?: IParameters): JQuery<HTMLElement>;
+  }
 }
 
-(function ($: any): void {
-  $.fn.rangeSlider = function (parameters: object = {}) {
+(function ($: JQueryStatic): void {
+  $.fn.rangeSlider = function (parameters: IParameters = {}): JQuery<HTMLElement> {
     const basicParameters: IParameters = {
       firstValue: 0,
       firstValuePercent: null,
@@ -22,8 +29,8 @@ declare global {
       onChange: null,
     };
 
-    return this.each(function () {
-      $.data(this, { rangeSlider: new App(this, { ...basicParameters, ...parameters }) });
+    return this.each(function (): void {
+      $.data(this, 'rangeSlider', new App(this, { ...basicParameters, ...parameters }));
     });
   };
-})($);
+})(window.$);
