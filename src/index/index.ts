@@ -3,16 +3,16 @@ import './index.scss';
 const $firstSlider = $('.js-first-slider');
 $firstSlider.rangeSlider({
   min: 0,
-  max: 50,
+  max: 20,
   firstValue: 10,
   step: 1,
   hasTip: true,
+  hasScale: true,
   onChange(value: string): void {
     const values = value.split(' - ');
     const $valueFrom = $firstSlider.closest('.slider').find('.js-slider-from-value');
     const $valueTo = $firstSlider.closest('.slider').find('.js-slider-to-value');
 
-    $firstSlider.val(value);
     $valueFrom.val(values[0]);
     $valueTo.val(values[1]);
   },
@@ -33,7 +33,6 @@ $secondSlider.rangeSlider({
     const $valueFrom = $secondSlider.closest('.slider').find('.js-slider-from-value');
     const $valueTo = $secondSlider.closest('.slider').find('.js-slider-to-value');
 
-    $secondSlider.val(value);
     $valueFrom.val(values[0]);
     $valueTo.val(values[1]);
   },
@@ -53,7 +52,6 @@ $thirdSlider.rangeSlider({
     const $valueFrom = $thirdSlider.closest('.slider').find('.js-slider-from-value');
     const $valueTo = $thirdSlider.closest('.slider').find('.js-slider-to-value');
 
-    $thirdSlider.val(value);
     $valueFrom.val(values[0]);
     $valueTo.val(values[1]);
   },
@@ -63,7 +61,7 @@ $('.js-slider-from-value').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('blur', () => {
@@ -75,7 +73,7 @@ $('.js-slider-to-value').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('blur', () => {
@@ -87,7 +85,7 @@ $('.js-slider-min-value').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('blur', () => {
@@ -99,7 +97,7 @@ $('.js-slider-max-value').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('blur', () => {
@@ -111,7 +109,7 @@ $('.js-slider-step').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('blur', () => {
@@ -119,11 +117,24 @@ $('.js-slider-step').each(function () {
   });
 });
 
+$('.js-slider-scale').each(function () {
+  const $field = $(this);
+  const sliderData = $field
+    .closest('.slider')
+    .find('[class$=slider]')
+    .data('rangeSlider');
+
+  $field.on('change', () => {
+    if ($field.val() === 'show') sliderData.update({ hasScale: true });
+    if ($field.val() === 'hide') sliderData.update({ hasScale: false });
+  });
+});
+
 $('.js-slider-tip').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('change', () => {
@@ -136,7 +147,7 @@ $('.js-slider-theme').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('change', () => {
@@ -149,7 +160,7 @@ $('.js-slider-type').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('change', () => {
@@ -162,7 +173,7 @@ $('.js-slider-view').each(function () {
   const $field = $(this);
   const sliderData = $field
     .closest('.slider')
-    .find('input[name$=slider]')
+    .find('[class$=slider]')
     .data('rangeSlider');
 
   $field.on('change', () => {

@@ -16,17 +16,21 @@ declare global {
   $.fn.rangeSlider = function (parameters: IParameters = {}): JQuery<HTMLElement> {
     const basicParameters: IParameters = {
       firstValue: 0,
-      firstValuePercent: null,
+      secondValue: null,
       min: 0,
       max: 100,
       step: 1,
       hasInterval: false,
-      secondValue: null,
-      secondValuePercent: null,
-      isVertical: false,
       hasTip: false,
+      hasScale: false,
+      isVertical: false,
       theme: 'aqua',
       onChange: null,
+
+      firstValuePercent: null,
+      secondValuePercent: null,
+      scaleValues: null,
+      scaleValue: null,
     };
 
     return this.each(function (): void {

@@ -16,11 +16,15 @@ export default class Presenter implements IPresenter {
 
   public subscribeForUpdates(): void {
     this.view.subscribe('moveRunner', this.handleRunnerMove);
+    this.view.subscribe('clickScale', this.handleScaleClick);
     this.model.subscribe('updateState', this.handleModelUpdate);
   }
 
   private handleRunnerMove =
     (parameters: IPositionsPercent): void => this.model.updateState(parameters)
+
+  private handleScaleClick =
+    (parameters: IParameters): void => this.model.updateState(parameters)
 
   private handleModelUpdate =
     (parameters: IParameters): void => this.view.reDrawView(parameters)

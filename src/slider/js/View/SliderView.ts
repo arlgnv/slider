@@ -2,17 +2,19 @@ import EventEmitter from '../EventEmitter/EventEmitter';
 import IParameters from '../Interfaces/IParameters';
 
 // @ts-ignore
-import sliderTemplateHbs from '../../templates/sliderTemplate.hbs';
+import sliderTemplateHbs from '../../sliderTemplate.hbs';
 
 export default class SliderView extends EventEmitter {
+  private anchorElement: HTMLElement;
   private slider: HTMLSpanElement;
   private runnerFrom: HTMLSpanElement;
   private tipFrom?: HTMLSpanElement;
   private bar: HTMLSpanElement;
   private runnerTo?: HTMLSpanElement;
   private tipTo?: HTMLSpanElement;
+  private scale: HTMLSpanElement;
 
-  constructor(private anchorElement: HTMLElement, parameters: IParameters) {
+  constructor(anchorElement: HTMLElement, parameters: IParameters) {
     super();
 
     this.anchorElement = anchorElement;
@@ -33,6 +35,7 @@ export default class SliderView extends EventEmitter {
     this.changeRunnerPosition(data);
     this.changeTipText(data);
     this.changeTipPosition(data);
+    this.drawScale(data);
 
     const { left: barLeftEdge, right: barRightEdge } = this.getBarEdges(data);
     this.changeBarFilling(barLeftEdge, barRightEdge, data);
@@ -49,7 +52,7 @@ export default class SliderView extends EventEmitter {
     if (isNeedToShowRunnerTo) {
       this.bar.insertAdjacentHTML('afterend', '<span class="lrs__runner"></span>');
 
-      this.findDOMElements(data);
+      this.runnerTo = this.bar.nextElementSibling as HTMLSpanElement;
       this.addEventListeners();
     }
 
@@ -62,9 +65,9 @@ export default class SliderView extends EventEmitter {
 
     const isNeedToShowTipFrom = !this.tipFrom && data.hasTip;
     if (isNeedToShowTipFrom) {
-      this.runnerFrom.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
+      this.bar.insertAdjacentHTML('beforebegin', '<span class="lrs__tip"></span>');
 
-      this.findDOMElements(data);
+      this.tipFrom = this.runnerFrom.nextElementSibling as HTMLSpanElement;
     }
 
     const isNeedToHideTipFrom = this.tipFrom && !data.hasTip;
@@ -78,7 +81,7 @@ export default class SliderView extends EventEmitter {
     if (isNeedToShowTipTo) {
       this.runnerTo.insertAdjacentHTML('afterend', '<span class="lrs__tip"></span>');
 
-      this.findDOMElements(data);
+      this.tipTo = this.runnerTo.nextElementSibling as HTMLSpanElement;
     }
 
     const isNeedToHideTipTo = (this.tipTo && !data.hasTip) || (this.tipTo && !data.hasInterval);
@@ -87,6 +90,21 @@ export default class SliderView extends EventEmitter {
 
       delete this.tipTo;
     }
+
+    const isNeedToShowScale = !this.scale && data.hasScale;
+    if (isNeedToShowScale) {
+      this.slider.insertAdjacentHTML('beforeend', '<span class="lrs__scale"></span>');
+
+      this.scale = this.slider.lastElementChild as HTMLSpanElement;
+      this.addEventListeners();
+    }
+
+    const isNeedToHideScale = this.scale && !data.hasScale;
+    if (isNeedToHideScale) {
+      this.slider.removeChild(this.scale);
+
+      delete this.scale;
+    }
   }
 
   private isNeedToReinit(data: IParameters): boolean {
@@ -94,7 +112,9 @@ export default class SliderView extends EventEmitter {
       (!this.tipFrom && data.hasTip) ||
       (this.tipFrom && !data.hasTip) ||
       (!this.runnerTo && data.hasInterval) ||
-      (this.runnerTo && !data.hasInterval)
+      (this.runnerTo && !data.hasInterval) ||
+      (!this.scale && data.hasScale) ||
+      (this.scale && !data.hasScale)
     );
   }
 
@@ -114,21 +134,30 @@ export default class SliderView extends EventEmitter {
     if (parameters.hasTip) {
       this.tipFrom = this.runnerFrom.nextElementSibling as HTMLSpanElement;
 
-      if (this.runnerTo) {
+      if (parameters.hasInterval) {
         this.tipTo = this.runnerTo.nextElementSibling as HTMLSpanElement;
+
       }
+    }
+
+    if (parameters.hasScale) {
+      this.scale = this.slider.lastElementChild as HTMLSpanElement;
     }
   }
 
   private addEventListeners(): void {
-    this.runnerFrom.addEventListener('mousedown', this.handlerRunnerMouseDown.bind(this));
+    this.runnerFrom.addEventListener('mousedown', this.handleRunnerMouseDown.bind(this));
 
     if (this.runnerTo) {
-      this.runnerTo.addEventListener('mousedown', this.handlerRunnerMouseDown.bind(this));
+      this.runnerTo.addEventListener('mousedown', this.handleRunnerMouseDown.bind(this));
+    }
+
+    if (this.scale) {
+      this.scale.addEventListener('click', this.handleScaleClick.bind(this));
     }
   }
 
-  private handlerRunnerMouseDown(evt: MouseEvent): void {
+  private handleRunnerMouseDown(evt: MouseEvent): void {
     const runner: HTMLSpanElement = evt.currentTarget as HTMLSpanElement;
     const cursorPosition = this.getCursorPosition(runner, evt.clientX, evt.clientY);
 
@@ -157,6 +186,14 @@ export default class SliderView extends EventEmitter {
 
     window.addEventListener('mousemove', handlerWindowMouseMove);
     window.addEventListener('mouseup', handlerWindowMouseUp);
+  }
+
+  private handleScaleClick(evt: MouseEvent): void {
+    const target: HTMLSpanElement = evt.target as HTMLSpanElement;
+
+    if (target.classList.contains('lrs__scale-mark')) {
+      this.notify('clickScale', { scaleValue: +target.textContent });
+    }
   }
 
   private getCursorPosition(target: HTMLSpanElement, clientX: number, clientY: number): number {
@@ -353,6 +390,33 @@ export default class SliderView extends EventEmitter {
 
     if (!isVertical) {
       this.slider.classList.remove('lrs_direction_vertical');
+    }
+  }
+
+  private drawScale(parameters: IParameters): void {
+    if (parameters.scaleValues) {
+      this.scale.textContent = '';
+
+      const elements = [];
+      const valuesElems = Object.entries(parameters.scaleValues);
+
+      for (let i: number = 0; i < valuesElems.length; i += 1) {
+        const [value, percent] = valuesElems[i];
+
+        const mark = document.createElement('span');
+        mark.classList.add('lrs__scale-mark');
+        mark.textContent = value;
+
+        const position = parameters.isVertical
+        ? ((this.slider.offsetHeight - this.runnerFrom.offsetHeight) / 100) * percent
+        : ((this.slider.offsetWidth - this.runnerFrom.offsetWidth) / 100) * percent;
+
+        mark.style.cssText = parameters.isVertical ? `bottom: ${position}px` :`left: ${position}px`;
+
+        elements.push(mark);
+      }
+
+      this.scale.append(...elements);
     }
   }
 }

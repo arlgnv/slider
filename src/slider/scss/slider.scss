@@ -1,3 +1,5 @@
+@import './variables';
+
 .lrs {
   $root: &;
 
@@ -11,8 +13,8 @@
 
   &__bar {
     position: absolute;
-    height: 100%;
-
+    top: 0;
+    bottom: 0;
     border-radius: 0.3571rem;
   }
 
@@ -69,13 +71,30 @@
     }
   }
 
+  &__scale {
+    position: absolute;
+    top: 1.0143rem;
+    left: 0;
+    right: 0;
+
+    &-mark {
+      position: absolute;
+      font-weight: bold;
+      color: $gray-dark-color-100;
+      line-height: 1.1429rem;
+      cursor: pointer;
+    }
+  }
+
   &_direction_vertical {
     width: 0.4286rem;
-    height: 100%;
+    height: 21.4286rem;
 
     #{$root}__bar {
-      height: auto;
-      width: 100%;
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: auto;
     }
 
     #{$root}__runner {
@@ -98,6 +117,16 @@
         top: 50%;
         transform: translate(0, -50%) rotate(135deg);
       }
+    }
+
+    #{$root}__scale {
+      position: absolute;
+      left: auto;
+      right: 1.4286rem;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: flex-end;
     }
   }
 

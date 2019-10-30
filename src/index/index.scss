@@ -1,6 +1,18 @@
-@import '../scss/variables';
-@import '../scss/base';
-@import '../scss/slider';
+@import '../slider/scss/slider';
+
+html {
+  font: 14px/24px Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-width: 22.8571rem;
+  max-width: 137.1429rem;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0;
+}
 
 .demonstration {
   flex-grow: 1;
@@ -32,49 +44,63 @@
   $root: &;
 
   box-sizing: border-box;
-  width: 32.1429rem;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
   margin: 0.7143rem;
-  padding: 0.9143rem 0.7143rem;
+  padding: 2.9143rem 0.7143rem 2.9143rem 2.9143rem;
   box-shadow: 0 0 0.9143rem $gray-color-100;
 
-  @media screen and (max-width: 470px) {
-    width: 100%;
-    margin: 0.7143rem 0;
-  }
-
   &__title {
-    margin: 0 0 2.6857rem;
+    position: absolute;
+    left: 43.3286rem;
+    top: 2.5714rem;
+    margin: 0;
     font-size: 2.1429rem;
     text-align: center;
   }
 
-  &__preview #{$root}__form {
-    height: 8.5714rem;
+  &__preview {
+    position: relative;
+    width: 35%;
+    text-align: center;
   }
 
-  &__preview #{$root}__field {
-    &_hidden {
-      position: absolute;
-      width: 0.0714rem;
-      height: 0.0714rem;
-      margin: -0.0714rem;
-      border: 0;
-      padding: 0;
-      clip-path: inset(100%);
-      clip: rect(0 0 0 0);
-      overflow: hidden;
-    }
+  &__configuration {
+    width: 60%;
+  }
+
+  &__form {
+    display: flex;
+    align-items: center;
   }
 
   &__group {
-    margin: 1.0714rem 0;
+    &:nth-child(1) {
+      width: 40%;
+      margin-right: 2.4286rem;
+
+      #{$root}__field {
+        margin-left: 1.2143rem;
+      }
+    }
+
+    &:nth-child(2) {
+      width: 40%;
+    }
+
+    &-title + #{$root}__group-title {
+      margin-left: 1.0714rem;
+    }
   }
 
-  &__group-title + #{$root}__group-title {
-    margin-left: 1.0715rem;
-  }
+  &__subgroup {
+    margin: 0 0 1.0714rem;
 
-  &__field {
-    margin-left: 0.6143rem;
+    &:last-child {
+      margin: 0;
+    }
   }
 }

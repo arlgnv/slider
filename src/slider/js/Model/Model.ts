@@ -24,8 +24,8 @@ export default class Model extends EventEmitter implements IModel {
 
   private validateParameters(parameters: IParameters | IPositionsPercent): IParameters {
     let {
-      firstValue, secondValue, firstValuePercent, secondValuePercent,
-      min, max, step, theme, hasInterval, hasTip, isVertical, onChange,
+      firstValue, secondValue, firstValuePercent, secondValuePercent, onChange,
+      min, max, step, theme, hasInterval, hasTip, hasScale, scaleValues, scaleValue, isVertical,
     } = parameters;
 
     const validatedMinMax = this.validateMinMax(min, max);
@@ -38,16 +38,20 @@ export default class Model extends EventEmitter implements IModel {
     hasTip = this.validateBooleanType(hasTip);
     hasInterval = this.validateBooleanType(hasInterval);
     onChange = this.validateFunctionValue(onChange);
+    hasScale = this.validateBooleanType(hasScale);
+    scaleValues = hasScale ? this.getScaleValues(min, max, step) : null;
 
     const values = this.validateValues(parameters);
     firstValue = values.firstValue;
     firstValuePercent = this.convertValueToPercent(firstValue, min, max);
-    secondValue = values.secondValue;
+    secondValue = hasInterval ? values.secondValue : null;
     secondValuePercent = hasInterval ? this.convertValueToPercent(secondValue, min, max) : null;
 
+    scaleValue = null;
+
     return {
-      firstValue, secondValue, firstValuePercent, secondValuePercent,
-      min, max, step, theme, hasInterval, hasTip, isVertical, onChange,
+      firstValue, secondValue, firstValuePercent, secondValuePercent, onChange,
+      min, max, step, theme, hasInterval, hasTip, hasScale, scaleValues, scaleValue, isVertical,
     };
   }
 
@@ -84,8 +88,6 @@ export default class Model extends EventEmitter implements IModel {
     values.firstValue = values.firstValue < min ? min : values.firstValue;
     values.firstValue = values.firstValue > max ? max : values.firstValue;
 
-    values.secondValue = null;
-
     if (parameters.hasInterval) {
       values.secondValue = typeof secondValue !== 'number' ? max : secondValue;
 
@@ -105,6 +107,23 @@ export default class Model extends EventEmitter implements IModel {
 
         values.firstValue = min;
         values.secondValue = max;
+      }
+    }
+
+    if (parameters.scaleValue !== null) {
+      if (parameters.hasInterval) {
+        const isFirstValueNearer =
+          (Math.max(values.firstValue, parameters.scaleValue) -
+          Math.min(values.firstValue, parameters.scaleValue))
+          < (Math.max(values.secondValue, parameters.scaleValue) -
+          Math.min(values.secondValue, parameters.scaleValue));
+
+        if (isFirstValueNearer) values.firstValue = parameters.scaleValue;
+        else values.secondValue = parameters.scaleValue;
+      }
+
+      if (!parameters.hasInterval) {
+        values.firstValue = parameters.scaleValue;
       }
     }
 
@@ -141,5 +160,15 @@ export default class Model extends EventEmitter implements IModel {
 
   private convertValueFromPercentToNum(value: number, min: number, max: number): number {
     return Math.round(min + (value * (max - min)) / 100);
+  }
+
+  private getScaleValues(min: number, max: number, step: number): object {
+    let values = { [min]: 0 };
+
+    for (let i: number = min + step; i < max; i += step) {
+      values = { ...values, ...{ [i]: this.convertValueToPercent(i, min, max) } };
+    }
+
+    return { ...values, ...{ [max]: 100 } };
   }
 }
