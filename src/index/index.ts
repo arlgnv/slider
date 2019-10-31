@@ -7,7 +7,7 @@ $firstSlider.rangeSlider({
   firstValue: 10,
   step: 1,
   hasTip: true,
-  hasScale: false,
+  hasScale: true,
   onChange(value: string): void {
     const values = value.split(' - ');
     const $valueFrom = $firstSlider.closest('.slider').find('.js-slider-from-value');

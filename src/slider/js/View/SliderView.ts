@@ -22,23 +22,22 @@ export default class SliderView extends EventEmitter {
     this.init(parameters);
   }
 
-  reDrawView(data: IParameters): void {
-    const valueText = data.hasInterval ? `${data.firstValue} - ${data.secondValue}` : `${data.firstValue}`;
+  reDrawView(parameters: IParameters): void {
+    const { firstValue, firstValuePercent, secondValue, secondValuePercent, theme,
+      hasInterval, hasTip, hasScale, scaleValues, isVertical, onChange } = parameters;
 
-    if (data.onChange) data.onChange(valueText); // console.log(data);
+    if (onChange) onChange(hasInterval ? `${firstValue} - ${secondValue}` : `${firstValue}`);
+    if (this.isNeedToReinit(parameters)) this.reinit(parameters);
 
-    this.changeTheme(data.theme);
-    this.changeDirection(data.isVertical);
+    this.changeTheme(theme); // console.log(data);
+    this.changeDirection(isVertical);
+    this.changeRunnerPosition({ firstValuePercent, secondValuePercent, isVertical, hasInterval  });
+    if (hasTip) this.changeTipText({ firstValue, secondValue, hasInterval });
+    if (hasTip) this.changeTipPosition({ isVertical, hasInterval });
+    if (hasScale) this.drawScale({ scaleValues, isVertical });
 
-    if (this.isNeedToReinit(data)) this.reinit(data);
-
-    this.changeRunnerPosition(data);
-    this.changeTipText(data);
-    this.changeTipPosition(data);
-    this.drawScale(data);
-
-    const { left: barLeftEdge, right: barRightEdge } = this.getBarEdges(data);
-    this.changeBarFilling(barLeftEdge, barRightEdge, data);
+    const { left, right } = this.getBarEdges({ hasInterval, isVertical });
+    this.changeBarFilling({ from: left, to: right, isVertical });
   }
 
   private init(parameters: IParameters): void {
@@ -152,9 +151,7 @@ export default class SliderView extends EventEmitter {
       this.runnerTo.addEventListener('mousedown', this.handleRunnerMouseDown.bind(this));
     }
 
-    if (this.scale) {
-      this.scale.addEventListener('click', this.handleScaleClick.bind(this));
-    }
+    if (this.scale) this.scale.addEventListener('click', this.handleScaleClick.bind(this));
   }
 
   private handleRunnerMouseDown(evt: MouseEvent): void {
@@ -273,89 +270,54 @@ export default class SliderView extends EventEmitter {
     runner.classList.add('lrs__runner_last-grabbed');
   }
 
-  private changeRunnerPosition(data: IParameters): void {
-    let position = data.isVertical
-      ? ((this.slider.offsetHeight - this.runnerFrom.offsetHeight) * data.firstValuePercent) / 100
-      : ((this.slider.offsetWidth - this.runnerFrom.offsetWidth) * data.firstValuePercent) / 100;
+  // tslint:disable-next-line:max-line-length
+  private changeRunnerPosition({ firstValuePercent, secondValuePercent, isVertical, hasInterval }): void {
+    this.runnerFrom.style.cssText = isVertical
+      ? `bottom: ${((this.slider.offsetHeight - this.runnerFrom.offsetHeight) * firstValuePercent) / 100}px`
+      : `left: ${((this.slider.offsetWidth - this.runnerFrom.offsetWidth) * firstValuePercent) / 100}px`;
 
-    this.runnerFrom.style.cssText = data.isVertical
-      ? `bottom: ${position}px`
-      : `left: ${position}px`;
-
-    if (data.hasInterval) {
-      position = data.isVertical
-        ? ((this.slider.offsetHeight - this.runnerTo.offsetHeight) * data.secondValuePercent) / 100
-        : ((this.slider.offsetWidth - this.runnerTo.offsetWidth) * data.secondValuePercent) / 100;
-
-      this.runnerTo.style.cssText = data.isVertical
-        ? `bottom: ${position}px`
-        : `left: ${position}px`;
+    if (hasInterval) {
+      this.runnerTo.style.cssText = isVertical
+        ? `bottom: ${((this.slider.offsetHeight - this.runnerTo.offsetHeight) * secondValuePercent) / 100}px`
+        : `left: ${((this.slider.offsetWidth - this.runnerTo.offsetWidth) * secondValuePercent) / 100}px`;
     }
   }
 
-  private changeTipText(data: IParameters): void {
-    if (data.hasTip) {
-      this.tipFrom.textContent = String(data.firstValue);
+  private changeTipText({ firstValue, secondValue, hasInterval }): void {
+    this.tipFrom.textContent = String(firstValue);
+    if (hasInterval) this.tipTo.textContent = String(secondValue);
+  }
 
-      if (data.hasInterval) {
-        this.tipTo.textContent = String(data.secondValue);
-      }
+  private changeTipPosition({ isVertical, hasInterval }): void {
+    this.tipFrom.style.cssText = isVertical
+      ? `bottom:${(parseFloat(this.runnerFrom.style.bottom) - (this.tipFrom.offsetHeight - this.runnerFrom.offsetHeight) / 2)}px`
+      : `left:${(parseFloat(this.runnerFrom.style.left) - (this.tipFrom.offsetWidth - this.runnerFrom.offsetWidth) / 2)}px`;
+
+    if (hasInterval) {
+      this.tipTo.style.cssText = isVertical
+        ? `bottom:${(parseFloat(this.runnerTo.style.bottom) - (this.tipTo.offsetHeight - this.runnerTo.offsetHeight) / 2)}px`
+        : `left:${(parseFloat(this.runnerTo.style.left) - (this.tipTo.offsetWidth - this.runnerTo.offsetWidth) / 2)}px`;
     }
   }
 
-  private changeTipPosition(data: IParameters): void {
-    if (data.hasTip) {
-      let runner = this.runnerFrom;
-      let runnerPosition = data.isVertical
-        ? parseFloat(runner.style.bottom)
-        : parseFloat(runner.style.left);
-      let tip = this.tipFrom;
-      let tipPosition = data.isVertical
-        ? runnerPosition - (tip.offsetHeight - runner.offsetHeight) / 2
-        : runnerPosition - (tip.offsetWidth - runner.offsetWidth) / 2;
+  private getBarEdges({ hasInterval, isVertical }): any {
+    const barEdges = { left: 0, right: 0 };
 
-      this.tipFrom.style.cssText = data.isVertical
-        ? `bottom: ${tipPosition}px`
-        : `left: ${tipPosition}px`;
-
-      if (data.hasInterval) {
-        runner = this.runnerTo;
-        runnerPosition = data.isVertical
-          ? parseFloat(runner.style.bottom)
-          : parseFloat(runner.style.left);
-        tip = this.tipTo;
-        tipPosition = data.isVertical
-          ? runnerPosition - (tip.offsetHeight - runner.offsetHeight) / 2
-          : runnerPosition - (tip.offsetWidth - runner.offsetWidth) / 2;
-
-        this.tipTo.style.cssText = data.isVertical
-          ? `bottom: ${tipPosition}px`
-          : `left: ${tipPosition}px`;
-      }
-    }
-  }
-
-  private getBarEdges(data: IParameters): any {
-    const barEdges = {
-      left: 0,
-      right: 0,
-    };
-
-    if (data.hasInterval) {
-      barEdges.left = data.isVertical
+    if (hasInterval) {
+      barEdges.left = isVertical
         ? parseFloat(this.runnerFrom.style.bottom) + this.runnerFrom.offsetHeight / 2
         : parseFloat(this.runnerFrom.style.left) + this.runnerFrom.offsetWidth / 2;
 
-      barEdges.right = data.isVertical
+      barEdges.right = isVertical
         ? this.slider.offsetHeight -
           (parseFloat(this.runnerTo.style.bottom) + this.runnerTo.offsetHeight / 2)
         : this.slider.offsetWidth -
           (parseFloat(this.runnerTo.style.left) + this.runnerTo.offsetWidth / 2);
     }
 
-    if (!data.hasInterval) {
+    if (!hasInterval) {
       barEdges.left = 0;
-      barEdges.right = data.isVertical
+      barEdges.right = isVertical
         ? this.slider.offsetHeight -
           (parseFloat(this.runnerFrom.style.bottom) + this.runnerFrom.offsetHeight / 2)
         : this.slider.offsetWidth -
@@ -365,58 +327,42 @@ export default class SliderView extends EventEmitter {
     return barEdges;
   }
 
-  private changeBarFilling(from: number, to: number, data: IParameters): void {
-    this.bar.style.cssText = data.isVertical
+  private changeBarFilling({ from, to, isVertical }): void {
+    this.bar.style.cssText = isVertical
       ? `bottom: ${from}px; top: ${to}px;`
       : `left: ${from}px; right: ${to}px;`;
   }
 
   private changeTheme(theme: string): void {
-    if (theme === 'aqua') {
-      this.slider.classList.remove('lrs_theme_red');
-      this.slider.classList.add('lrs_theme_aqua');
-    }
-
-    if (theme === 'red') {
-      this.slider.classList.remove('lrs_theme_aqua');
-      this.slider.classList.add('lrs_theme_red');
-    }
+    this.slider.classList.remove(`lrs_theme_${theme === 'aqua' ? 'red' : 'aqua'}`);
+    this.slider.classList.add(`lrs_theme_${theme === 'aqua' ? 'aqua' : 'red'}`);
   }
 
   private changeDirection(isVertical: boolean): void {
-    if (isVertical) {
-      this.slider.classList.add('lrs_direction_vertical');
-    }
-
-    if (!isVertical) {
-      this.slider.classList.remove('lrs_direction_vertical');
-    }
+    if (isVertical) this.slider.classList.add('lrs_direction_vertical');
+    if (!isVertical) this.slider.classList.remove('lrs_direction_vertical');
   }
 
-  private drawScale(parameters: IParameters): void {
-    if (parameters.scaleValues) {
-      this.scale.textContent = '';
+  private drawScale({ scaleValues, isVertical }): void {
+    this.scale.textContent = '';
 
-      const elements = [];
-      const valuesElems = Object.entries(parameters.scaleValues);
+    const elements = [];
+    const marks = Object.entries(scaleValues);
 
-      for (let i: number = 0; i < valuesElems.length; i += 1) {
-        const [value, percent] = valuesElems[i];
+    for (let i: number = 0; i < marks.length; i += 1) {
+      const [value, percent] = marks[i];
 
-        const mark = document.createElement('span');
-        mark.classList.add('lrs__scale-mark');
-        mark.textContent = value;
+      const mark = document.createElement('span');
+      mark.classList.add('lrs__scale-mark');
+      mark.textContent = value;
 
-        const position = parameters.isVertical
-        ? ((this.slider.offsetHeight - this.runnerFrom.offsetHeight) / 100) * percent
-        : ((this.slider.offsetWidth - this.runnerFrom.offsetWidth) / 100) * percent;
+      mark.style.cssText = isVertical
+        ? `bottom:${((this.slider.offsetHeight - this.runnerFrom.offsetHeight) / 100) * +percent}px`
+        : `left:${((this.slider.offsetWidth - this.runnerFrom.offsetWidth) / 100) * +percent}px`;
 
-        mark.style.cssText = parameters.isVertical ? `bottom: ${position}px` :`left: ${position}px`;
-
-        elements.push(mark);
-      }
-
-      this.scale.append(...elements);
+      elements.push(mark);
     }
+
+    this.scale.append(...elements);
   }
 }
