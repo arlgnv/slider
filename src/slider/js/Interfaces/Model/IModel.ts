@@ -1,7 +1,7 @@
 import IParameters from '../IParameters';
-import IPositionsPercent from '../IPositionsPercent';
+import { IRunnerParameters } from '../IRunnerParameters';
 
 export default interface IModel {
-  updateState(data: IParameters | IPositionsPercent): void;
+  updateState(data: IParameters | IRunnerParameters): void;
   getState(): IParameters;
 }

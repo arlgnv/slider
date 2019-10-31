@@ -1,6 +1,5 @@
 import Model from '../Model/Model';
 import SliderView from '../View/SliderView';
-import InputView from '../View/InputView';
 import Presenter from '../Presenter/Presenter';
 import IApp from '../Interfaces/App/IApp';
 import IParameters from '../Interfaces/IParameters';

@@ -26,11 +26,6 @@ declare global {
       isVertical: false,
       theme: 'aqua',
       onChange: null,
-
-      firstValuePercent: null,
-      secondValuePercent: null,
-      scaleValues: null,
-      scaleValue: null,
     };
 
     return this.each(function (): void {

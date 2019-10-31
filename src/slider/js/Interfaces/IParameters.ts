@@ -11,9 +11,4 @@ export default interface IParameters {
   theme?: string;
 
   onChange?: null | Function;
-
-  firstValuePercent?: number | null;
-  secondValuePercent?: number | null;
-  scaleValues?: object | null;
-  scaleValue?: number | null;
 }

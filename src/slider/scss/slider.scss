@@ -83,6 +83,10 @@
       color: $gray-dark-color-100;
       line-height: 1.1429rem;
       cursor: pointer;
+
+      &:hover {
+        color: $gray-dark-color-75;
+      }
     }
   }
 
