@@ -1,3 +1,5 @@
+// tslint:disable:max-line-length
+
 import EventEmitter from '../EventEmitter/EventEmitter';
 import IModel from '../Interfaces/Model/IModel';
 import IParameters from '../Interfaces/IParameters';
@@ -23,31 +25,22 @@ export default class Model extends EventEmitter implements IModel {
     return this.state;
   }
 
-  // tslint:disable-next-line:max-line-length
   private validateParameters(parameters: IParameters | IRunnerParameters | IScaleParameters): IParameters {
+    let { firstValue, secondValue, firstValuePercent, secondValuePercent, min, max,  hasInterval,
+      step, theme, hasTip, hasScale, scaleValues, isVertical, onChange } = <IParameters>parameters;
+
     if (instanceOfIRunnerParameters(parameters)) {
       const { firstPositionPercent, secondPositionPercent } = parameters;
-      const { min, max, step, hasInterval, hasScale } = this.state;
-      let { firstValue, secondValue, firstValuePercent, secondValuePercent } = this.state;
 
       firstValue = firstPositionPercent
-        ? this.convertValueFromPercentToNum(firstPositionPercent, min, max) : this.state.firstValue;
+        ? this.convertValueFromPercentToNum(firstPositionPercent, min, max) : firstValue;
       secondValue = secondPositionPercent
-      ? this.convertValueFromPercentToNum(secondPositionPercent, min, max) : this.state.secondValue;
+        ? this.convertValueFromPercentToNum(secondPositionPercent, min, max) : secondValue;
 
       [firstValue, secondValue] =
         this.validateValues({ firstValue, secondValue, min, max, step, hasInterval });
-
-      firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
-      secondValuePercent = hasScale ? this.convertValueToPercent(secondValue, min,  max) : null;
-
-      return { ...this.state, firstValue, secondValue, firstValuePercent, secondValuePercent };
-    }
-
-    if (instanceOfIScaleParameters(parameters)) {
+    } else if (instanceOfIScaleParameters(parameters)) {
       const { scaleValue } = parameters;
-      let { firstValue, secondValue, firstValuePercent, secondValuePercent } = this.state;
-      const { hasInterval, min, max, hasScale } = this.state;
 
       if (hasInterval) {
         const isFirstValueNearer =
@@ -56,31 +49,23 @@ export default class Model extends EventEmitter implements IModel {
 
         if (isFirstValueNearer) firstValue = scaleValue;
         else secondValue = scaleValue;
-      } else firstValue = parameters.scaleValue;
-
-      firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
-      secondValuePercent = hasScale ? this.convertValueToPercent(secondValue, min,  max) : null;
-
-      return { ...this.state, firstValue, secondValue, firstValuePercent, secondValuePercent };
+      } else firstValue = scaleValue;
+    } else {
+      [min, max] = this.validateMinMax({ min, max });
+      step = this.validateStepValue(step);
+      theme = this.validateThemeValue(theme);
+      isVertical = this.validateBooleanType(isVertical);
+      hasTip = this.validateBooleanType(hasTip);
+      hasInterval = this.validateBooleanType(hasInterval);
+      onChange = this.validateFunctionValue(onChange);
+      hasScale = this.validateBooleanType(hasScale);
+      [firstValue, secondValue] =
+        this.validateValues({ firstValue, secondValue, min, max, step, hasInterval });
     }
 
-    let {firstValue, secondValue, min, max, step, firstValuePercent, secondValuePercent,
-      theme, hasInterval, hasTip, hasScale, scaleValues, onChange, isVertical} = parameters;
-
-    [min, max] = this.validateMinMax({ min, max });
-    step = this.validateStepValue(step);
-    theme = this.validateThemeValue(theme);
-    isVertical = this.validateBooleanType(isVertical);
-    hasTip = this.validateBooleanType(hasTip);
-    hasInterval = this.validateBooleanType(hasInterval);
-    onChange = this.validateFunctionValue(onChange);
-    hasScale = this.validateBooleanType(hasScale);
-    scaleValues = hasScale ? this.getScaleValues(min, max, step) : null;
-    [firstValue, secondValue] =
-      this.validateValues({ firstValue, secondValue, min, max, step, hasInterval });
-
     firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
-    secondValuePercent = hasScale ? this.convertValueToPercent(secondValue, min,  max) : null;
+    secondValuePercent = hasInterval ? this.convertValueToPercent(secondValue, min,  max) : null;
+    scaleValues = hasScale ? this.getScaleValues(min, max, step) : null;
 
     return {firstValue, secondValue, firstValuePercent, secondValuePercent,
       min, max, step, theme, hasInterval, hasTip, hasScale, scaleValues, isVertical, onChange };
@@ -102,8 +87,7 @@ export default class Model extends EventEmitter implements IModel {
     firstValue = typeof firstValue !== 'number' ? min : Math.round(firstValue);
 
     firstValue = firstValue !== min && firstValue !== max
-      ? this.correctValueWithStep(firstValue, step, min)
-      : firstValue;
+      ? this.correctValueWithStep(firstValue, step, min) : firstValue;
 
     firstValue = firstValue < min ? min : firstValue;
     firstValue = firstValue > max ? max : firstValue;
@@ -157,7 +141,7 @@ export default class Model extends EventEmitter implements IModel {
     return Math.round(min + (value * (max - min)) / 100);
   }
 
-  private getScaleValues(min: number, max: number, step: number): {[key: string]: number} {
+  private getScaleValues(min: number, max: number, step: number): object {
     let values = { [min]: 0 };
 
     for (let i: number = min + step; i < max; i += step) {

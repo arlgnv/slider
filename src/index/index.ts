@@ -18,44 +18,44 @@ $firstSlider.rangeSlider({
   },
 });
 
-// const $secondSlider = $('.js-second-slider');
-// $secondSlider.rangeSlider({
-//   min: 0,
-//   max: 200,
-//   firstValue: 10,
-//   step: 1,
-//   hasTip: true,
-//   hasInterval: true,
-//   secondValue: 190,
-//   theme: 'red',
-//   onChange(value: string): void {
-//     const values = value.split(' - ');
-//     const $valueFrom = $secondSlider.closest('.slider').find('.js-slider-from-value');
-//     const $valueTo = $secondSlider.closest('.slider').find('.js-slider-to-value');
+const $secondSlider = $('.js-second-slider');
+$secondSlider.rangeSlider({
+  min: 0,
+  max: 200,
+  firstValue: 10,
+  step: 1,
+  hasTip: true,
+  hasInterval: true,
+  secondValue: 190,
+  theme: 'red',
+  onChange(value: string): void {
+    const values = value.split(' - ');
+    const $valueFrom = $secondSlider.closest('.slider').find('.js-slider-from-value');
+    const $valueTo = $secondSlider.closest('.slider').find('.js-slider-to-value');
 
-//     $valueFrom.val(values[0]);
-//     $valueTo.val(values[1]);
-//   },
-// });
+    $valueFrom.val(values[0]);
+    $valueTo.val(values[1]);
+  },
+});
 
-// const $thirdSlider = $('.js-third-slider');
-// $thirdSlider.rangeSlider({
-//   min: 10,
-//   max: 80,
-//   firstValue: 20,
-//   step: 1,
-//   hasTip: true,
-//   theme: 'aqua',
-//   isVertical: true,
-//   onChange(value: string): void {
-//     const values = value.split(' - ');
-//     const $valueFrom = $thirdSlider.closest('.slider').find('.js-slider-from-value');
-//     const $valueTo = $thirdSlider.closest('.slider').find('.js-slider-to-value');
+const $thirdSlider = $('.js-third-slider');
+$thirdSlider.rangeSlider({
+  min: 10,
+  max: 80,
+  firstValue: 20,
+  step: 1,
+  hasTip: true,
+  theme: 'aqua',
+  isVertical: true,
+  onChange(value: string): void {
+    const values = value.split(' - ');
+    const $valueFrom = $thirdSlider.closest('.slider').find('.js-slider-from-value');
+    const $valueTo = $thirdSlider.closest('.slider').find('.js-slider-to-value');
 
-//     $valueFrom.val(values[0]);
-//     $valueTo.val(values[1]);
-//   },
-// });
+    $valueFrom.val(values[0]);
+    $valueTo.val(values[1]);
+  },
+});
 
 $('.js-slider-from-value').each(function () {
   const $field = $(this);

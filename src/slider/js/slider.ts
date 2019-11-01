@@ -32,7 +32,7 @@ declare global {
     };
 
     return this.each(function (): void {
-      $.data(this, 'rangeSlider', new App(this, { ...basicParameters, ...parameters }));
+      $.data(this, 'rangeSlider', new App($(this), { ...basicParameters, ...parameters }));
     });
   };
 })(window.$);
