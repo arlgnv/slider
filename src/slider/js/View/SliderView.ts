@@ -27,7 +27,7 @@ export default class SliderView extends EventEmitter implements ISliderView{
     const { firstValue, firstValuePercent, secondValue, secondValuePercent, theme,
       hasInterval, hasTip, hasScale, scaleValues, isVertical, onChange } = parameters;
 
-    if (onChange) onChange(hasInterval ? `${firstValue} - ${secondValue}` : `${firstValue}`);
+    if (onChange) onChange(parameters);
     if (this.isNeedToReinit(parameters)) this.reinit(parameters);
 
     this.changeTheme(theme); // console.log(parameters);
@@ -91,7 +91,7 @@ export default class SliderView extends EventEmitter implements ISliderView{
 
     const isNeedToShowScale = !this.scale && data.hasScale;
     if (isNeedToShowScale) {
-      this.slider.before('<span class="lrs__scale"></span>');
+      this.slider.append('<span class="lrs__scale"></span>');
 
       this.scale = this.slider.find(':last-child');
       this.scale.on('click', this.handleScaleClick.bind(this));

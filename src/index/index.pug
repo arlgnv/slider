@@ -18,118 +18,47 @@ html(lang="ru")
     main.demonstration
       h1.demonstration__title.demonstration__title_hidden Демо страница со слайдерами
       .demonstration__container
-        -
-          const sliders =
-          [
-            {
-              "title": "Слайдер 1",
-              "name": "first-slider",
-              "class": "js-first-slider",
-              "parameters": 
-              {
-                "valueFrom": "10", 
-                "valueTo": "", 
-                "valueMin": "0", 
-                "valueMax": "20", 
-                "step": "1", 
-                "scale": {"show": true, "hide": false}, 
-                "tip": {"show": true, "hide": false}, 
-                "theme": {"aqua": true, "red": false}, 
-                "type": {"single": true, "double": false}, 
-                "view": {"horizontal": true, "vertical": false}
-              }
-            },
-            {
-              "title": "Слайдер 2",
-              "name": "second-slider",
-              "class": "js-second-slider",
-              "parameters": 
-              {
-                "valueFrom": "10", 
-                "valueTo": "190", 
-                "valueMin": "0", 
-                "valueMax": "200", 
-                "step": "1",
-                "scale": {"show": false, "hide": true},  
-                "tip": {"show": true, "hide": false}, 
-                "theme": {"aqua": false, "red": true}, 
-                "type": {"single": false, "double": true}, 
-                "view": {"horizontal": true, "vertical": false}
-              }
-            },
-            {
-              "title": "Слайдер 3",
-              "name": "third-slider",
-              "class": "js-third-slider",
-              "parameters": 
-              {
-                "valueFrom": "20", 
-                "valueTo": "", 
-                "valueMin": "10", 
-                "valueMax": "80", 
-                "step": "1",
-                "scale": {"show": false, "hide": true},  
-                "tip": {"show": true, "hide": false}, 
-                "theme": {"aqua": true, "red": false}, 
-                "type": {"single": true, "double": false}, 
-                "view": {"horizontal": false, "vertical": true}
-              }
-            }
-          ]
+        - const sliders = ["Слайдер 1", "Слайдер 2", "Слайдер 3"]
         each slider in sliders
-          - const {valueFrom, valueTo, valueMin, valueMax, step, scale, tip, theme, type, view} = slider.parameters
-          section.slider
-            h2.slider__title= slider.title
+          section.slider.js-slider
+            h2.slider__title= slider
             .slider__preview
-              span(class= slider.class)
+              span.slider__field
             .slider__configuration
               form.slider__form(action="/mock-address/change-me" method="post")
                 .slider__group
                   p.slider__subgroup
                     label.slider__group-title Значение ОТ
-                      input.slider__field.js-slider-from-value(type="text" value= valueFrom)
+                      input.slider__field(type="text" name="firstValue")
                   p.slider__subgroup
                     label.slider__group-title Значение ДО
-                      input.slider__field.js-slider-to-value(type="text" value= valueTo)
+                      input.slider__field(type="text" name="secondValue")
                   p.slider__subgroup
                     label.slider__group-title Минимальное значение
-                      input.slider__field.js-slider-min-value(type="text" value= valueMin)
+                      input.slider__field(type="text" name="min")
                   p.slider__subgroup
                     label.slider__group-title Максимальное значение
-                      input.slider__field.js-slider-max-value(type="text" value= valueMax)
+                      input.slider__field(type="text" name="max")
                   p.slider__subgroup
                     label.slider__group-title Шаг слайдера
-                      input.slider__field.js-slider-step(type="text" value= step)
+                      input.slider__field(type="text" name="step")
                 .slider__group
-                  fieldset.slider__subgroup
-                    legend Шкала значений
-                    label.slider__group-title Показать
-                      input.slider__field.js-slider-scale(type="radio" name="scale" value="show" checked= scale.show)
-                    label.slider__group-title Скрыть
-                      input.slider__field.js-slider-scale(type="radio" name="scale" value="hide" checked= scale.hide)
-                  fieldset.slider__subgroup
-                    legend Подсказка
-                    label.slider__group-title Показать
-                      input.slider__field.js-slider-tip(type="radio" name="tip" value="show" checked= tip.show)
-                    label.slider__group-title Скрыть
-                      input.slider__field.js-slider-tip(type="radio" name="tip" value="hide" checked= tip.hide)
+                  p.slider__subgroup
+                    label.slider__group-title Показать шкалу
+                      input.slider__field(type="checkbox" name="hasScale")
+                  p.slider__subgroup
+                    label.slider__group-title Показать подсказку
+                      input.slider__field(type="checkbox" name="hasTip")
+                  p.slider__subgroup
+                    label.slider__group-title Интервал
+                      input.slider__field(type="checkbox" name="hasInterval")
+                  p.slider__subgroup
+                    label.slider__group-title Вертикальный вид
+                      input.slider__field(type="checkbox" name="isVertical")
                   fieldset.slider__subgroup
                     legend Цветовые темы слайдера
                     label.slider__group-title Голубая тема
-                      input.slider__field.js-slider-theme(type="radio" name="theme" value="aqua" checked= theme.aqua)
+                      input.slider__field(type="radio" name="theme" value="aqua")
                     label.slider__group-title Красная тема
-                      input.slider__field.js-slider-theme(type="radio" name="theme" value="red" checked= theme.red)
-                  fieldset.slider__subgroup
-                    legend Тип слайдера
-                    label.slider__group-title Одиночное значение
-                      input.slider__field.js-slider-type(type="radio" name="type" value="single" checked= type.single)
-                    label.slider__group-title Диапазон
-                      input.slider__field.js-slider-type(type="radio" name="type" value="double" checked= type.double)
-                  fieldset.slider__subgroup
-                    legend Вид слайдера
-                    label.slider__group-title Горизонтальный
-                      input.slider__field.js-slider-view(type="radio" name="view" value="horizontal" checked= view.horizontal)
-                    label.slider__group-title Вертикальный
-                      input.slider__field.js-slider-view(type="radio" name="view" value="vertical" checked= view.vertical)
-    script(src="../slider/js/slider.ts")
+                      input.slider__field(type="radio" name="theme" value="red")
     script(src="./index.ts")

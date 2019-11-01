@@ -15,7 +15,7 @@ export default class App implements IApp {
     this.presenter = new Presenter(this.model, this.view);
   }
 
-  update(data: IParameters = {}): void {
-    this.model.updateState(data);
+  update(parameters: IParameters = {}): void {
+    this.model.updateState(parameters);
   }
 }
