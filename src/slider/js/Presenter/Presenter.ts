@@ -1,7 +1,7 @@
 import Model from '../Model/Model';
 import SliderView from '../View/SliderView';
 import IPresenter from '../Interfaces/Presenter/IPresenter';
-import IParameters from '../Interfaces/IParameters';
+import IFullParameters from '../Interfaces/IFullParameters';
 import { IRunnerParameters } from '../Interfaces/IRunnerParameters';
 import { IScaleParameters } from '../Interfaces/IScaleParameters';
 
@@ -12,7 +12,7 @@ export default class Presenter implements IPresenter {
 
     this.subscribeForUpdates();
 
-    this.view.reDrawView(this.model.getState());
+    this.view.redrawView(this.model.getState());
   }
 
   public subscribeForUpdates(): void {
@@ -28,5 +28,5 @@ export default class Presenter implements IPresenter {
     (parameters: IScaleParameters): void => this.model.updateState(parameters)
 
   private handleModelUpdate =
-    (parameters: IParameters): void => this.view.reDrawView(parameters)
+    (parameters: IFullParameters): void => this.view.redrawView(parameters)
 }

@@ -20,23 +20,35 @@ export default class SliderDemo {
   constructor(slider: JQuery<HTMLElement>, parameters: IParameters) {
     this.parameters = parameters;
 
-    this.prepareDOMElements(slider);
+    this.findDOMElements(slider);
+    this.addEventListeners();
     this.init();
   }
 
-  private prepareDOMElements(slider: JQuery<HTMLElement>): void {
+  private findDOMElements(slider: JQuery<HTMLElement>): void {
     this.slider = slider;
     this.sliderElement = this.slider.find('.slider__field').first();
-    this.fieldFirstValue = this.slider.find('[name=firstValue]').on('blur', this.updateSlider);
-    this.fieldSecondValue = this.slider.find('[name=secondValue]').on('blur', this.updateSlider);
-    this.fieldMin = this.slider.find('[name=min]').on('blur', this.updateSlider);
-    this.fieldMax = this.slider.find('[name=max]').on('blur', this.updateSlider);
-    this.fieldStep = this.slider.find('[name=step]').on('blur', this.updateSlider);
-    this.fieldScale = this.slider.find('[name=hasScale]').on('click', this.updateSlider);
-    this.fieldTip = this.slider.find('[name=hasTip]').on('click', this.updateSlider);
-    this.fieldTheme = this.slider.find('[name=theme]').on('click', this.updateSlider);
-    this.fieldType = this.slider.find('[name=hasInterval]').on('click', this.updateSlider);
-    this.fieldView = this.slider.find('[name=isVertical]').on('click', this.updateSlider);
+    this.fieldFirstValue = this.slider.find('[name=firstValue]');
+    this.fieldSecondValue = this.slider.find('[name=secondValue]');
+    this.fieldMin = this.slider.find('[name=min]');
+    this.fieldMax = this.slider.find('[name=max]');
+    this.fieldStep = this.slider.find('[name=step]');
+    this.fieldScale = this.slider.find('[name=hasScale]');
+    this.fieldTip = this.slider.find('[name=hasTip]');
+    this.fieldTheme = this.slider.find('[name=theme]');
+    this.fieldType = this.slider.find('[name=hasInterval]');
+    this.fieldView = this.slider.find('[name=isVertical]');
+  }
+
+  private addEventListeners() {
+    const updateSliderFunction = this.updateSlider;
+
+    this.slider.find('input').each(function () {
+      const elem = $(this);
+
+      if (elem .prop('type') === 'text') elem.on('blur', updateSliderFunction);
+      else elem.on('click', updateSliderFunction);
+    });
   }
 
   private init(): void {

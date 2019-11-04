@@ -16,7 +16,6 @@ declare global {
   $.fn.rangeSlider = function (parameters: IParameters = {}): JQuery<HTMLElement> {
     const basicParameters: IParameters = {
       firstValue: 0,
-      firstValuePercent: null,
       min: 0,
       max: 100,
       step: 1,
@@ -26,8 +25,6 @@ declare global {
       isVertical: false,
       theme: 'aqua',
       secondValue: null,
-      secondValuePercent: null,
-      scaleValues: null,
       onChange: null,
     };
 

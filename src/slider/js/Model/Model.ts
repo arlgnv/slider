@@ -3,11 +3,12 @@
 import EventEmitter from '../EventEmitter/EventEmitter';
 import IModel from '../Interfaces/Model/IModel';
 import IParameters from '../Interfaces/IParameters';
+import IFullParameters from '../Interfaces/IFullParameters';
 import { IRunnerParameters, instanceOfIRunnerParameters } from '../Interfaces/IRunnerParameters';
 import { IScaleParameters, instanceOfIScaleParameters } from '../Interfaces/IScaleParameters';
 
 export default class Model extends EventEmitter implements IModel {
-  private state: IParameters;
+  private state: IFullParameters;
 
   constructor(parameters: IParameters) {
     super(); // console.log(this.state);
@@ -25,16 +26,16 @@ export default class Model extends EventEmitter implements IModel {
     return this.state;
   }
 
-  private validateParameters(parameters: IParameters | IRunnerParameters | IScaleParameters): IParameters {
-    let { firstValue, secondValue, firstValuePercent, secondValuePercent, min, max,  hasInterval,
-      step, theme, hasTip, hasScale, scaleValues, isVertical, onChange } = <IParameters>parameters;
+  private validateParameters(parameters: IParameters | IRunnerParameters | IScaleParameters): IFullParameters {
+    let { firstValue, secondValue, min, max,  hasInterval,
+      step, theme, hasTip, hasScale, isVertical, onChange } = <IParameters>parameters;
 
     if (instanceOfIRunnerParameters(parameters)) {
       const { firstPositionPercent, secondPositionPercent } = parameters;
 
-      firstValue = firstPositionPercent
+      firstValue = 'firstPositionPercent' in parameters
         ? this.convertValueFromPercentToNum(firstPositionPercent, min, max) : firstValue;
-      secondValue = secondPositionPercent
+      secondValue = 'secondPositionPercent' in parameters
         ? this.convertValueFromPercentToNum(secondPositionPercent, min, max) : secondValue;
 
       [firstValue, secondValue] =
@@ -63,9 +64,9 @@ export default class Model extends EventEmitter implements IModel {
         this.validateValues({ firstValue, secondValue, min, max, step, hasInterval });
     }
 
-    firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
-    secondValuePercent = hasInterval ? this.convertValueToPercent(secondValue, min,  max) : null;
-    scaleValues = hasScale ? this.getScaleValues(min, max, step) : null;
+    const firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
+    const secondValuePercent = hasInterval ? this.convertValueToPercent(secondValue, min,  max) : null;
+    const scaleValues = hasScale ? this.getScaleValues(min, max, step) : null;
 
     return {firstValue, secondValue, firstValuePercent, secondValuePercent,
       min, max, step, theme, hasInterval, hasTip, hasScale, scaleValues, isVertical, onChange };
@@ -141,7 +142,7 @@ export default class Model extends EventEmitter implements IModel {
     return Math.round(min + (value * (max - min)) / 100);
   }
 
-  private getScaleValues(min: number, max: number, step: number): object {
+  private getScaleValues(min: number, max: number, step: number): {[key: string]: number} {
     let values = { [min]: 0 };
 
     for (let i: number = min + step; i < max; i += step) {
