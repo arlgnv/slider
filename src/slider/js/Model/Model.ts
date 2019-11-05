@@ -9,17 +9,23 @@ import { IScaleParameters, instanceOfIScaleParameters } from '../Interfaces/ISca
 
 export default class Model extends EventEmitter implements IModel {
   private state: IFullParameters;
+  private prevState: IFullParameters;
 
   constructor(parameters: IParameters) {
     super(); // console.log(this.state);
 
     this.state = this.validateParameters(parameters);
+    this.prevState = this.state;
   }
 
   public updateState(parameters: IParameters | IRunnerParameters | IScaleParameters): void {
+    this.prevState = this.state;
     this.state = this.validateParameters({ ...this.state, ...parameters });
 
-    this.notify('updateState', this.state);
+    const changed: IFullParameters = {};
+    for (const key in this.state) if (!(this.state[key] === this.prevState[key])) changed[key] = this.state[key];
+
+    this.notify('updateState', this.state, changed);
   }
 
   public getState(): IParameters {
@@ -66,10 +72,9 @@ export default class Model extends EventEmitter implements IModel {
 
     const firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
     const secondValuePercent = hasInterval ? this.convertValueToPercent(secondValue, min,  max) : null;
-    const scaleValues = hasScale ? this.getScaleValues(min, max, step) : null;
 
     return {firstValue, secondValue, firstValuePercent, secondValuePercent,
-      min, max, step, theme, hasInterval, hasTip, hasScale, scaleValues, isVertical, onChange };
+      min, max, step, theme, hasInterval, hasTip, hasScale, isVertical, onChange };
   }
 
   private validateMinMax(minMax: IParameters): number[] {
@@ -140,15 +145,5 @@ export default class Model extends EventEmitter implements IModel {
 
   private convertValueFromPercentToNum(value: number, min: number, max: number): number {
     return Math.round(min + (value * (max - min)) / 100);
-  }
-
-  private getScaleValues(min: number, max: number, step: number): {[key: string]: number} {
-    let values = { [min]: 0 };
-
-    for (let i: number = min + step; i < max; i += step) {
-      values = { ...values, ...{ [i]: this.convertValueToPercent(i, min, max) } };
-    }
-
-    return { ...values, ...{ [max]: 100 } };
   }
 }

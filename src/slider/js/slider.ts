@@ -8,12 +8,12 @@ declare global {
   }
 
   interface JQuery {
-    rangeSlider(parameters?: IParameters): JQuery<HTMLElement>;
+    rangeSlider(parameters?: IParameters): JQuery;
   }
 }
 
 (function ($: JQueryStatic): void {
-  $.fn.rangeSlider = function (parameters: IParameters = {}): JQuery<HTMLElement> {
+  $.fn.rangeSlider = function (parameters: IParameters = {}): JQuery {
     const basicParameters: IParameters = {
       firstValue: 0,
       min: 0,

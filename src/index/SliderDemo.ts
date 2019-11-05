@@ -19,6 +19,7 @@ export default class SliderDemo {
 
   constructor(slider: JQuery<HTMLElement>, parameters: IParameters) {
     this.parameters = parameters;
+    this.parameters.onChange = this.handleSliderChange;
 
     this.findDOMElements(slider);
     this.addEventListeners();
@@ -55,7 +56,6 @@ export default class SliderDemo {
     this.sliderElement.rangeSlider(this.parameters);
 
     this.sliderData = this.sliderElement.data('rangeSlider');
-    this.sliderData.update({ onChange: this.handleSliderChange });
   }
 
   private handleSliderChange = (parameters: IParameters): void => {

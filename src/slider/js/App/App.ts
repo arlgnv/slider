@@ -9,7 +9,7 @@ export default class App implements IApp {
   private view: SliderView;
   private presenter: Presenter;
 
-  constructor(anchorElement: JQuery<HTMLElement>, parameters: IParameters) {
+  constructor(anchorElement: JQuery, parameters: IParameters) {
     this.model = new Model(parameters);
     this.view = new SliderView(anchorElement, this.model.getState());
     this.presenter = new Presenter(this.model, this.view);

@@ -12,12 +12,13 @@ export default class Presenter implements IPresenter {
 
     this.subscribeForUpdates();
 
-    this.view.redrawView(this.model.getState());
+    this.view.redrawView(this.model.getState(), this.model.getState());
   }
 
   public subscribeForUpdates(): void {
     this.view.subscribe('moveRunner', this.handleRunnerMove);
     this.view.subscribe('clickScale', this.handleScaleClick);
+    this.view.subscribe('windowResize', this.handleWindowResize);
     this.model.subscribe('updateState', this.handleModelUpdate);
   }
 
@@ -28,5 +29,8 @@ export default class Presenter implements IPresenter {
     (parameters: IScaleParameters): void => this.model.updateState(parameters)
 
   private handleModelUpdate =
-    (parameters: IFullParameters): void => this.view.redrawView(parameters)
+    (parameters: IFullParameters, changed?: IFullParameters): void => this.view.redrawView(parameters, changed)
+
+  private handleWindowResize =
+    (): void => this.view.redrawView(this.model.getState(), this.model.getState())
 }
