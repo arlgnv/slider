@@ -9,23 +9,17 @@ import { IScaleParameters, instanceOfIScaleParameters } from '../Interfaces/ISca
 
 export default class Model extends EventEmitter implements IModel {
   private state: IFullParameters;
-  private prevState: IFullParameters;
 
   constructor(parameters: IParameters) {
     super(); // console.log(this.state);
 
     this.state = this.validateParameters(parameters);
-    this.prevState = this.state;
   }
 
   public updateState(parameters: IParameters | IRunnerParameters | IScaleParameters): void {
-    this.prevState = this.state;
     this.state = this.validateParameters({ ...this.state, ...parameters });
 
-    const changed: IFullParameters = {};
-    for (const key in this.state) if (!(this.state[key] === this.prevState[key])) changed[key] = this.state[key];
-
-    this.notify('updateState', this.state, changed);
+    this.notify('updateState', this.state);
   }
 
   public getState(): IParameters {
@@ -90,7 +84,7 @@ export default class Model extends EventEmitter implements IModel {
     let { firstValue, secondValue } = parameters;
     const { min, max, step, hasInterval } = parameters;
 
-    firstValue = typeof firstValue !== 'number' ? min : Math.round(firstValue);
+    firstValue = typeof firstValue !== 'number' ? min : firstValue;
 
     firstValue = firstValue !== min && firstValue !== max
       ? this.correctValueWithStep(firstValue, step, min) : firstValue;
@@ -99,7 +93,7 @@ export default class Model extends EventEmitter implements IModel {
     firstValue = firstValue > max ? max : firstValue;
 
     if (hasInterval) {
-      secondValue = typeof secondValue !== 'number' ? max : Math.round(secondValue);
+      secondValue = typeof secondValue !== 'number' ? max : secondValue;
 
       secondValue = secondValue !== max
         ? this.correctValueWithStep(secondValue, step, min) : secondValue;
@@ -136,7 +130,7 @@ export default class Model extends EventEmitter implements IModel {
   }
 
   private correctValueWithStep(value: number, step: number, min: number): number {
-    return Math.round((Math.round((value - min) / step) * step + min));
+    return (Math.round((value - min) / step) * step + min);
   }
 
   private convertValueToPercent(value: number, min: number, max: number): number {
@@ -144,6 +138,6 @@ export default class Model extends EventEmitter implements IModel {
   }
 
   private convertValueFromPercentToNum(value: number, min: number, max: number): number {
-    return Math.round(min + (value * (max - min)) / 100);
+    return min + (value * (max - min)) / 100;
   }
 }

@@ -12,7 +12,7 @@ export default class Presenter implements IPresenter {
 
     this.subscribeForUpdates();
 
-    this.view.redrawView(this.model.getState(), this.model.getState());
+    this.view.updateView(this.model.getState());
   }
 
   public subscribeForUpdates(): void {
@@ -29,8 +29,7 @@ export default class Presenter implements IPresenter {
     (parameters: IScaleParameters): void => this.model.updateState(parameters)
 
   private handleModelUpdate =
-    (parameters: IFullParameters, changed?: IFullParameters): void => this.view.redrawView(parameters, changed)
+    (parameters: IFullParameters): void => this.view.updateView(parameters)
 
-  private handleWindowResize =
-    (): void => this.view.redrawView(this.model.getState(), this.model.getState())
+  private handleWindowResize = (): void => this.view.updateView(this.model.getState());
 }
