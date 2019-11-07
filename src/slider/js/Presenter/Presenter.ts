@@ -1,9 +1,9 @@
 import Model from '../Model/Model';
 import SliderView from '../View/SliderView';
 import IPresenter from '../Interfaces/Presenter/IPresenter';
-import IFullParameters from '../Interfaces/IFullParameters';
-import { IRunnerParameters } from '../Interfaces/IRunnerParameters';
-import { IScaleParameters } from '../Interfaces/IScaleParameters';
+import IParameters from '../Interfaces/IParameters';
+import IRunnerParameters from '../Interfaces/IRunnerParameters';
+import IScaleParameters from '../Interfaces/IScaleParameters';
 
 export default class Presenter implements IPresenter {
   constructor(private model: Model, private view: SliderView) {
@@ -11,8 +11,6 @@ export default class Presenter implements IPresenter {
     this.view = view;
 
     this.subscribeForUpdates();
-
-    this.view.updateView(this.model.getState());
   }
 
   public subscribeForUpdates(): void {
@@ -23,13 +21,14 @@ export default class Presenter implements IPresenter {
   }
 
   private handleRunnerMove =
-    (parameters: IRunnerParameters): void => this.model.updateState(parameters)
+    (parameters: IRunnerParameters): void => this.model.updateState({ ...parameters, condition: 'afterUpdatePercent' })
 
   private handleScaleClick =
-    (parameters: IScaleParameters): void => this.model.updateState(parameters)
+    (parameters: IScaleParameters): void => this.model.updateState({ ...parameters, condition: 'afterUpdateSingleValue' })
 
   private handleModelUpdate =
-    (parameters: IFullParameters): void => this.view.updateView(parameters)
+    (parameters: IParameters): void => this.view.updateSlider(parameters)
 
-  private handleWindowResize = (): void => this.view.updateView(this.model.getState());
+  private handleWindowResize =
+    (): void => this.view.updateSlider({ ...this.model.getState(), condition: 'afterUpdateState' })
 }

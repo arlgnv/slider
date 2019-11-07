@@ -1,22 +1,20 @@
-// tslint:disable:max-line-length
-
 import EventEmitter from '../EventEmitter/EventEmitter';
 import IModel from '../Interfaces/Model/IModel';
 import IParameters from '../Interfaces/IParameters';
-import IFullParameters from '../Interfaces/IFullParameters';
-import { IRunnerParameters, instanceOfIRunnerParameters } from '../Interfaces/IRunnerParameters';
-import { IScaleParameters, instanceOfIScaleParameters } from '../Interfaces/IScaleParameters';
+import IRunnerParameters from '../Interfaces/IRunnerParameters';
+import IScaleParameters from '../Interfaces/IScaleParameters';
+import IUpdateParameters from '../Interfaces/IUpdateParameters';
 
 export default class Model extends EventEmitter implements IModel {
-  private state: IFullParameters;
+  private state: IParameters;
 
   constructor(parameters: IParameters) {
-    super(); // console.log(this.state);
+    super();
 
-    this.state = this.validateParameters(parameters);
+    this.state = this.validateParameters({ ...parameters, condition: 'afterUpdateState' });
   }
 
-  public updateState(parameters: IParameters | IRunnerParameters | IScaleParameters): void {
+  public updateState(parameters: IUpdateParameters | IRunnerParameters | IScaleParameters): void {
     this.state = this.validateParameters({ ...this.state, ...parameters });
 
     this.notify('updateState', this.state);
@@ -26,107 +24,106 @@ export default class Model extends EventEmitter implements IModel {
     return this.state;
   }
 
-  private validateParameters(parameters: IParameters | IRunnerParameters | IScaleParameters): IFullParameters {
-    let { firstValue, secondValue, min, max,  hasInterval,
-      step, theme, hasTip, hasScale, isVertical, onChange } = <IParameters>parameters;
+  private validateParameters(
+    parameters: IUpdateParameters | IRunnerParameters | IScaleParameters): IParameters {
+    let validatedParameters: IParameters;
 
-    if (instanceOfIRunnerParameters(parameters)) {
-      const { firstPositionPercent, secondPositionPercent } = parameters;
+    switch (parameters.condition) {
+      case 'afterUpdateState':
+        validatedParameters = this.validateParametersAfterUpdateState(parameters);
+        break;
+      case 'afterUpdatePercent':
+        validatedParameters = this.validateParametersAfterUpdatePercent(parameters);
+        break;
+      case 'afterUpdateSingleValue':
+        validatedParameters = this.validateParametersAfterUpdateSingleValue(parameters);
+      default: break;
+    }
 
-      firstValue = 'firstPositionPercent' in parameters
-        ? this.convertValueFromPercentToNum(firstPositionPercent, min, max) : firstValue;
-      secondValue = 'secondPositionPercent' in parameters
-        ? this.convertValueFromPercentToNum(secondPositionPercent, min, max) : secondValue;
+    const { firstValue, secondValue, min, max, hasInterval } = validatedParameters;
+    validatedParameters.firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
+    validatedParameters.secondValuePercent =
+      hasInterval === true ? this.convertValueToPercent(secondValue, min,  max) : null;
 
-      [firstValue, secondValue] =
-        this.validateValues({ firstValue, secondValue, min, max, step, hasInterval });
-    } else if (instanceOfIScaleParameters(parameters)) {
-      const { scaleValue } = parameters;
+    return validatedParameters;
+  }
 
-      if (hasInterval) {
+  private validateParametersAfterUpdateState(parameters: IParameters): IParameters {
+    const step = this.validateStepValue(parameters.step);
+    const { min, max } = this.validateMinMax(parameters);
+    const { firstValue, secondValue } = this.validateValues({ ...parameters, min, max });
+
+    return { ...parameters, step, min, max, firstValue, secondValue };
+  }
+
+  private validateParametersAfterUpdatePercent(parameters: IRunnerParameters): IParameters {
+    const { firstPositionPercent, secondPositionPercent, min, max } = parameters;
+    let { firstValue, secondValue } = parameters;
+
+    firstValue = 'firstPositionPercent' in parameters
+      ? this.convertValueFromPercentToNum(firstPositionPercent, min, max) : firstValue;
+    secondValue = 'secondPositionPercent' in parameters
+      ? this.convertValueFromPercentToNum(secondPositionPercent, min, max) : secondValue;
+
+    delete parameters.firstPositionPercent;
+    delete parameters.secondPositionPercent;
+
+    return { ...parameters, ...this.validateValues({ ...parameters, firstValue, secondValue }) };
+  }
+
+  private validateParametersAfterUpdateSingleValue(parameters: IScaleParameters): IParameters {
+    const { scaleValue, hasInterval } = parameters;
+    let { firstValue, secondValue } = parameters;
+
+    switch (hasInterval) {
+      case true:
         const isFirstValueNearer =
-        (Math.max(firstValue, scaleValue) - Math.min(firstValue, scaleValue))
-          < (Math.max(secondValue, scaleValue) - Math.min(secondValue, scaleValue));
+          (Math.max(firstValue, scaleValue) - Math.min(firstValue, scaleValue))
+          <= (Math.max(secondValue, scaleValue) - Math.min(secondValue, scaleValue));
 
         if (isFirstValueNearer) firstValue = scaleValue;
         else secondValue = scaleValue;
-      } else firstValue = scaleValue;
-    } else {
-      [min, max] = this.validateMinMax({ min, max });
-      step = this.validateStepValue(step);
-      theme = this.validateThemeValue(theme);
-      isVertical = this.validateBooleanType(isVertical);
-      hasTip = this.validateBooleanType(hasTip);
-      hasInterval = this.validateBooleanType(hasInterval);
-      onChange = this.validateFunctionValue(onChange);
-      hasScale = this.validateBooleanType(hasScale);
-      [firstValue, secondValue] =
-        this.validateValues({ firstValue, secondValue, min, max, step, hasInterval });
+        break;
+      default:
+        firstValue = scaleValue;
+        break;
     }
 
-    const firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
-    const secondValuePercent = hasInterval ? this.convertValueToPercent(secondValue, min,  max) : null;
+    delete parameters.scaleValue;
 
-    return {firstValue, secondValue, firstValuePercent, secondValuePercent,
-      min, max, step, theme, hasInterval, hasTip, hasScale, isVertical, onChange };
+    return { ...parameters, firstValue, secondValue };
   }
 
-  private validateMinMax(minMax: IParameters): number[] {
-    let { min, max } = minMax;
-
-    min = typeof min !== 'number' ? 0 : Math.round(min);
-    max = typeof max !== 'number' ? 100 : Math.round(max);
-
-    return min > max ? [Math.min(max, min), Math.max(max, min)] : [min, max];
+  private validateMinMax({ min, max }: IParameters): IParameters {
+    return min > max
+      ? { min: Math.round(Math.min(max, min)), max: Math.round(Math.max(max, min)) }
+      : { min: Math.round(min), max: Math.round(max) };
   }
 
-  private validateValues(parameters: IParameters): number[] {
-    let { firstValue, secondValue } = parameters;
-    const { min, max, step, hasInterval } = parameters;
+  private validateValues({firstValue: first, secondValue: second,
+    min, max, step, hasInterval }: IParameters): IParameters {
+    let [firstValue, secondValue] = [first, second];
 
-    firstValue = typeof firstValue !== 'number' ? min : firstValue;
-
-    firstValue = firstValue !== min && firstValue !== max
+    firstValue = firstValue !== min && firstValue < max
       ? this.correctValueWithStep(firstValue, step, min) : firstValue;
-
-    firstValue = firstValue < min ? min : firstValue;
     firstValue = firstValue > max ? max : firstValue;
 
-    if (hasInterval) {
-      secondValue = typeof secondValue !== 'number' ? max : secondValue;
-
+    if (hasInterval === true) {
+      secondValue = secondValue === null ? max : secondValue;
       secondValue = secondValue !== max
         ? this.correctValueWithStep(secondValue, step, min) : secondValue;
-
-      secondValue = secondValue < min ? min : secondValue;
-      secondValue = secondValue > max ? max : secondValue;
+      secondValue = secondValue > max || secondValue < min ? max : secondValue;
 
       [firstValue, secondValue] = firstValue > secondValue
         ? [Math.min(firstValue, secondValue), Math.max(firstValue, secondValue)]
         : [firstValue, secondValue];
-    } else secondValue = null;
+    }
 
-    return [firstValue, secondValue];
+    return { firstValue, secondValue };
   }
 
   private validateStepValue(value: number): number {
-    const isStepInvalid = typeof value !== 'number' || value < 1;
-
-    return isStepInvalid ? 1 : Math.round(value);
-  }
-
-  private validateThemeValue(theme: string): string {
-    const isThemeInvalid = theme !== 'aqua' && theme !== 'red';
-
-    return isThemeInvalid ? 'aqua' : theme;
-  }
-
-  private validateBooleanType(value: boolean): boolean {
-    return typeof value !== 'boolean' ? false : value;
-  }
-
-  private validateFunctionValue(value: Function): null | Function {
-    return typeof value !== 'function' ? null : value;
+    return value < 1 ? 1 : Math.round(value);
   }
 
   private correctValueWithStep(value: number, step: number, min: number): number {

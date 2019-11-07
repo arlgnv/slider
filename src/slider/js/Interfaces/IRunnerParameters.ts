@@ -1,10 +1,7 @@
-interface IRunnerParameters {
+import IParameters from './IParameters';
+
+export default interface IRunnerParameters extends IParameters {
+  condition?: 'afterUpdatePercent';
   firstPositionPercent?: number;
   secondPositionPercent?: number;
 }
-
-function instanceOfIRunnerParameters(object: object): object is IRunnerParameters {
-  return 'firstPositionPercent' in object || 'secondPositionPercent' in object;
-}
-
-export { IRunnerParameters, instanceOfIRunnerParameters };

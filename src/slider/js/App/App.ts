@@ -7,15 +7,14 @@ import IParameters from '../Interfaces/IParameters';
 export default class App implements IApp {
   private model: Model;
   private view: SliderView;
-  private presenter: Presenter;
 
   constructor(anchorElement: JQuery, parameters: IParameters) {
     this.model = new Model(parameters);
     this.view = new SliderView(anchorElement, this.model.getState());
-    this.presenter = new Presenter(this.model, this.view);
+    new Presenter(this.model, this.view);
   }
 
   update(parameters: IParameters = {}): void {
-    this.model.updateState(parameters);
+    this.model.updateState({ ...parameters, condition: 'afterUpdateState' });
   }
 }

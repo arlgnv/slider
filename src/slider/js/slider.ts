@@ -14,7 +14,7 @@ declare global {
 
 (function ($: JQueryStatic): void {
   $.fn.rangeSlider = function (parameters: IParameters = {}): JQuery {
-    const basicParameters: IParameters = {
+    const defaultParameters: IParameters = {
       firstValue: 0,
       min: 0,
       max: 100,
@@ -29,7 +29,7 @@ declare global {
     };
 
     return this.each(function (): void {
-      $.data(this, 'rangeSlider', new App($(this), { ...basicParameters, ...parameters }));
+      $.data(this, 'rangeSlider', new App($(this), { ...defaultParameters, ...parameters }));
     });
   };
 })(window.$);

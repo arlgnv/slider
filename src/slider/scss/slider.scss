@@ -1,4 +1,4 @@
-@import './variables';
+@import './colors';
 
 .lrs {
   $root: &;
@@ -28,8 +28,7 @@
     transform: translateY(-50%);
     cursor: grab;
 
-    &:first-child,
-    &:first-child + #{$root}__tip {
+    &:first-child {
       z-index: 1;
     }
 
@@ -37,8 +36,7 @@
       cursor: grabbing;
     }
 
-    &_last-grabbed,
-    &_last-grabbed + #{$root}__tip {
+    &_last-grabbed {
       z-index: 2;
     }
 
@@ -49,12 +47,14 @@
 
   &__tip {
     position: absolute;
-    top: -3.1571rem;
+    left: 50%;
+    top: -2.8571rem;
     padding: 0.3571rem 0.5714rem;
     color: $white-color-100;
     font-size: 1rem;
     line-height: normal;
     border-radius: 0.3571rem;
+    transform: translateX(-50%);
 
     &::before {
       content: '';
@@ -112,9 +112,10 @@
     }
 
     #{$root}__tip {
-      top: auto;
-      left: 1.7286rem;
+      top: 50%;
+      left: 2.3286rem;
       padding: 0.2857rem 0.5714rem;
+      transform: translateY(-50%);
 
       &::before {
         left: -0.2857rem;

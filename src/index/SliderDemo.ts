@@ -3,21 +3,21 @@ import IParameters from '../slider/js/Interfaces/IParameters';
 
 export default class SliderDemo {
   private parameters: IParameters;
-  private slider: JQuery<HTMLElement>;
+  private slider: JQuery;
   private sliderData: IApp;
-  private sliderElement: JQuery<HTMLElement>;
-  private fieldFirstValue: JQuery<HTMLElement>;
-  private fieldSecondValue: JQuery<HTMLElement>;
-  private fieldMin: JQuery<HTMLElement>;
-  private fieldMax: JQuery<HTMLElement>;
-  private fieldStep: JQuery<HTMLElement>;
-  private fieldScale: JQuery<HTMLElement>;
-  private fieldTip: JQuery<HTMLElement>;
-  private fieldTheme: JQuery<HTMLElement>;
-  private fieldType: JQuery<HTMLElement>;
-  private fieldView: JQuery<HTMLElement>;
+  private sliderElement: JQuery;
+  private fieldFirstValue: JQuery;
+  private fieldSecondValue: JQuery;
+  private fieldMin: JQuery;
+  private fieldMax: JQuery;
+  private fieldStep: JQuery;
+  private fieldScale: JQuery;
+  private fieldTip: JQuery;
+  private fieldTheme: JQuery;
+  private fieldType: JQuery;
+  private fieldView: JQuery;
 
-  constructor(slider: JQuery<HTMLElement>, parameters: IParameters) {
+  constructor(slider: JQuery, parameters: IParameters) {
     this.parameters = parameters;
     this.parameters.onChange = this.handleSliderChange;
 
@@ -26,7 +26,7 @@ export default class SliderDemo {
     this.init();
   }
 
-  private findDOMElements(slider: JQuery<HTMLElement>): void {
+  private findDOMElements(slider: JQuery): void {
     this.slider = slider;
     this.sliderElement = this.slider.find('.slider__field').first();
     this.fieldFirstValue = this.slider.find('[name=firstValue]');
@@ -75,7 +75,7 @@ export default class SliderDemo {
   }
 
   private updateSlider = (evt: JQuery.ClickEvent): void => {
-    const $target: JQuery<HTMLElement> = $(evt.currentTarget);
+    const $target: JQuery = $(evt.currentTarget);
     const elemType = $target.attr('type');
 
     if (elemType === 'text') this.sliderData.update({ [$target.attr('name')]: +$target.val() });
