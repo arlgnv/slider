@@ -1,5 +1,5 @@
 import Model from '../Model/Model';
-import SliderView from '../View/SliderView';
+import SliderView from '../View/Slider/SliderView';
 import IPresenter from '../Interfaces/Presenter/IPresenter';
 import IParameters from '../Interfaces/IParameters';
 import IRunnerParameters from '../Interfaces/IRunnerParameters';
@@ -10,10 +10,10 @@ export default class Presenter implements IPresenter {
     this.model = model;
     this.view = view;
 
-    this.subscribeForUpdates();
+    this.subscribeToUpdates();
   }
 
-  public subscribeForUpdates(): void {
+  public subscribeToUpdates(): void {
     this.view.subscribe('moveRunner', this.handleRunnerMove);
     this.view.subscribe('clickScale', this.handleScaleClick);
     this.view.subscribe('windowResize', this.handleWindowResize);

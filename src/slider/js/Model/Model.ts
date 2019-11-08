@@ -51,9 +51,9 @@ export default class Model extends EventEmitter implements IModel {
   private validateParametersAfterUpdateState(parameters: IParameters): IParameters {
     const step = this.validateStepValue(parameters.step);
     const { min, max } = this.validateMinMax(parameters);
-    const { firstValue, secondValue } = this.validateValues({ ...parameters, min, max });
+    const { firstValue, secondValue } = this.validateValues({ ...parameters, step, min, max });
 
-    return { ...parameters, step, min, max, firstValue, secondValue };
+    return { ...parameters, firstValue, secondValue, min, max, step };
   }
 
   private validateParametersAfterUpdatePercent(parameters: IRunnerParameters): IParameters {
@@ -72,26 +72,22 @@ export default class Model extends EventEmitter implements IModel {
   }
 
   private validateParametersAfterUpdateSingleValue(parameters: IScaleParameters): IParameters {
-    const { scaleValue, hasInterval } = parameters;
+    const { scaleValue } = parameters;
     let { firstValue, secondValue } = parameters;
 
-    switch (hasInterval) {
-      case true:
-        const isFirstValueNearer =
-          (Math.max(firstValue, scaleValue) - Math.min(firstValue, scaleValue))
-          <= (Math.max(secondValue, scaleValue) - Math.min(secondValue, scaleValue));
+    if (parameters.hasInterval === true) {
+      const isFirstValueNearer =
+        (Math.max(firstValue, scaleValue) - Math.min(firstValue, scaleValue))
+        < (Math.max(secondValue, scaleValue) - Math.min(secondValue, scaleValue));
 
-        if (isFirstValueNearer) firstValue = scaleValue;
-        else secondValue = scaleValue;
-        break;
-      default:
-        firstValue = scaleValue;
-        break;
-    }
+      if (isFirstValueNearer) firstValue = scaleValue;
+      else secondValue = scaleValue;
+    } else firstValue = scaleValue;
 
     delete parameters.scaleValue;
 
-    return { ...parameters, firstValue, secondValue };
+    return {
+      ...parameters, ...this.validateValues({ ...parameters, firstValue, secondValue }) };
   }
 
   private validateMinMax({ min, max }: IParameters): IParameters {
@@ -106,13 +102,13 @@ export default class Model extends EventEmitter implements IModel {
 
     firstValue = firstValue !== min && firstValue < max
       ? this.correctValueWithStep(firstValue, step, min) : firstValue;
-    firstValue = firstValue > max ? max : firstValue;
+    firstValue = firstValue > max ? max : firstValue < min ? min : firstValue;
 
     if (hasInterval === true) {
       secondValue = secondValue === null ? max : secondValue;
       secondValue = secondValue !== max
         ? this.correctValueWithStep(secondValue, step, min) : secondValue;
-      secondValue = secondValue > max || secondValue < min ? max : secondValue;
+      secondValue = secondValue > max ? max : secondValue < min ? min : secondValue;
 
       [firstValue, secondValue] = firstValue > secondValue
         ? [Math.min(firstValue, secondValue), Math.max(firstValue, secondValue)]
