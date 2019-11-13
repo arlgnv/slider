@@ -1,5 +1,5 @@
-import IParameters from '../IParameters';
+import IFullParameters from '../IFullParameters';
 
 export default interface ISliderView {
-  updateSlider(parameters: IParameters): void;
+  updateSlider(parameters: IFullParameters): void;
 }

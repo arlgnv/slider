@@ -3,7 +3,7 @@ import RunnerView from '../Runner/RunnerView';
 import BarView from '../Bar/BarView';
 import ScaleView from '../Scale/ScaleView';
 import ISliderView from '../../Interfaces/View/ISliderView';
-import IParameters from '../../Interfaces/IParameters';
+import IFullParameters from '../../Interfaces/IFullParameters';
 import sliderTemplateHbs from './sliderTemplate.hbs';
 
 export default class SliderView extends EventEmitter implements ISliderView {
@@ -13,7 +13,7 @@ export default class SliderView extends EventEmitter implements ISliderView {
   private runnerTo?: RunnerView;
   private scale?: ScaleView;
 
-  constructor($anchorElement: JQuery, parameters: IParameters) {
+  constructor($anchorElement: JQuery, parameters: IFullParameters) {
     super();
 
     $anchorElement.before(sliderTemplateHbs(parameters));
@@ -22,187 +22,135 @@ export default class SliderView extends EventEmitter implements ISliderView {
     this.init(parameters);
   }
 
-  updateSlider(parameters: IParameters): void {
-    const { firstValue, firstValuePercent, secondValue, secondValuePercent,
-      hasTip, hasScale, hasInterval, onChange, isVertical } = parameters;
+  updateSlider(parameters: IFullParameters): void {
+    const { hasInterval, onChange } = parameters;
 
+    if (parameters.condition === 'updatedOnPercent') this.updateSliderOnMoveRunner(parameters);
+    if (parameters.condition === 'updatedOnInteger') this.updateSliderOnUserActivity(parameters);
+
+    if (onChange) onChange(parameters);
+
+    const runnerFromPosition = this.runnerFrom.getPosition();
+    const runnerToPosition = hasInterval ? this.runnerTo.getPosition() : null;
+    this.bar.update(runnerFromPosition, runnerToPosition);
+  }
+
+  private updateSliderOnMoveRunner(parameters: IFullParameters): void {
+    const { firstValue, secondValue, firstValuePercent, secondValuePercent,
+      hasInterval } = parameters;
     const $movedRunner = this.$slider.find('.lrs__runner_grabbed');
 
-    if ($movedRunner.length) {
-      this.updateRunner($movedRunner,
-                        $movedRunner.is(this.runnerFrom) ? firstValuePercent : secondValuePercent);
-
-      if (hasTip) {
-        this.updateTip($movedRunner.find('.lrs__tip'),
-                       $movedRunner.is(this.runnerFrom) ? firstValue : secondValue);
+    if (hasInterval) {
+      if ($movedRunner.is(this.runnerFrom.getRunner())) {
+        this.runnerFrom.update(firstValuePercent, firstValue);
       }
-    } else {
-      // this.reinit(parameters);
-      this.updateDirection(parameters);
-      this.updateTheme(parameters);
-      this.runnerFrom.update(firstValuePercent, firstValue);
-      if (hasInterval) this.runnerTo.update(secondValuePercent, secondValue);
-      if (hasScale) this.scale.update(parameters);
-    }
 
-    this.bar.update(parameters);
-    if (onChange) onChange(parameters);
+      if ($movedRunner.is(this.runnerTo.getRunner())) {
+        this.runnerTo.update(secondValuePercent, secondValue);
+      }
+    } else this.runnerFrom.update(firstValuePercent, firstValue);
   }
 
-  getSliderSize(): number {
-    return this.$slider.hasClass('lrs_direction_vertical')
-      ? this.$slider.outerHeight() : this.$slider.outerWidth();
+  private updateSliderOnUserActivity(parameters: IFullParameters): void {
+    const {firstValue, firstValuePercent, secondValue, secondValuePercent,
+      hasInterval, hasScale, hasTip} = parameters;
+
+    const isNeedToReinit =
+      (this.runnerTo && !hasInterval) || (!this.runnerTo && hasInterval)
+      || (!this.scale && hasScale) || (this.scale && !hasScale)
+      || (this.$slider.find('.lrs__tip').length && !hasTip)
+      || (!this.$slider.find('.lrs__tip').length && hasTip);
+    if (isNeedToReinit) this.reinit(parameters);
+
+    this.updateDirection(parameters);
+    this.updateTheme(parameters);
+    this.runnerFrom.update(firstValuePercent, firstValue);
+    if (hasInterval) this.runnerTo.update(secondValuePercent, secondValue);
+    if (hasScale) this.scale.update(parameters);
   }
 
-  getRunnerFromPosition(): string {
-    return this.runnerFrom.getPosition();
-  }
-
-  getRunnerToPosition(): string {
-    return this.runnerTo.getPosition();
-  }
-
-  private init(parameters: IParameters): void {
+  private init(parameters: IFullParameters): void {
     const { hasInterval, hasScale } = parameters;
 
-    this.runnerFrom = new RunnerView(this, this.$slider, parameters);
-    this.bar = new BarView(this, this.$slider);
-    if (hasInterval) this.runnerTo = new RunnerView(this, this.$slider, parameters);
-    if (hasScale) this.scale = new ScaleView(this, this.$slider);
+    this.runnerFrom = new RunnerView(this.$slider, parameters);
+    this.bar = new BarView(this.$slider);
+    if (hasInterval) this.runnerTo = new RunnerView(this.$slider, parameters);
+    if (hasScale) this.scale = new ScaleView(this.$slider);
 
-    $(window).on('resize', () => this.notify('windowResize'));
-
+    this.subscribeToUpdates(parameters);
     this.updateSlider(parameters);
   }
 
-  private reinit({ hasTip, hasInterval, hasScale }: IParameters): void {
-    const isNeedToShowRunnerTo = !this.runnerTo && hasInterval;
-    if (isNeedToShowRunnerTo) {
-      this.bar.after('<span class="lrs__runner"></span>');
+  private subscribeToUpdates(parameters: IFullParameters): void {
+    const { hasInterval, hasScale } = parameters;
 
-      this.runnerTo = this.bar.next();
-      this.runnerTo.on('mousedown', this.handleRunnerMouseDown);
-    }
+    this.runnerFrom.subscribe('moveRunner', this.handleRunnerMove);
+    if (hasInterval) this.runnerTo.subscribe('moveRunner', this.handleRunnerMove);
+    if (hasScale) this.scale.subscribe('clickOnScale', this.handleScaleClick);
 
-    const isNeedToHideRunnerTo = this.runnerTo && !hasInterval;
-    if (isNeedToHideRunnerTo) {
-      this.runnerTo.remove();
-
-      delete this.runnerTo;
-    }
-
-    const isNeedToShowTipFrom = !this.tipFrom && hasTip;
-    if (isNeedToShowTipFrom) {
-      this.runnerFrom.append('<span class="lrs__tip"></span>');
-
-      this.tipFrom = this.runnerFrom.find(':first-child');
-    }
-
-    const isNeedToHideTipFrom = this.tipFrom && !hasTip;
-    if (isNeedToHideTipFrom) {
-      this.tipFrom.remove();
-
-      delete this.tipFrom;
-    }
-
-    const isNeedToShowTipTo = !this.tipTo && hasTip && hasInterval;
-    if (isNeedToShowTipTo) {
-      this.runnerTo.append('<span class="lrs__tip"></span>');
-
-      this.tipTo = this.runnerTo.find(':first-child');
-    }
-
-    const isNeedToHideTipTo = (this.tipTo && !hasTip) || (this.tipTo && !hasInterval);
-    if (isNeedToHideTipTo) {
-      this.tipTo.remove();
-
-      delete this.tipTo;
-    }
-
-    const isNeedToShowScale = !this.scale && hasScale;
-    if (isNeedToShowScale) {
-      this.slider.append('<span class="lrs__scale"></span>');
-
-      this.scale = this.slider.find('.lrs__scale');
-      this.scale.on('click', this.handleScaleClick);
-    }
-
-    const isNeedToHideScale = this.scale && !hasScale;
-    if (isNeedToHideScale) {
-      this.scale.remove();
-
-      delete this.scale;
-    }
+    $(window).on('resize', () => this.notify('windowResize'));
   }
 
-  private handleRunnerMouseDown = (evt: JQuery.MouseDownEvent): void => {
-    const $runner: JQuery = $(evt.currentTarget).addClass('lrs__runner_grabbed');
-    const cursorPosition = this.getCursorPosition($runner, evt.clientX, evt.clientY);
-    const metric = this.slider.hasClass('lrs_direction_vertical') ? 'outerHeight' : 'outerWidth';
+  private reinit(parameters: IFullParameters): void {
+    this.$slider.text('');
+    delete this.runnerFrom;
+    delete this.runnerTo;
+    delete this.bar;
+    delete this.scale;
+    this.init(parameters);
+  }
+
+  private handleRunnerMove = ({ runnerPosition, $runner }): void => {
+    const position = this.correctExtremeRunnerPositions($runner, runnerPosition);
+    const metric = this.$slider.hasClass('lrs_direction_vertical') ? 'outerHeight' : 'outerWidth';
+    const positionPercent = (position * 100) / (this.$slider[metric]() - $runner[metric]());
+    const updatedValue = $runner.is(this.runnerFrom.getRunner()) ? 'firstValue' : 'secondValue';
 
     if (this.runnerTo) this.correctZAxis($runner);
 
-    const handleWindowMouseMove = (event: JQuery.Event): void => {
-      let runnerPosition = this.getRunnerShift(cursorPosition, event.clientX, event.clientY);
-      runnerPosition = this.correctExtremeRunnerPositions($runner, runnerPosition);
-
-      this.notify('moveRunner', {
-        [$runner.is(this.runnerFrom) ? 'firstPositionPercent' : 'secondPositionPercent']:
-        (runnerPosition * 100) / (this.slider[metric]() - $runner[metric]()),
-      });
-    };
-
-    const handleWindowMouseUp = (): void => {
-      $runner.removeClass('lrs__runner_grabbed');
-
-      $(window).off('mousemove', handleWindowMouseMove).off('mouseup', handleWindowMouseUp);
-    };
-
-    $(window).on('mousemove', handleWindowMouseMove).on('mouseup', handleWindowMouseUp);
+    this.notify('interactWithRunner', {
+      updatedValue,
+      [$runner.is(this.runnerFrom.getRunner()) ? 'firstValue' : 'secondValue']: positionPercent,
+    });
   }
 
-  private handleScaleClick = (evt: JQuery.ClickEvent): void => {
-    const $target: JQuery = $(evt.target);
-
-    if ($target.hasClass('lrs__scale-mark')) {
-      this.notify('clickScale', { scaleValue: +$target.text() });
-    }
-  }
-
-  private getCursorPosition($target: JQuery, clientX: number, clientY: number): number {
-    return this.slider.hasClass('lrs_direction_vertical')
-      ? clientY + (parseFloat($target.css('bottom')) || 0) : clientX - (parseFloat($target.css('left')) || 0);
-  }
-
-  private getRunnerShift(position: number, clientX: number, clientY: number): number {
-    return this.slider.hasClass('lrs_direction_vertical') ? position - clientY : clientX - position;
+  private handleScaleClick = ({ position, value }): void => {
+    if (this.runnerTo) {
+      const runnerFromPosition = this.runnerFrom.getPosition();
+      const runnerToPosition = this.runnerTo.getPosition();
+      const isFirstValueNearer =
+         (Math.max(runnerFromPosition, position) - Math.min(runnerFromPosition, position))
+         < (Math.max(runnerToPosition, position) - Math.min(runnerToPosition, position));
+      if (isFirstValueNearer) this.notify('interactWithScale', { firstValue: value });
+      else this.notify('interactWithScale', { secondValue: value });
+    } else this.notify('interactWithScale', { firstValue: value });
   }
 
   private correctExtremeRunnerPositions($runner: JQuery, position: number): number {
-    const property = this.slider.hasClass('lrs_direction_vertical') ? 'bottom' : 'left';
-    const metric = this.slider.hasClass('lrs_direction_vertical') ? 'outerHeight' : 'outerWidth';
-    const minPosition = $runner.is(this.runnerFrom) ? 0 : parseFloat(this.runnerFrom.css(property));
-    const maxPosition = $runner.is(this.runnerFrom)
+    const isVertical = this.$slider.hasClass('lrs_direction_vertical');
+    const metric = isVertical ? 'outerHeight' : 'outerWidth';
+    const minPosition = $runner.is(this.runnerFrom.getRunner())
+      ? 0 : this.runnerFrom.getPosition();
+    const maxPosition = $runner.is(this.runnerFrom.getRunner())
       ? (this.runnerTo
-          ? parseFloat(this.runnerTo.css(property))
-          : this.slider[metric]() - $runner[metric]())
-      : this.slider[metric]() - $runner[metric]();
+          ? this.runnerTo.getPosition() : this.$slider[metric]() - $runner[metric]())
+      : this.$slider[metric]() - $runner[metric]();
 
     return position < minPosition ? minPosition : position > maxPosition ? maxPosition : position;
   }
 
   private correctZAxis($runner: JQuery): void {
-    this.runnerFrom.removeClass('lrs__runner_last-grabbed');
-    this.runnerTo.removeClass('lrs__runner_last-grabbed');
+    this.runnerFrom.getRunner().removeClass('lrs__runner_last-grabbed');
+    this.runnerTo.getRunner().removeClass('lrs__runner_last-grabbed');
 
     $runner.addClass('lrs__runner_last-grabbed');
   }
 
-  private updateTheme({ theme }: IParameters): void {
+  private updateTheme({ theme }: IFullParameters): void {
     this.$slider.addClass(`lrs_theme_${theme}`).removeClass(`lrs_theme_${theme === 'aqua' ? 'red' : 'aqua'}`);
   }
 
-  private updateDirection({ isVertical }: IParameters): void {
+  private updateDirection({ isVertical }: IFullParameters): void {
     if (isVertical) this.$slider.addClass('lrs_direction_vertical');
     if (!isVertical) this.$slider.removeClass('lrs_direction_vertical');
   }

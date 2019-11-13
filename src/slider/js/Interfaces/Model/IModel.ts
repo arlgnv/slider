@@ -1,8 +1,8 @@
-import IParameters from '../IParameters';
-import IRunnerParameters from '../IRunnerParameters';
-import IScaleParameters from '../IScaleParameters';
+import IFullParameters from '../IFullParameters';
+import IIntegerParameters from '../IIntegerParameters';
+import IPercentParameters from '../IPercentParameters';
 
 export default interface IModel {
-  updateState(parameters: IParameters | IRunnerParameters | IScaleParameters): void;
-  getState(): IParameters;
+  updateState(parameters: IIntegerParameters | IPercentParameters): void;
+  getState(): IFullParameters;
 }

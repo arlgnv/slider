@@ -1,5 +1,5 @@
 import IApp from '../slider/js/Interfaces/App/IApp';
-import IParameters from '../slider/js/Interfaces/IParameters';
+import IDefaultParameters from '../slider/js/Interfaces/IDefaultParameters';
 
 export default class SliderDemo {
   private parameters: IParameters;

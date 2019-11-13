@@ -1,9 +1,6 @@
-export default interface IParameters {
-  condition?: 'afterUpdateState' | 'afterUpdatePercent' | 'afterUpdateSingleValue';
+export default interface IDefaultParameters {
   firstValue?: number;
-  firstValuePercent?: number;
   secondValue?: number | null;
-  secondValuePercent?: number | null;
   min?: number;
   max?: number;
   step?: number;

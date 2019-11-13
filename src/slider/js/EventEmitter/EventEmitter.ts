@@ -14,7 +14,7 @@ export default class EventEmitter implements IEventEmitter {
     }
   }
 
-  public notify(type: string, ...args: any[]): void {
-    if (this.events[type]) this.events[type].forEach(cb => cb(...args));
+  public notify(type: string, arg?: Object): void {
+    if (this.events[type]) this.events[type].forEach(cb => cb(arg));
   }
 }

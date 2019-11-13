@@ -1,5 +1,5 @@
-import IParameters from '../IParameters';
+import IDefaultParameters from '../IDefaultParameters';
 
 export default interface IApp {
-  update(data: IParameters): void;
+  update(data: IDefaultParameters): void;
 }

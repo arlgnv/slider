@@ -1,121 +1,92 @@
 import EventEmitter from '../EventEmitter/EventEmitter';
 import IModel from '../Interfaces/Model/IModel';
-import IParameters from '../Interfaces/IParameters';
-import IRunnerParameters from '../Interfaces/IRunnerParameters';
-import IScaleParameters from '../Interfaces/IScaleParameters';
-import IUpdateParameters from '../Interfaces/IUpdateParameters';
+import IDefaultParameters from '../Interfaces/IDefaultParameters';
+import IFullParameters from '../Interfaces/IFullParameters';
+import IPercentParameters from '../Interfaces/IPercentParameters';
+import IIntegerParameters from '../Interfaces/IIntegerParameters';
 
 export default class Model extends EventEmitter implements IModel {
-  private state: IParameters;
+  private state: IFullParameters;
 
-  constructor(parameters: IParameters) {
+  constructor(parameters: IDefaultParameters) {
     super();
 
-    this.state = this.validateParameters({ ...parameters, condition: 'afterUpdateState' });
+    this.state = this.validateParameters({ ...parameters, condition: 'updatedOnInteger' });
   }
 
-  public updateState(parameters: IUpdateParameters | IRunnerParameters | IScaleParameters): void {
+  public updateState(parameters: IIntegerParameters | IPercentParameters): void {
     this.state = this.validateParameters({ ...this.state, ...parameters });
 
     this.notify('updateState', this.state);
   }
 
-  public getState(): IParameters {
+  public getState(): IFullParameters {
     return this.state;
   }
 
-  private validateParameters(
-    parameters: IUpdateParameters | IRunnerParameters | IScaleParameters): IParameters {
-    let validatedParameters: IParameters;
-
-    switch (parameters.condition) {
-      case 'afterUpdateState':
-        validatedParameters = this.validateParametersAfterUpdateState(parameters);
-        break;
-      case 'afterUpdatePercent':
-        validatedParameters = this.validateParametersAfterUpdatePercent(parameters);
-        break;
-      case 'afterUpdateSingleValue':
-        validatedParameters = this.validateParametersAfterUpdateSingleValue(parameters);
-      default: break;
+  private validateParameters(parameters: IIntegerParameters | IPercentParameters): IFullParameters {
+    if (parameters.condition === 'updatedOnInteger') {
+      return this.validateParametersWithInteger(parameters);
     }
 
-    const { firstValue, secondValue, min, max, hasInterval } = validatedParameters;
-    validatedParameters.firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
-    validatedParameters.secondValuePercent =
-      hasInterval === true ? this.convertValueToPercent(secondValue, min,  max) : null;
-
-    return validatedParameters;
+    if (parameters.condition === 'updatedOnPercent') {
+      return this.validateParametersWithPercent(parameters);
+    }
   }
 
-  private validateParametersAfterUpdateState(parameters: IParameters): IParameters {
+  private validateParametersWithInteger(parameters: IIntegerParameters): IFullParameters {
+    const { hasInterval } = parameters;
     const step = this.validateStepValue(parameters.step);
     const { min, max } = this.validateMinMax(parameters);
     const { firstValue, secondValue } = this.validateValues({ ...parameters, step, min, max });
+    const firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
+    const secondValuePercent =
+      hasInterval === true ? this.convertValueToPercent(secondValue, min,  max) : null;
 
-    return { ...parameters, firstValue, secondValue, min, max, step };
+    return { ...parameters, firstValue, firstValuePercent, secondValue, secondValuePercent,
+      min, max, step };
   }
 
-  private validateParametersAfterUpdatePercent(parameters: IRunnerParameters): IParameters {
-    const { firstPositionPercent, secondPositionPercent, min, max } = parameters;
-    let { firstValue, secondValue } = parameters;
+  private validateParametersWithPercent(parameters: IPercentParameters): IFullParameters {
+    const { updatedValue, min, max, hasInterval } = parameters;
 
-    firstValue = 'firstPositionPercent' in parameters
-      ? this.convertValueFromPercentToNum(firstPositionPercent, min, max) : firstValue;
-    secondValue = 'secondPositionPercent' in parameters
-      ? this.convertValueFromPercentToNum(secondPositionPercent, min, max) : secondValue;
+    parameters[updatedValue] =
+      this.convertValueFromPercentToNum(parameters[updatedValue], min, max);
+    delete parameters.updatedValue;
 
-    delete parameters.firstPositionPercent;
-    delete parameters.secondPositionPercent;
+    const { firstValue, secondValue } = this.validateValues(parameters);
+    const firstValuePercent = this.convertValueToPercent(firstValue, min,  max);
+    const secondValuePercent =
+      hasInterval === true ? this.convertValueToPercent(secondValue, min,  max) : null;
 
-    return { ...parameters, ...this.validateValues({ ...parameters, firstValue, secondValue }) };
+    return { ...parameters, firstValue, secondValue, firstValuePercent, secondValuePercent };
   }
 
-  private validateParametersAfterUpdateSingleValue(parameters: IScaleParameters): IParameters {
-    const { scaleValue } = parameters;
-    let { firstValue, secondValue } = parameters;
-
-    if (parameters.hasInterval === true) {
-      const isFirstValueNearer =
-        (Math.max(firstValue, scaleValue) - Math.min(firstValue, scaleValue))
-        < (Math.max(secondValue, scaleValue) - Math.min(secondValue, scaleValue));
-
-      if (isFirstValueNearer) firstValue = scaleValue;
-      else secondValue = scaleValue;
-    } else firstValue = scaleValue;
-
-    delete parameters.scaleValue;
-
-    return {
-      ...parameters, ...this.validateValues({ ...parameters, firstValue, secondValue }) };
-  }
-
-  private validateMinMax({ min, max }: IParameters): IParameters {
+  private validateMinMax({ min, max }: IDefaultParameters): IDefaultParameters {
     return min > max
       ? { min: Math.round(Math.min(max, min)), max: Math.round(Math.max(max, min)) }
       : { min: Math.round(min), max: Math.round(max) };
   }
 
-  private validateValues({firstValue: first, secondValue: second,
-    min, max, step, hasInterval }: IParameters): IParameters {
-    let [firstValue, secondValue] = [first, second];
+  private validateValues({ firstValue, secondValue,
+    min, max, step, hasInterval }: IDefaultParameters): IDefaultParameters {
+    let [first, second] = [firstValue, secondValue];
 
-    firstValue = firstValue !== min && firstValue < max
-      ? this.correctValueWithStep(firstValue, step, min) : firstValue;
-    firstValue = firstValue > max ? max : firstValue < min ? min : firstValue;
+    first = first > min && first < max
+      ? this.correctValueWithStep(first, step, min) : first;
+    first = first > max ? max : first < min ? min : first;
 
     if (hasInterval === true) {
-      secondValue = secondValue === null ? max : secondValue;
-      secondValue = secondValue !== max
-        ? this.correctValueWithStep(secondValue, step, min) : secondValue;
-      secondValue = secondValue > max ? max : secondValue < min ? min : secondValue;
+      second = second === null ? max : second;
+      second = second !== max
+        ? this.correctValueWithStep(second, step, min) : second;
+      second = second > max ? max : second < min ? min : second;
 
-      [firstValue, secondValue] = firstValue > secondValue
-        ? [Math.min(firstValue, secondValue), Math.max(firstValue, secondValue)]
-        : [firstValue, secondValue];
+      [first, second] = first > second
+        ? [Math.min(first, second), Math.max(first, second)] : [first, second];
     }
 
-    return { firstValue, secondValue };
+    return { firstValue: first, secondValue: second };
   }
 
   private validateStepValue(value: number): number {
@@ -123,7 +94,7 @@ export default class Model extends EventEmitter implements IModel {
   }
 
   private correctValueWithStep(value: number, step: number, min: number): number {
-    return (Math.round((value - min) / step) * step + min);
+    return Math.round((value - min) / step) * step + min;
   }
 
   private convertValueToPercent(value: number, min: number, max: number): number {
@@ -131,6 +102,6 @@ export default class Model extends EventEmitter implements IModel {
   }
 
   private convertValueFromPercentToNum(value: number, min: number, max: number): number {
-    return min + (value * (max - min)) / 100;
+    return Math.round(min + (value * (max - min)) / 100);
   }
 }

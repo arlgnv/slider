@@ -1,9 +1,9 @@
 import Model from '../Model/Model';
 import SliderView from '../View/Slider/SliderView';
 import IPresenter from '../Interfaces/Presenter/IPresenter';
-import IParameters from '../Interfaces/IParameters';
-import IRunnerParameters from '../Interfaces/IRunnerParameters';
-import IScaleParameters from '../Interfaces/IScaleParameters';
+import IFullParameters from '../Interfaces/IFullParameters';
+import IIntegerParameters from '../Interfaces/IIntegerParameters';
+import IPercentParameters from '../Interfaces/IPercentParameters';
 
 export default class Presenter implements IPresenter {
   constructor(private model: Model, private view: SliderView) {
@@ -14,21 +14,21 @@ export default class Presenter implements IPresenter {
   }
 
   public subscribeToUpdates(): void {
-    this.view.subscribe('moveRunner', this.handleRunnerMove);
-    this.view.subscribe('clickScale', this.handleScaleClick);
+    this.view.subscribe('interactWithRunner', this.handleRunnerInteract);
+    this.view.subscribe('interactWithScale', this.handleScaleInteract);
     this.view.subscribe('windowResize', this.handleWindowResize);
     this.model.subscribe('updateState', this.handleModelUpdate);
   }
 
-  private handleRunnerMove =
-    (parameters: IRunnerParameters): void => this.model.updateState({ ...parameters, condition: 'afterUpdatePercent' })
+  private handleRunnerInteract =
+    (parameters: IPercentParameters): void => this.model.updateState({ ...parameters, condition: 'updatedOnPercent' })
 
-  private handleScaleClick =
-    (parameters: IScaleParameters): void => this.model.updateState({ ...parameters, condition: 'afterUpdateSingleValue' })
+  private handleScaleInteract =
+    (parameters: IIntegerParameters): void => this.model.updateState({ ...parameters, condition: 'updatedOnInteger' })
 
   private handleModelUpdate =
-    (parameters: IParameters): void => this.view.updateSlider(parameters)
+    (parameters: IFullParameters): void => this.view.updateSlider(parameters)
 
   private handleWindowResize =
-    (): void => this.view.updateSlider({ ...this.model.getState(), condition: 'afterUpdateState' })
+    (): void => this.view.updateSlider({ ...this.model.getState(), condition: 'updatedOnInteger' })
 }
