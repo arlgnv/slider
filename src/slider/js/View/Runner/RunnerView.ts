@@ -1,57 +1,76 @@
 import EventEmitter from '../../EventEmitter/EventEmitter';
-import IDefaultParameters from '../../Interfaces/IDefaultParameters';
+import IFullParameters from '../../Interfaces/IFullParameters';
 import runnerTemplateHbs from './runnerTemplate.hbs';
 
 export default class RunnerView extends EventEmitter {
   private $slider: JQuery;
   private $runner: JQuery;
+  private runnerType: 'first' | 'second';
+  private positionPercent: number;
+  private value?: number;
   private $tip: JQuery;
 
-  constructor($slider: JQuery, parameters: IDefaultParameters) {
+  constructor($slider: JQuery, parameters: IFullParameters, runnerType: 'first' | 'second') {
     super();
 
-    this.init($slider, parameters);
+    this.init($slider, parameters, runnerType);
   }
 
-  update(positionPercent: number, value?: number): void {
+  update(parameters: IFullParameters): void {
+    this.positionPercent = parameters[`${this.runnerType}ValuePercent`];
+
     const isVertical = this.$slider.hasClass('lrs_direction_vertical');
-    const sliderSize = isVertical ? this.$slider.outerHeight() : this.$slider.outerWidth();
-    const runnerSize = isVertical ? this.$runner.outerHeight() : this.$runner.outerWidth();
-    const property = isVertical ? 'bottom' : 'left';
-    const runnerOffset = ((sliderSize - runnerSize) * positionPercent) / 100;
+    this.$runner.attr('style', `${isVertical ? 'bottom' : 'left'}: ${this.positionPercent}%`);
 
-    this.$runner.attr('style', `${property}: ${runnerOffset}px`);
-
-    if (this.$tip) this.$tip.text(value);
+    if (this.$tip) {
+      this.value = parameters[`${this.runnerType}Value`];
+      this.$tip.text(this.value);
+    }
   }
 
-  getPosition(): number {
-    return this.$slider.hasClass('lrs_direction_vertical')
-      ? parseFloat(this.$runner.css('bottom')) : parseFloat(this.$runner.css('left'));
+  getPositionPercent(): number {
+    return this.positionPercent;
   }
 
   getRunner(): JQuery {
     return this.$runner;
   }
 
-  private init($slider: JQuery, parameters: IDefaultParameters): void {
+  private init($slider: JQuery, parameters: IFullParameters, runnerType: 'first' | 'second'): void {
     this.$slider = $slider;
     this.$runner = $(runnerTemplateHbs(parameters));
-    this.$runner.on('mousedown', this.handleRunnerMouseDown);
+    this.runnerType = runnerType;
+    this.positionPercent = runnerType === 'first'
+      ? parameters.firstValuePercent : parameters.secondValuePercent;
     if (parameters.hasTip) this.$tip = this.$runner.find('.lrs__tip');
+    this.addEventListeners();
 
     this.$slider.append(this.$runner);
+    this.update(parameters);
+  }
+
+  private addEventListeners(): void {
     this.$runner.on('mousedown', this.handleRunnerMouseDown);
   }
 
   private handleRunnerMouseDown = (evt: JQuery.MouseDownEvent): void => {
     const $runner: JQuery = $(evt.currentTarget).addClass('lrs__runner_grabbed');
     const cursorPosition = this.getCursorPosition($runner, evt.clientX, evt.clientY);
+    const metric = this.$slider.hasClass('lrs_direction_vertical') ? 'outerHeight' : 'outerWidth';
+    const maxRunnerPosition = this.$slider[metric]();
 
-    const handleWindowMouseMove = (event: JQuery.Event): void => {
-      const runnerPosition = this.getRunnerShift(cursorPosition, event.clientX, event.clientY);
+    this.$slider.find('.lrs__runner').each(function () {
+      $(this).removeClass('lrs__runner_last-grabbed');
+    });
+    $runner.addClass('lrs__runner_last-grabbed');
 
-      this.notify('moveRunner', { runnerPosition, $runner: this.$runner });
+    const handleWindowMouseMove = (e: JQuery.Event): void => {
+      let runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
+      if (runnerShift < 0) runnerShift = 0;
+      if (runnerShift > maxRunnerPosition) runnerShift = maxRunnerPosition;
+
+      const runnerShiftPercent = Math.round((runnerShift * 100) / this.$slider[metric]());
+      this.notify('moveRunner', { runnerShiftPercent, runnerType: this.runnerType });
     };
 
     const handleWindowMouseUp = (): void => {
@@ -69,7 +88,6 @@ export default class RunnerView extends EventEmitter {
   }
 
   private getRunnerShift(position: number, clientX: number, clientY: number): number {
-    return this.$slider.hasClass('lrs_direction_vertical')
-      ? position - clientY : clientX - position;
+    return this.$slider.hasClass('lrs_direction_vertical') ? position - clientY :clientX - position;
   }
 }

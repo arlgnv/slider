@@ -15,6 +15,6 @@ export default class App implements IApp {
   }
 
   update(parameters: IDefaultParameters = {}): void {
-    this.model.updateState({ ...parameters, condition: 'updatedOnInteger' });
+    this.model.updateState({ ...parameters, condition: 'updated' });
   }
 }

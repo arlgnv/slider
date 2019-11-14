@@ -3,7 +3,7 @@ import IModel from '../Interfaces/Model/IModel';
 import IDefaultParameters from '../Interfaces/IDefaultParameters';
 import IFullParameters from '../Interfaces/IFullParameters';
 import IPercentParameters from '../Interfaces/IPercentParameters';
-import IIntegerParameters from '../Interfaces/IIntegerParameters';
+import IRegularParameters from '../Interfaces/IRegularParameters';
 
 export default class Model extends EventEmitter implements IModel {
   private state: IFullParameters;
@@ -11,12 +11,11 @@ export default class Model extends EventEmitter implements IModel {
   constructor(parameters: IDefaultParameters) {
     super();
 
-    this.state = this.validateParameters({ ...parameters, condition: 'updatedOnInteger' });
+    this.state = this.validateParameters({ ...parameters, condition: 'updated' });
   }
 
-  public updateState(parameters: IIntegerParameters | IPercentParameters): void {
+  public updateState(parameters: IRegularParameters | IPercentParameters): void {
     this.state = this.validateParameters({ ...this.state, ...parameters });
-
     this.notify('updateState', this.state);
   }
 
@@ -24,8 +23,8 @@ export default class Model extends EventEmitter implements IModel {
     return this.state;
   }
 
-  private validateParameters(parameters: IIntegerParameters | IPercentParameters): IFullParameters {
-    if (parameters.condition === 'updatedOnInteger') {
+  private validateParameters(parameters: IRegularParameters | IPercentParameters): IFullParameters {
+    if (parameters.condition === 'updated') {
       return this.validateParametersWithInteger(parameters);
     }
 
@@ -34,7 +33,7 @@ export default class Model extends EventEmitter implements IModel {
     }
   }
 
-  private validateParametersWithInteger(parameters: IIntegerParameters): IFullParameters {
+  private validateParametersWithInteger(parameters: IRegularParameters): IFullParameters {
     const { hasInterval } = parameters;
     const step = this.validateStepValue(parameters.step);
     const { min, max } = this.validateMinMax(parameters);
@@ -48,11 +47,10 @@ export default class Model extends EventEmitter implements IModel {
   }
 
   private validateParametersWithPercent(parameters: IPercentParameters): IFullParameters {
-    const { updatedValue, min, max, hasInterval } = parameters;
+    const { lastUpdatedOnPercent, percent, min, max, hasInterval } = parameters;
 
-    parameters[updatedValue] =
-      this.convertValueFromPercentToNum(parameters[updatedValue], min, max);
-    delete parameters.updatedValue;
+    parameters[lastUpdatedOnPercent] =
+      this.convertValueFromPercentToNum(percent, min, max);
 
     const { firstValue, secondValue } = this.validateValues(parameters);
     const firstValuePercent = this.convertValueToPercent(firstValue, min,  max);

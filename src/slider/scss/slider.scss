@@ -25,7 +25,7 @@
     height: 1.1857rem;
     width: 1.1857rem;
     border-radius: 50%;
-    transform: translateY(-50%);
+    transform: translate(-50%, -50%);
     cursor: grab;
 
     &:first-child {
@@ -83,6 +83,7 @@
       color: $gray-dark-color-100;
       line-height: 1.1429rem;
       cursor: pointer;
+      transform: translateX(-50%);
 
       &:hover {
         color: $gray-dark-color-75;
@@ -108,7 +109,7 @@
       height: 1.2857rem;
       width: 1.2857rem;
       border-radius: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, 50%);
     }
 
     #{$root}__tip {
@@ -132,6 +133,10 @@
       bottom: 0;
       display: flex;
       justify-content: flex-end;
+
+      #{$root}__scale-mark {
+        transform: translateY(50%);
+      }
     }
   }
 

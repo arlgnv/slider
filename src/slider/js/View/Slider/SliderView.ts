@@ -16,69 +16,47 @@ export default class SliderView extends EventEmitter implements ISliderView {
   constructor($anchorElement: JQuery, parameters: IFullParameters) {
     super();
 
-    $anchorElement.before(sliderTemplateHbs(parameters));
-    this.$slider = $anchorElement.prev();
-
-    this.init(parameters);
+    this.init(parameters, $anchorElement);
   }
 
   updateSlider(parameters: IFullParameters): void {
-    const { hasInterval, onChange } = parameters;
+    const { condition } = parameters;
 
-    if (parameters.condition === 'updatedOnPercent') this.updateSliderOnMoveRunner(parameters);
-    if (parameters.condition === 'updatedOnInteger') this.updateSliderOnUserActivity(parameters);
-
-    if (onChange) onChange(parameters);
-
-    const runnerFromPosition = this.runnerFrom.getPosition();
-    const runnerToPosition = hasInterval ? this.runnerTo.getPosition() : null;
-    this.bar.update(runnerFromPosition, runnerToPosition);
+    if (condition === 'updatedOnPercent') this.updateSliderOnMoveRunner(parameters);
+    if (condition === 'updated') this.reinit(parameters);
   }
 
   private updateSliderOnMoveRunner(parameters: IFullParameters): void {
-    const { firstValue, secondValue, firstValuePercent, secondValuePercent,
-      hasInterval } = parameters;
-    const $movedRunner = this.$slider.find('.lrs__runner_grabbed');
+    const { hasInterval, onChange } = parameters;
 
-    if (hasInterval) {
-      if ($movedRunner.is(this.runnerFrom.getRunner())) {
-        this.runnerFrom.update(firstValuePercent, firstValue);
-      }
+    this.runnerFrom.update(parameters);
+    if (hasInterval) this.runnerTo.update(parameters);
 
-      if ($movedRunner.is(this.runnerTo.getRunner())) {
-        this.runnerTo.update(secondValuePercent, secondValue);
-      }
-    } else this.runnerFrom.update(firstValuePercent, firstValue);
+    const runnerFromPosition = this.runnerFrom.getPositionPercent();
+    const runnerToPosition = hasInterval ? this.runnerTo.getPositionPercent() : null;
+    this.bar.update(runnerFromPosition, runnerToPosition);
+
+    if (onChange) onChange(parameters);
   }
 
-  private updateSliderOnUserActivity(parameters: IFullParameters): void {
-    const {firstValue, firstValuePercent, secondValue, secondValuePercent,
-      hasInterval, hasScale, hasTip} = parameters;
+  private init(parameters: IFullParameters, $anchorElement?: JQuery): void {
+    const { hasInterval, hasScale, onChange } = parameters;
 
-    const isNeedToReinit =
-      (this.runnerTo && !hasInterval) || (!this.runnerTo && hasInterval)
-      || (!this.scale && hasScale) || (this.scale && !hasScale)
-      || (this.$slider.find('.lrs__tip').length && !hasTip)
-      || (!this.$slider.find('.lrs__tip').length && hasTip);
-    if (isNeedToReinit) this.reinit(parameters);
+    if ($anchorElement) {
+      $anchorElement.before(sliderTemplateHbs(parameters));
+      this.$slider = $anchorElement.prev();
+    }
 
     this.updateDirection(parameters);
     this.updateTheme(parameters);
-    this.runnerFrom.update(firstValuePercent, firstValue);
-    if (hasInterval) this.runnerTo.update(secondValuePercent, secondValue);
-    if (hasScale) this.scale.update(parameters);
-  }
+    if (onChange) onChange(parameters);
 
-  private init(parameters: IFullParameters): void {
-    const { hasInterval, hasScale } = parameters;
-
-    this.runnerFrom = new RunnerView(this.$slider, parameters);
-    this.bar = new BarView(this.$slider);
-    if (hasInterval) this.runnerTo = new RunnerView(this.$slider, parameters);
-    if (hasScale) this.scale = new ScaleView(this.$slider);
+    this.runnerFrom = new RunnerView(this.$slider, parameters, 'first');
+    this.bar = new BarView(this.$slider, parameters);
+    if (hasInterval) this.runnerTo = new RunnerView(this.$slider, parameters, 'second');
+    if (hasScale) this.scale = new ScaleView(this.$slider, parameters);
 
     this.subscribeToUpdates(parameters);
-    this.updateSlider(parameters);
   }
 
   private subscribeToUpdates(parameters: IFullParameters): void {
@@ -87,8 +65,6 @@ export default class SliderView extends EventEmitter implements ISliderView {
     this.runnerFrom.subscribe('moveRunner', this.handleRunnerMove);
     if (hasInterval) this.runnerTo.subscribe('moveRunner', this.handleRunnerMove);
     if (hasScale) this.scale.subscribe('clickOnScale', this.handleScaleClick);
-
-    $(window).on('resize', () => this.notify('windowResize'));
   }
 
   private reinit(parameters: IFullParameters): void {
@@ -100,50 +76,39 @@ export default class SliderView extends EventEmitter implements ISliderView {
     this.init(parameters);
   }
 
-  private handleRunnerMove = ({ runnerPosition, $runner }): void => {
-    const position = this.correctExtremeRunnerPositions($runner, runnerPosition);
-    const metric = this.$slider.hasClass('lrs_direction_vertical') ? 'outerHeight' : 'outerWidth';
-    const positionPercent = (position * 100) / (this.$slider[metric]() - $runner[metric]());
-    const updatedValue = $runner.is(this.runnerFrom.getRunner()) ? 'firstValue' : 'secondValue';
+  private handleRunnerMove = ({ runnerShiftPercent, runnerType }): void => {
+    let positionPercent = runnerShiftPercent;
 
-    if (this.runnerTo) this.correctZAxis($runner);
+    if (this.runnerTo) {
+      if (runnerType === 'first') {
+        const maxPosition = this.runnerTo.getPositionPercent();
+        positionPercent = positionPercent > maxPosition ? maxPosition : positionPercent;
+      }
+      if (runnerType === 'second') {
+        const minPosition = this.runnerFrom.getPositionPercent();
+        positionPercent = positionPercent < minPosition ? minPosition : positionPercent;
+      }
+    }
 
     this.notify('interactWithRunner', {
-      updatedValue,
-      [$runner.is(this.runnerFrom.getRunner()) ? 'firstValue' : 'secondValue']: positionPercent,
-    });
+      lastUpdatedOnPercent: `${runnerType}Value`, percent: positionPercent});
   }
 
-  private handleScaleClick = ({ position, value }): void => {
+  private handleScaleClick = ({ positionPercent: position }): void => {
+    let updatedValue: 'firstValue' | 'secondValue';
+
     if (this.runnerTo) {
-      const runnerFromPosition = this.runnerFrom.getPosition();
-      const runnerToPosition = this.runnerTo.getPosition();
+      const runnerFromPosition = this.runnerFrom.getPositionPercent();
+      const runnerToPosition = this.runnerTo.getPositionPercent();
       const isFirstValueNearer =
          (Math.max(runnerFromPosition, position) - Math.min(runnerFromPosition, position))
          < (Math.max(runnerToPosition, position) - Math.min(runnerToPosition, position));
-      if (isFirstValueNearer) this.notify('interactWithScale', { firstValue: value });
-      else this.notify('interactWithScale', { secondValue: value });
-    } else this.notify('interactWithScale', { firstValue: value });
-  }
+      if (isFirstValueNearer) updatedValue = 'firstValue';
+      else updatedValue = 'secondValue';
+    } else updatedValue = 'firstValue';
 
-  private correctExtremeRunnerPositions($runner: JQuery, position: number): number {
-    const isVertical = this.$slider.hasClass('lrs_direction_vertical');
-    const metric = isVertical ? 'outerHeight' : 'outerWidth';
-    const minPosition = $runner.is(this.runnerFrom.getRunner())
-      ? 0 : this.runnerFrom.getPosition();
-    const maxPosition = $runner.is(this.runnerFrom.getRunner())
-      ? (this.runnerTo
-          ? this.runnerTo.getPosition() : this.$slider[metric]() - $runner[metric]())
-      : this.$slider[metric]() - $runner[metric]();
-
-    return position < minPosition ? minPosition : position > maxPosition ? maxPosition : position;
-  }
-
-  private correctZAxis($runner: JQuery): void {
-    this.runnerFrom.getRunner().removeClass('lrs__runner_last-grabbed');
-    this.runnerTo.getRunner().removeClass('lrs__runner_last-grabbed');
-
-    $runner.addClass('lrs__runner_last-grabbed');
+    this.notify('interactWithScale', {
+      lastUpdatedOnPercent: updatedValue, percent: position });
   }
 
   private updateTheme({ theme }: IFullParameters): void {
