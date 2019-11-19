@@ -1,7 +1,9 @@
 import IDefaultParameters from './IDefaultParameters';
 
 export default interface IFullParameters extends IDefaultParameters {
-  condition: 'updatedOnPercent' | 'updated';
-  firstValuePercent: number;
-  secondValuePercent: number | null;
+  kind?: 'stateUpdated' | 'valuePercentUpdated';
+  firstValuePercent?: number;
+  secondValuePercent?: number | null;
+  percent?: number;
+  lastUpdatedOnPercent?: 'firstValue' | 'secondValue';
 }

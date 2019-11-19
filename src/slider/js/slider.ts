@@ -1,6 +1,7 @@
 window.$ = require('jquery');
 import App from './App/App';
 import IDefaultParameters from './Interfaces/IDefaultParameters';
+import IRegularParameters from './Interfaces/IRegularParameters';
 
 declare global {
   interface Window {
@@ -14,7 +15,8 @@ declare global {
 
 (function ($: JQueryStatic): void {
   $.fn.rangeSlider = function (parameters: IDefaultParameters = {}): JQuery {
-    const defaultParameters: IDefaultParameters = {
+    const defaultParameters: IRegularParameters = {
+      kind: 'stateUpdated',
       firstValue: 0,
       min: 0,
       max: 100,

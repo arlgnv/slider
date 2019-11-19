@@ -1,7 +1,7 @@
-import IEventEmitter from '../Interfaces/EventEmitter/IEventEmitter';
-import IEvents from '../Interfaces/EventEmitter/IEvents';
+import IObserver from '../Interfaces/Observer/IObserver';
+import IEvents from '../Interfaces/Observer/IEvents';
 
-export default class EventEmitter implements IEventEmitter {
+export default class Observer implements IObserver {
   private events: IEvents = {};
 
   public subscribe(type: string, cb: Function): void {

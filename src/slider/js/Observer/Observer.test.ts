@@ -1,7 +1,7 @@
-import EventEmitter from './EventEmitter';
+import Observer from './Observer';
 
 test('attach callback to event', () => {
-  const eventEmitter: EventEmitter = new EventEmitter();
+  const eventEmitter: Observer = new Observer();
   const typeEvent: string = 'drag';
   const callback = (arg: any): void => console.log(arg);
 

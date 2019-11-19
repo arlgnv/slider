@@ -1,8 +1,8 @@
-import EventEmitter from '../../EventEmitter/EventEmitter';
+import Observer from '../../Observer/Observer';
 import IFullParameters from '../../Interfaces/IFullParameters';
 import scaleTemplateHbs from './scaleTemplate.hbs';
 
-export default class ScaleView extends EventEmitter {
+export default class ScaleView extends Observer {
   private $slider: JQuery;
   private $scale: JQuery;
 
@@ -53,7 +53,7 @@ export default class ScaleView extends EventEmitter {
     }
   }
 
-  private init($slider: JQuery, parameters: IFullParameters) {
+  private init($slider: JQuery, parameters: IFullParameters): void {
     this.$slider = $slider;
     this.$scale = $(scaleTemplateHbs());
     this.$scale.on('click', this.handleScaleClick);

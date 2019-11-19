@@ -18,7 +18,7 @@ export default class BarView {
     else this.$bar.attr('style', `left: ${leftEdge}%; right: ${rightEdge}%;`);
   }
 
-  private init($slider: JQuery, parameters: IFullParameters) {
+  private init($slider: JQuery, parameters: IFullParameters): void {
     this.$slider = $slider;
     this.$bar = $(barTemplateHbs());
 

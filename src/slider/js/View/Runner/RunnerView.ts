@@ -1,14 +1,14 @@
-import EventEmitter from '../../EventEmitter/EventEmitter';
+import Observer from '../../Observer/Observer';
 import IFullParameters from '../../Interfaces/IFullParameters';
 import runnerTemplateHbs from './runnerTemplate.hbs';
 
-export default class RunnerView extends EventEmitter {
+export default class RunnerView extends Observer {
   private $slider: JQuery;
   private $runner: JQuery;
+  private $tip: JQuery;
   private runnerType: 'first' | 'second';
   private positionPercent: number;
   private value?: number;
-  private $tip: JQuery;
 
   constructor($slider: JQuery, parameters: IFullParameters, runnerType: 'first' | 'second') {
     super();

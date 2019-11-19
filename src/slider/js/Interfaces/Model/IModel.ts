@@ -3,6 +3,6 @@ import IRegularParameters from '../IRegularParameters';
 import IPercentParameters from '../IPercentParameters';
 
 export default interface IModel {
-  updateState(parameters: IRegularParameters | IPercentParameters): void;
+  dispatchState(parameters: IRegularParameters | IPercentParameters): void;
   getState(): IFullParameters;
 }

@@ -13,16 +13,12 @@ export default class Presenter implements IPresenter {
   }
 
   public subscribeToUpdates(): void {
-    this.view.subscribe('interactWithRunner', this.handleRunnerInteract);
-    this.view.subscribe('interactWithScale', this.handleScaleInteract);
+    this.view.subscribe('interactWithSlider', this.handleSliderInteract);
     this.model.subscribe('updateState', this.handleModelUpdate);
   }
 
-  private handleRunnerInteract =
-    (parameters: IPercentParameters): void => this.model.updateState({ ...parameters, condition: 'updatedOnPercent' })
-
-  private handleScaleInteract =
-    (parameters: IPercentParameters): void => this.model.updateState({ ...parameters, condition: 'updatedOnPercent' })
+  private handleSliderInteract =
+    (parameters: IPercentParameters): void => this.model.dispatchState({ ...parameters, kind: 'valuePercentUpdated' })
 
   private handleModelUpdate =
     (parameters: IFullParameters): void => this.view.updateSlider(parameters)

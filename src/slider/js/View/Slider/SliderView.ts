@@ -1,4 +1,4 @@
-import EventEmitter from '../../EventEmitter/EventEmitter';
+import Observer from '../../Observer/Observer';
 import RunnerView from '../Runner/RunnerView';
 import BarView from '../Bar/BarView';
 import ScaleView from '../Scale/ScaleView';
@@ -6,7 +6,7 @@ import ISliderView from '../../Interfaces/View/ISliderView';
 import IFullParameters from '../../Interfaces/IFullParameters';
 import sliderTemplateHbs from './sliderTemplate.hbs';
 
-export default class SliderView extends EventEmitter implements ISliderView {
+export default class SliderView extends Observer implements ISliderView {
   private $slider: JQuery;
   private runnerFrom: RunnerView;
   private bar: BarView;
@@ -20,28 +20,25 @@ export default class SliderView extends EventEmitter implements ISliderView {
   }
 
   updateSlider(parameters: IFullParameters): void {
-    const { condition } = parameters;
+    const { kind, onChange } = parameters;
 
-    if (condition === 'updatedOnPercent') this.updateSliderOnMoveRunner(parameters);
-    if (condition === 'updated') this.reinit(parameters);
-  }
-
-  private updateSliderOnMoveRunner(parameters: IFullParameters): void {
-    const { hasInterval, onChange } = parameters;
-
-    this.runnerFrom.update(parameters);
-    if (hasInterval) this.runnerTo.update(parameters);
-
-    const runnerFromPosition = this.runnerFrom.getPositionPercent();
-    const runnerToPosition = hasInterval ? this.runnerTo.getPositionPercent() : null;
-    this.bar.update(runnerFromPosition, runnerToPosition);
-
+    if (kind === 'valuePercentUpdated') this.updateSliderOnInteract(parameters);
+    if (kind === 'stateUpdated') this.reinit(parameters);
     if (onChange) onChange(parameters);
   }
 
-  private init(parameters: IFullParameters, $anchorElement?: JQuery): void {
-    const { hasInterval, hasScale, onChange } = parameters;
+  private updateSliderOnInteract(parameters: IFullParameters): void {
+    const { lastUpdatedOnPercent, hasInterval } = parameters;
 
+    if (lastUpdatedOnPercent === 'firstValue') this.runnerFrom.update(parameters);
+    if (lastUpdatedOnPercent === 'secondValue') this.runnerTo.update(parameters);
+
+    this.bar.update(
+      this.runnerFrom.getPositionPercent(),
+      hasInterval ? this.runnerTo.getPositionPercent() : null);
+  }
+
+  private init(parameters: IFullParameters, $anchorElement?: JQuery): void {
     if ($anchorElement) {
       $anchorElement.before(sliderTemplateHbs(parameters));
       this.$slider = $anchorElement.prev();
@@ -49,12 +46,14 @@ export default class SliderView extends EventEmitter implements ISliderView {
 
     this.updateDirection(parameters);
     this.updateTheme(parameters);
-    if (onChange) onChange(parameters);
 
     this.runnerFrom = new RunnerView(this.$slider, parameters, 'first');
     this.bar = new BarView(this.$slider, parameters);
+
+    const { hasInterval, hasScale, onChange } = parameters;
     if (hasInterval) this.runnerTo = new RunnerView(this.$slider, parameters, 'second');
     if (hasScale) this.scale = new ScaleView(this.$slider, parameters);
+    if (onChange) onChange(parameters);
 
     this.subscribeToUpdates(parameters);
   }
@@ -90,7 +89,7 @@ export default class SliderView extends EventEmitter implements ISliderView {
       }
     }
 
-    this.notify('interactWithRunner', {
+    this.notify('interactWithSlider', {
       lastUpdatedOnPercent: `${runnerType}Value`, percent: positionPercent});
   }
 
@@ -107,7 +106,7 @@ export default class SliderView extends EventEmitter implements ISliderView {
       else updatedValue = 'secondValue';
     } else updatedValue = 'firstValue';
 
-    this.notify('interactWithScale', {
+    this.notify('interactWithSlider', {
       lastUpdatedOnPercent: updatedValue, percent: position });
   }
 
