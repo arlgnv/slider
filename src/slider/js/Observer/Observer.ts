@@ -15,6 +15,8 @@ export default class Observer implements IObserver {
   }
 
   public notify(type: string, arg?: Object): void {
-    if (this.events[type]) this.events[type].forEach(cb => cb(arg));
+    if (this.events[type]) {
+      this.events[type].forEach(cb => cb(arg));
+    }
   }
 }

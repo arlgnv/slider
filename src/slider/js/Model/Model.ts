@@ -1,8 +1,8 @@
 import Observer from '../Observer/Observer';
 import IModel from '../Interfaces/Model/IModel';
 import IFullParameters from '../Interfaces/IFullParameters';
-import IPercentParameters from '../Interfaces/IPercentParameters';
 import IRegularParameters from '../Interfaces/IRegularParameters';
+import IPercentParameters from '../Interfaces/IPercentParameters';
 
 export default class Model extends Observer implements IModel {
   private state: IFullParameters;
@@ -25,91 +25,109 @@ export default class Model extends Observer implements IModel {
   private validateParameters(parameters: IRegularParameters | IPercentParameters): IFullParameters {
     switch (parameters.kind) {
       case 'valuePercentUpdated':
-        return this.validateParametersAfterUpdatePercent(parameters);
+        return this.validateParametersWithUpdatedPercent(parameters);
       case 'stateUpdated':
-        return this.validateParametersAfterUpdateState(parameters);
+        return this.validateParametersWithUpdatedState(parameters);
     }
   }
 
-  private validateParametersAfterUpdateState(parameters: IRegularParameters): IFullParameters {
+  private validateParametersWithUpdatedState(parameters: IRegularParameters): IFullParameters {
     const { step } = this.validateStep(parameters);
     const { min, max } = this.validateMinMax(parameters);
+    const { firstValue, secondValue } = this.validateValues({ ...parameters, step, min, max });
+    const { firstValuePercent, secondValuePercent } =
+      this.calculateValuesPercent({ ...parameters, firstValue, secondValue, min, max });
 
-    return { ...parameters, ...this.validateValues({ ...parameters, step, min, max }),
+    return { ...parameters, firstValue, secondValue, firstValuePercent, secondValuePercent,
       min, max, step };
   }
 
-  private validateParametersAfterUpdatePercent(parameters: IPercentParameters): IFullParameters {
-    const { lastUpdatedOnPercent, percent, min, max } = parameters;
+  private validateParametersWithUpdatedPercent(parameters: IPercentParameters): IFullParameters {
+    const { firstValue, secondValue } = this.validateValues(parameters);
+    const { firstValuePercent, secondValuePercent } =
+      this.calculateValuesPercent({ ...parameters, firstValue, secondValue });
+
+    return { ...parameters, firstValue, secondValue, firstValuePercent, secondValuePercent };
+  }
+
+  private validateValues(parameters: IFullParameters): IFullParameters {
+    return parameters.hasInterval
+     ? {
+       ...parameters,
+       ...this.validateIntervalValues(parameters),
+     }
+     : {
+       ...parameters,
+       firstValue: this.validateSingleValue(parameters, 'firstValue'),
+       secondValue: null,
+     };
+  }
+
+  private validateSingleValue(parameters: IFullParameters, valueType: string): number {
+    const { kind, lastUpdatedOnPercent, percent, max, min, step } = parameters;
+
+    if (kind === 'valuePercentUpdated') {
+      if (lastUpdatedOnPercent === valueType) {
+        const convertedValue = this.convertPercentToValue(percent, min, max);
+        const newValue = Math.round((convertedValue - min) / step) * step + min;
+        return newValue >= max ? max : newValue;
+      }
+
+      return parameters[valueType];
+    }
+
+    if (kind === 'stateUpdated') {
+      const value = parameters[valueType];
+
+      if (value >= max || value === null) return max;
+      if (value <= min) return min;
+
+      const newValue = Math.round((value - min) / step) * step + min;
+      return newValue >= max ? max : newValue;
+    }
+  }
+
+  private validateIntervalValues(parameters: IFullParameters): IFullParameters {
+    const firstValue = this.validateSingleValue(parameters, 'firstValue');
+    const secondValue = this.validateSingleValue(parameters, 'secondValue');
 
     return {
       ...parameters,
-      ...this.validateValues({
-        ...parameters,
-        [lastUpdatedOnPercent]: this.convertValueFromPercentToNum(percent, min, max)}) };
+      firstValue: firstValue > secondValue ? Math.min(firstValue, secondValue) : firstValue,
+      secondValue: firstValue > secondValue ? Math.max(firstValue, secondValue) : secondValue,
+    };
   }
 
-  private validateMinMax({ min, max }: IFullParameters): IFullParameters {
-    return min > max
-      ? { min: Math.round(Math.min(max, min)), max: Math.round(Math.max(max, min)) }
-      : { min: Math.round(min), max: Math.round(max) };
+  private validateMinMax(parameters: IFullParameters): IFullParameters {
+    const { min, max } = parameters;
+
+    return {
+      ...parameters,
+      min: min > max ? Math.round(Math.min(max, min)) : min,
+      max: min > max ? Math.round(Math.max(max, min)) : max,
+    };
   }
 
-  private validateValues({ firstValue, secondValue,
-    min, max, step, hasInterval }: IFullParameters): IFullParameters {
-    const newValues: IFullParameters = {};
+  private validateStep(parameters: IFullParameters): IFullParameters {
+    const { step } = parameters;
 
-    if (firstValue >= max) {
-      newValues.firstValue = max;
-    } else if (firstValue <= min) {
-      newValues.firstValue = min;
-    } else {
-      const newFirstValue = Math.round((firstValue - min) / step) * step + min;
-      newValues.firstValue = newFirstValue >= max ? max : newFirstValue;
-    }
-
-    newValues.secondValue = newValues.secondValuePercent = null;
-
-    if (hasInterval) {
-      if (secondValue === null) {
-        newValues.secondValue = max;
-      } else {
-        if (secondValue >= max) {
-          newValues.secondValue = max;
-        } else if (secondValue <= min) {
-          newValues.secondValue = min;
-        } else {
-          const newSecondValue = Math.round((secondValue - min) / step) * step + min;
-          newValues.secondValue = newSecondValue >= max ? max : newSecondValue;
-        }
-      }
-
-      if (newValues.firstValue > newValues.secondValue) {
-        const minValue = Math.min(newValues.firstValue, newValues.secondValue);
-        const maxValue = Math.max(newValues.firstValue, newValues.secondValue);
-        const [newFirstValue, newSecondValue] = [minValue, maxValue];
-
-        newValues.firstValue = newFirstValue;
-        newValues.secondValue = newSecondValue;
-      }
-
-      newValues.secondValuePercent = this.calculateValuePercent(newValues.secondValue, min,  max);
-    }
-
-    newValues.firstValuePercent = this.calculateValuePercent(newValues.firstValue, min,  max);
-
-    return newValues;
+    return {
+      ...parameters,
+      step: step < 1 ? 1 : Math.round(step),
+    };
   }
 
-  private validateStep({ step }: IFullParameters): IFullParameters {
-    return { step: step < 1 ? 1 : Math.round(step) };
+  private calculateValuesPercent(parameters: IFullParameters): IFullParameters {
+    const { hasInterval, firstValue, secondValue, min, max } = parameters;
+
+    return {
+      ...parameters,
+      firstValuePercent: (firstValue - min) * 100 / (max - min),
+      secondValuePercent: hasInterval ? (secondValue - min) * 100 / (max - min) : null,
+    };
   }
 
-  private calculateValuePercent(value: number, min: number, max: number): number {
-    return (value - min) * 100 / (max - min);
-  }
-
-  private convertValueFromPercentToNum(percent: number, min: number, max: number): number {
+  private convertPercentToValue(percent: number, min: number, max: number): number {
     return min + (percent * (max - min)) / 100;
   }
 }

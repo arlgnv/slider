@@ -1,3 +1,3 @@
 export default interface IPresenter {
-  subscribeToUpdates(): void;
+  initSubscribes(): void;
 }

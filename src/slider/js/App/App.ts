@@ -16,6 +16,6 @@ export default class App implements IApp {
   }
 
   update(parameters: IDefaultParameters = {}): void {
-    this.model.dispatchState({ ...parameters, kind: 'stateUpdated' });
+    this.model.dispatchState({ ...this.model.getState(), ...parameters, kind: 'stateUpdated' });
   }
 }

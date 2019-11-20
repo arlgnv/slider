@@ -89,7 +89,7 @@ export default class SliderView extends Observer implements ISliderView {
       }
     }
 
-    this.notify('interactWithSlider', {
+    this.notify('dispatchParameters', {
       lastUpdatedOnPercent: `${runnerType}Value`, percent: positionPercent});
   }
 
@@ -106,7 +106,7 @@ export default class SliderView extends Observer implements ISliderView {
       else updatedValue = 'secondValue';
     } else updatedValue = 'firstValue';
 
-    this.notify('interactWithSlider', {
+    this.notify('dispatchParameters', {
       lastUpdatedOnPercent: updatedValue, percent: position });
   }
 
