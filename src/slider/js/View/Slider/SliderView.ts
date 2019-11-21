@@ -2,7 +2,7 @@ import Observer from '../../Observer/Observer';
 import RunnerView from '../Runner/RunnerView';
 import ProgressBar from '../ProgressBar/ProgressBar';
 import ScaleView from '../Scale/ScaleView';
-import ISliderView from '../../Interfaces/View/ISliderView';
+import ISliderView from '../../Interfaces/View/Slider/ISliderView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import sliderTemplateHbs from './sliderTemplate.hbs';
 
@@ -16,7 +16,7 @@ export default class SliderView extends Observer implements ISliderView {
   constructor($anchorElement: JQuery, parameters: IDefaultParameters) {
     super();
 
-    this.init(parameters, $anchorElement);
+    this.initSlider(parameters, $anchorElement);
   }
 
   updateSlider(parameters: IDefaultParameters): void {
@@ -30,15 +30,15 @@ export default class SliderView extends Observer implements ISliderView {
   private updateSliderOnInteract(parameters: IDefaultParameters): void {
     const { lastUpdatedOnPercent, hasInterval } = parameters;
 
-    if (lastUpdatedOnPercent === 'firstValue') this.runnerFrom.update(parameters);
-    if (lastUpdatedOnPercent === 'secondValue') this.runnerTo.update(parameters);
+    if (lastUpdatedOnPercent === 'firstValue') this.runnerFrom.updateRunner(parameters);
+    if (lastUpdatedOnPercent === 'secondValue') this.runnerTo.updateRunner(parameters);
 
-    this.bar.update(
+    this.bar.updateProgressBar(
       this.runnerFrom.getPositionPercent(),
       hasInterval ? this.runnerTo.getPositionPercent() : null);
   }
 
-  private init(parameters: IDefaultParameters, $anchorElement?: JQuery): void {
+  private initSlider(parameters: IDefaultParameters, $anchorElement?: JQuery): void {
     if ($anchorElement) {
       $anchorElement.before(sliderTemplateHbs(parameters));
       this.$slider = $anchorElement.prev();
@@ -68,11 +68,8 @@ export default class SliderView extends Observer implements ISliderView {
 
   private reinit(parameters: IDefaultParameters): void {
     this.$slider.text('');
-    delete this.runnerFrom;
-    delete this.runnerTo;
-    delete this.bar;
-    delete this.scale;
-    this.init(parameters);
+
+    this.initSlider(parameters);
   }
 
   private handleRunnerMove = ({ runnerShiftPercent, runnerType }): void => {

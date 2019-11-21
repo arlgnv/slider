@@ -1,15 +1,16 @@
 import progressBarTemplateHbs from './progressBarTemplate.hbs';
+import IProgressBarView from '../../Interfaces/View/ProgressBar/IProgressBarView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 
-export default class ProgressBar {
+export default class ProgressBar implements IProgressBarView {
   private $slider: JQuery;
   private $bar: JQuery;
 
   constructor($slider: JQuery, parameters: IDefaultParameters) {
-    this.init($slider, parameters);
+    this.initProgressBar($slider, parameters);
   }
 
-  update(runnerFromPosition: number, runnerToPosition: number | null): void {
+  updateProgressBar(runnerFromPosition: number, runnerToPosition: number | null): void {
     const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
     const leftEdge = runnerToPosition ? runnerFromPosition : 0;
     const rightEdge = runnerToPosition ? 100 - runnerToPosition : 100 - runnerFromPosition;
@@ -18,7 +19,7 @@ export default class ProgressBar {
     else this.$bar.attr('style', `left: ${leftEdge}%; right: ${rightEdge}%;`);
   }
 
-  private init($slider: JQuery, parameters: IDefaultParameters): void {
+  private initProgressBar($slider: JQuery, parameters: IDefaultParameters): void {
     this.$slider = $slider;
     this.$bar = $(progressBarTemplateHbs());
 
@@ -26,6 +27,6 @@ export default class ProgressBar {
 
     const { firstValuePercent, secondValuePercent } = parameters;
 
-    this.update(firstValuePercent, secondValuePercent ? secondValuePercent : null);
+    this.updateProgressBar(firstValuePercent, secondValuePercent ? secondValuePercent : null);
   }
 }

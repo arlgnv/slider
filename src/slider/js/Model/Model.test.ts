@@ -1,96 +1,45 @@
 import Model from './Model';
-import IDefaultParameters from '../Interfaces/IDefaultParameters';
+import IRegularParameters from '../Interfaces/IRegularParameters';
 
-test("Model's state is an empty object by default", () => {
-  const model: Model = new Model();
-  const state: IParameters = model.getState();
+const defaultConfig: IRegularParameters = {
+  kind: 'stateUpdated',
+  firstValue: 0,
+  firstValuePercent: 0,
+  min: 0,
+  max: 100,
+  step: 1,
+  hasInterval: false,
+  hasTip: false,
+  hasScale: false,
+  isVertical: false,
+  theme: 'aqua',
+  secondValue: null,
+  secondValuePercent: null,
+  onChange: null,
+};
 
-  expect(Object.keys(state).length).toBe(0);
+describe('Constructor', (): void => {
+  test('Устанавливает корректное состояние модели', (): void => {
+    const model = new Model(defaultConfig);
+    const state = model.getState();
+
+    expect(Object.getOwnPropertyNames(state).length).toEqual(14);
+    expect(state.kind).toEqual('stateUpdated');
+    expect(state.max).toEqual(100);
+    expect(state.hasScale).toEqual(false);
+    expect(state.theme).toEqual('aqua');
+    expect(state.onChange).toEqual(null);
+  });
 });
 
-test("Model's state equals to parameters", () => {
-  const parameters = { theme: 'aqua', lala: 'lala' };
-  const model = new Model(parameters);
-  const state: IParameters = model.getState();
+describe('updatingModel', (): void => {
+  test('Корректно обновляет модель', (): void => {
+    const model = new Model(defaultConfig);
+    const state = model.getState();
+    model.dispatchState({ ...state, kind: 'stateUpdated', theme: 'red' });
+    const newState = model.getState();
 
-  expect(state).toEqual(parameters);
+    expect(state.theme).toEqual('aqua');
+    expect(newState.theme).toEqual('red');
+  });
 });
-
-// import correctSettings from './utilities';
-
-// test('from equals min (from < min)', () => {
-//   const correctedSettings = correctSettings({ from: -1, min: 0 });
-
-//   expect(correctedSettings.from).toBe(correctedSettings.min);
-// });
-
-// test('from equals max (from > max, hasInterval = false)', () => {
-//   const correctedSettings = correctSettings({ from: 11, max: 10 });
-
-//   expect(correctedSettings.from).toBe(correctedSettings.max);
-// });
-
-// test('from between min and max (from > min, from < max, hasInterval = false)', () => {
-//   const correctedSettings = correctSettings({
-//     min: 0, from: 10, max: 20, hasInterval: false,
-//   });
-
-//   expect(correctedSettings.from).toBe(10);
-// });
-
-// test('from equals min (from > max, hasInterval = true)', () => {
-//   const correctedSettings = correctSettings({
-//     max: 100, from: 101, hasInterval: true,
-//   });
-
-//   expect(correctedSettings.from).toBe(correctedSettings.min);
-// });
-
-// test('to equals max (to > max, hasInterval = true)', () => {
-//   const correctedSettings = correctSettings({
-//     max: 100, to: 101, hasInterval: true,
-//   });
-
-//   expect(correctedSettings.to).toBe(correctedSettings.max);
-// });
-
-// test('to equals max (to < min, hasInterval = true)', () => {
-//   const correctedSettings = correctSettings({
-//     min: 0, to: -1, hasInterval: true,
-//   });
-
-//   expect(correctedSettings.to).toBe(correctedSettings.max);
-// });
-
-// test('from and to switch places (from > to, hasInterval = true)', () => {
-//   const correctedSettings = correctSettings({
-//     min: 0, max: 100, from: 30, to: 20, hasInterval: true,
-//   });
-
-//   expect(correctedSettings.from).toBe(20);
-//   expect(correctedSettings.to).toBe(30);
-// });
-
-// test('return theme aqua (theme != red, theme != aqua)', () => {
-//   const correctedSettings = correctSettings({ theme: 'lalala' });
-
-//   expect(correctedSettings.theme).toBe('aqua');
-// });
-
-// test('return isVertical = false (isVertical != true, isVertical != false)', () => {
-//   const correctedSettings = correctSettings({ isVertical: 'lalala' });
-
-//   expect(correctedSettings.isVertical).toBe(false);
-// });
-
-// test('return hasInterval false (hasInterval != true, hasInterval != false)', () => {
-//   const correctedSettings = correctSettings({ hasInterval: 'lalala' });
-
-//   expect(correctedSettings.hasInterval).toBe(false);
-// });
-
-// test('step equal 1 (step < 0)', () => {
-//   const correctedSettings = correctSettings({ step: -13 });
-
-//   expect(correctedSettings.step).toBe(1);
-// });

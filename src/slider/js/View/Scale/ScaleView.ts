@@ -1,8 +1,9 @@
 import Observer from '../../Observer/Observer';
+import IScaleView from '../../Interfaces/View/Scale/IScaleView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import scaleTemplateHbs from './scaleTemplate.hbs';
 
-export default class ScaleView extends Observer {
+export default class ScaleView extends Observer implements IScaleView {
   private $slider: JQuery;
   private $scale: JQuery;
 
@@ -26,10 +27,6 @@ export default class ScaleView extends Observer {
       $('<span>', {class: 'range-slider__scale-mark', text: value,
         style: `${isVertical ? 'bottom' : 'left'}: ${position}%` }).appendTo(this.$scale);
     });
-  }
-
-  getScale(): JQuery {
-    return this.$scale;
   }
 
   private handleScaleClick = (evt: JQuery.ClickEvent): void => {

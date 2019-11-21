@@ -1,8 +1,9 @@
 import Observer from '../../Observer/Observer';
+import IRunnerView from '../../Interfaces/View/Runner/IRunnerView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import runnerTemplateHbs from './runnerTemplate.hbs';
 
-export default class RunnerView extends Observer {
+export default class RunnerView extends Observer implements IRunnerView {
   private $slider: JQuery;
   private $runner: JQuery;
   private $tip: JQuery;
@@ -13,10 +14,10 @@ export default class RunnerView extends Observer {
   constructor($slider: JQuery, parameters: IDefaultParameters, runnerType: 'first' | 'second') {
     super();
 
-    this.init($slider, parameters, runnerType);
+    this.initRunner($slider, parameters, runnerType);
   }
 
-  update(parameters: IDefaultParameters): void {
+  updateRunner(parameters: IDefaultParameters): void {
     this.positionPercent = parameters[`${this.runnerType}ValuePercent`];
 
     const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
@@ -32,12 +33,9 @@ export default class RunnerView extends Observer {
     return this.positionPercent;
   }
 
-  getRunner(): JQuery {
-    return this.$runner;
-  }
-
-  private init($slider: JQuery, parameters: IDefaultParameters, runnerType: 'first' | 'second'):
-  void {
+  private initRunner(
+      $slider: JQuery, parameters: IDefaultParameters, runnerType: 'first' | 'second',
+    ): void {
     this.$slider = $slider;
     this.$runner = $(runnerTemplateHbs(parameters));
     this.runnerType = runnerType;
@@ -47,7 +45,7 @@ export default class RunnerView extends Observer {
     this.addEventListeners();
 
     this.$slider.append(this.$runner);
-    this.update(parameters);
+    this.updateRunner(parameters);
   }
 
   private addEventListeners(): void {
