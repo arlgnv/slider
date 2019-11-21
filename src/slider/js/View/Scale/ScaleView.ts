@@ -9,32 +9,23 @@ export default class ScaleView extends Observer {
   constructor($slider: JQuery, parameters: IDefaultParameters) {
     super();
 
-    this.init($slider, parameters);
+    this.initScale($slider, parameters);
   }
 
-  update({ min, max, step }: IDefaultParameters): void {
-    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
-
+  updateScale({ min, max, step }: IDefaultParameters): void {
     this.$scale.text('');
 
-    let amountMarks = (max - min) / step;
-    let currentStep = step;
-    while (amountMarks > 20) {
-      amountMarks /= 2;
-      currentStep *= 2;
-    }
+    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
+    const amountMarks = Math.ceil((max - min) / step) - 1;
+    const values = this.beautifyMarks(
+      Array.of(min, ...Array.from({ length: amountMarks }, (e, i) => (i + 1) * step + min), max));
 
-    for (let i: number = 0, value = min; i < amountMarks; i += 1) {
+    values.forEach((value) => {
       const position = ((value - min) / (max - min)) * 100;
 
       $('<span>', {class: 'range-slider__scale-mark', text: value,
         style: `${isVertical ? 'bottom' : 'left'}: ${position}%` }).appendTo(this.$scale);
-
-      value += currentStep;
-    }
-
-    $('<span>', {class: 'range-slider__scale-mark', text: max,
-      style: `${isVertical ? 'bottom' : 'left'}: 100%` }).appendTo(this.$scale);
+    });
   }
 
   getScale(): JQuery {
@@ -43,22 +34,29 @@ export default class ScaleView extends Observer {
 
   private handleScaleClick = (evt: JQuery.ClickEvent): void => {
     const $target: JQuery = $(evt.target);
-    const metric = this.$slider.hasClass('range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
-    const positionPercent = this.$slider.hasClass('range-slider_direction_vertical')
-      ? Math.round(parseFloat($target.css('bottom')) / this.$slider[metric]() * 100)
-      : Math.round(parseFloat($target.css('left')) / this.$slider[metric]() * 100);
 
     if ($target.hasClass('range-slider__scale-mark')) {
+      const metric = this.$slider.hasClass('range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
+      const property = this.$slider.hasClass('range-slider_direction_vertical') ? 'bottom' : 'left';
+      const positionPercent =
+        Math.round(parseFloat($target.css(property)) / this.$slider[metric]() * 100);
+
       this.notify('clickOnScale', { positionPercent });
     }
   }
 
-  private init($slider: JQuery, parameters: IDefaultParameters): void {
+  private initScale($slider: JQuery, parameters: IDefaultParameters): void {
     this.$slider = $slider;
     this.$scale = $(scaleTemplateHbs());
     this.$scale.on('click', this.handleScaleClick);
 
     this.$slider.append(this.$scale);
-    this.update(parameters);
+    this.updateScale(parameters);
+  }
+
+  private beautifyMarks(array: number[]): number[] {
+    return array.length > 21
+      ? this.beautifyMarks(array.filter((e, i, arr) => i % 2 === 0  || i === arr.length - 1))
+      : array;
   }
 }

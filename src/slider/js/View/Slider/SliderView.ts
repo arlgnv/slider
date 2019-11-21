@@ -76,42 +76,30 @@ export default class SliderView extends Observer implements ISliderView {
   }
 
   private handleRunnerMove = ({ runnerShiftPercent, runnerType }): void => {
-    let positionPercent = runnerShiftPercent;
+    const lastUpdatedOnPercent = `${runnerType}Value`;
 
-    if (this.runnerTo) {
-      if (runnerType === 'first') {
-        const maxPosition = this.runnerTo.getPositionPercent();
-        positionPercent = positionPercent > maxPosition ? maxPosition : positionPercent;
-      }
-      if (runnerType === 'second') {
-        const minPosition = this.runnerFrom.getPositionPercent();
-        positionPercent = positionPercent < minPosition ? minPosition : positionPercent;
-      }
-    }
-
-    this.notify('dispatchedParameters', {
-      lastUpdatedOnPercent: `${runnerType}Value`, percent: positionPercent});
+    this.notify('dispatchedParameters', { lastUpdatedOnPercent, percent: runnerShiftPercent });
   }
 
-  private handleScaleClick = ({ positionPercent: position }): void => {
-    let updatedValue: 'firstValue' | 'secondValue';
-
+  private handleScaleClick = ({ positionPercent }): void => {
     if (this.runnerTo) {
-      const runnerFromPosition = this.runnerFrom.getPositionPercent();
-      const runnerToPosition = this.runnerTo.getPositionPercent();
-      const isFirstValueNearer =
-         (Math.max(runnerFromPosition, position) - Math.min(runnerFromPosition, position))
-         < (Math.max(runnerToPosition, position) - Math.min(runnerToPosition, position));
-      if (isFirstValueNearer) updatedValue = 'firstValue';
-      else updatedValue = 'secondValue';
-    } else updatedValue = 'firstValue';
+      const isFirstValueNearer = Math.abs(positionPercent - this.runnerFrom.getPositionPercent())
+        <= Math.abs(positionPercent - this.runnerTo.getPositionPercent());
 
-    this.notify('dispatchedParameters', {
-      lastUpdatedOnPercent: updatedValue, percent: position });
+      const lastUpdatedOnPercent = isFirstValueNearer ? 'firstValue' : 'secondValue';
+
+      this.notify('dispatchedParameters', { lastUpdatedOnPercent, percent: positionPercent });
+    } else {
+      const lastUpdatedOnPercent = 'firstValue';
+
+      this.notify('dispatchedParameters', { lastUpdatedOnPercent, percent: positionPercent });
+    }
   }
 
   private updateTheme({ theme }: IDefaultParameters): void {
-    this.$slider.addClass(`range-slider_theme_${theme}`).removeClass(`range-slider_theme_${theme === 'aqua' ? 'red' : 'aqua'}`);
+    this.$slider
+      .addClass(`range-slider_theme_${theme}`)
+      .removeClass(`range-slider_theme_${theme === 'aqua' ? 'red' : 'aqua'}`);
   }
 
   private updateDirection({ isVertical }: IDefaultParameters): void {

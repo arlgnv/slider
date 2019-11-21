@@ -58,7 +58,6 @@ export default class RunnerView extends Observer {
     const $runner: JQuery = $(evt.currentTarget).addClass('range-slider__runner_grabbed');
     const cursorPosition = this.getCursorPosition($runner, evt.clientX, evt.clientY);
     const metric = this.$slider.hasClass('range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
-    const maxRunnerPosition = this.$slider[metric]();
 
     this.$slider.find('.range-slider__runner').each(function () {
       $(this).removeClass('range-slider__runner_type_last-grabbed');
@@ -66,11 +65,9 @@ export default class RunnerView extends Observer {
     $runner.addClass('range-slider__runner_type_last-grabbed');
 
     const handleWindowMouseMove = (e: JQuery.Event): void => {
-      let runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
-      if (runnerShift < 0) runnerShift = 0;
-      if (runnerShift > maxRunnerPosition) runnerShift = maxRunnerPosition;
-
+      const runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
       const runnerShiftPercent = (runnerShift * 100) / this.$slider[metric]();
+
       this.notify('moveRunner', { runnerShiftPercent, runnerType: this.runnerType });
     };
 
@@ -90,7 +87,6 @@ export default class RunnerView extends Observer {
 
   private getRunnerShift(position: number, clientX: number, clientY: number): number {
     return this.$slider.hasClass('range-slider_direction_vertical')
-      ? position - clientY
-      : clientX - position;
+      ? position - clientY : clientX - position;
   }
 }

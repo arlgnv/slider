@@ -9,11 +9,13 @@ export default class Model extends Observer implements IModel {
 
   constructor(parameters: IRegularParameters) {
     super();
+
     this.state = this.validateParameters(parameters);
   }
 
   public dispatchState(parameters: IRegularParameters | IPercentParameters): void {
     this.state = this.validateParameters({ ...this.state, ...parameters });
+
     this.notify('updatedState', this.state);
   }
 
@@ -69,7 +71,10 @@ export default class Model extends Observer implements IModel {
     if (kind === 'valuePercentUpdated') {
       if (lastUpdatedOnPercent === valueType) {
         const convertedValue = this.convertPercentToValue(percent, min, max);
+        if (convertedValue >= max) return max;
+        if (convertedValue <= min) return min;
         const newValue = Math.round((convertedValue - min) / step) * step + min;
+
         return newValue >= max ? max : newValue;
       }
 
@@ -88,13 +93,23 @@ export default class Model extends Observer implements IModel {
   }
 
   private validateIntervalValues(parameters: IDefaultParameters): IDefaultParameters {
+    const { kind, lastUpdatedOnPercent } = parameters;
     const firstValue = this.validateSingleValue(parameters, 'firstValue');
     const secondValue = this.validateSingleValue(parameters, 'secondValue');
 
+    if (kind === 'valuePercentUpdated' && firstValue >= secondValue) {
+      return {
+        ...parameters,
+        firstValue: lastUpdatedOnPercent === 'firstValue' ? secondValue : firstValue,
+        secondValue: lastUpdatedOnPercent === 'firstValue' ? secondValue : firstValue,
+      };
+
+    }
+
     return {
       ...parameters,
-      firstValue: firstValue > secondValue ? Math.min(firstValue, secondValue) : firstValue,
-      secondValue: firstValue > secondValue ? Math.max(firstValue, secondValue) : secondValue,
+      firstValue: firstValue >= secondValue ? Math.min(firstValue, secondValue) : firstValue,
+      secondValue: firstValue >= secondValue ? Math.max(firstValue, secondValue) : secondValue,
     };
   }
 
