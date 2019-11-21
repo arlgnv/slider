@@ -1,6 +1,6 @@
 @import './colors';
 
-.lrs {
+.range-slider {
   $root: &;
 
   position: relative;
@@ -11,7 +11,7 @@
   border-radius: 0.3571rem;
   user-select: none;
 
-  &__bar {
+  &__progress-bar {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -95,7 +95,7 @@
     width: 0.4286rem;
     height: 21.4286rem;
 
-    #{$root}__bar {
+    #{$root}__progress-bar {
       left: 0;
       right: 0;
       top: auto;
@@ -141,7 +141,7 @@
   }
 
   &_theme_aqua {
-    #{$root}__bar,
+    #{$root}__progress-bar,
     #{$root}__runner,
     #{$root}__tip,
     #{$root}__tip::before {
@@ -155,7 +155,7 @@
   }
 
   &_theme_red {
-    #{$root}__bar,
+    #{$root}__progress-bar,
     #{$root}__runner,
     #{$root}__tip,
     #{$root}__tip::before {

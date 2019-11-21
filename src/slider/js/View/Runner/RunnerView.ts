@@ -1,5 +1,5 @@
 import Observer from '../../Observer/Observer';
-import IFullParameters from '../../Interfaces/IFullParameters';
+import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import runnerTemplateHbs from './runnerTemplate.hbs';
 
 export default class RunnerView extends Observer {
@@ -10,16 +10,16 @@ export default class RunnerView extends Observer {
   private positionPercent: number;
   private value?: number;
 
-  constructor($slider: JQuery, parameters: IFullParameters, runnerType: 'first' | 'second') {
+  constructor($slider: JQuery, parameters: IDefaultParameters, runnerType: 'first' | 'second') {
     super();
 
     this.init($slider, parameters, runnerType);
   }
 
-  update(parameters: IFullParameters): void {
+  update(parameters: IDefaultParameters): void {
     this.positionPercent = parameters[`${this.runnerType}ValuePercent`];
 
-    const isVertical = this.$slider.hasClass('lrs_direction_vertical');
+    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
     this.$runner.attr('style', `${isVertical ? 'bottom' : 'left'}: ${this.positionPercent}%`);
 
     if (this.$tip) {
@@ -36,13 +36,14 @@ export default class RunnerView extends Observer {
     return this.$runner;
   }
 
-  private init($slider: JQuery, parameters: IFullParameters, runnerType: 'first' | 'second'): void {
+  private init($slider: JQuery, parameters: IDefaultParameters, runnerType: 'first' | 'second'):
+  void {
     this.$slider = $slider;
     this.$runner = $(runnerTemplateHbs(parameters));
     this.runnerType = runnerType;
     this.positionPercent = runnerType === 'first'
       ? parameters.firstValuePercent : parameters.secondValuePercent;
-    if (parameters.hasTip) this.$tip = this.$runner.find('.lrs__tip');
+    if (parameters.hasTip) this.$tip = this.$runner.find('.range-slider__tip');
     this.addEventListeners();
 
     this.$slider.append(this.$runner);
@@ -54,27 +55,27 @@ export default class RunnerView extends Observer {
   }
 
   private handleRunnerMouseDown = (evt: JQuery.MouseDownEvent): void => {
-    const $runner: JQuery = $(evt.currentTarget).addClass('lrs__runner_grabbed');
+    const $runner: JQuery = $(evt.currentTarget).addClass('range-slider__runner_grabbed');
     const cursorPosition = this.getCursorPosition($runner, evt.clientX, evt.clientY);
-    const metric = this.$slider.hasClass('lrs_direction_vertical') ? 'outerHeight' : 'outerWidth';
+    const metric = this.$slider.hasClass('range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
     const maxRunnerPosition = this.$slider[metric]();
 
-    this.$slider.find('.lrs__runner').each(function () {
-      $(this).removeClass('lrs__runner_last-grabbed');
+    this.$slider.find('.range-slider__runner').each(function () {
+      $(this).removeClass('range-slider__runner_type_last-grabbed');
     });
-    $runner.addClass('lrs__runner_last-grabbed');
+    $runner.addClass('range-slider__runner_type_last-grabbed');
 
     const handleWindowMouseMove = (e: JQuery.Event): void => {
       let runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
       if (runnerShift < 0) runnerShift = 0;
       if (runnerShift > maxRunnerPosition) runnerShift = maxRunnerPosition;
 
-      const runnerShiftPercent = Math.round((runnerShift * 100) / this.$slider[metric]());
+      const runnerShiftPercent = (runnerShift * 100) / this.$slider[metric]();
       this.notify('moveRunner', { runnerShiftPercent, runnerType: this.runnerType });
     };
 
     const handleWindowMouseUp = (): void => {
-      $runner.removeClass('lrs__runner_grabbed');
+      $runner.removeClass('range-slider__runner_grabbed');
 
       $(window).off('mousemove', handleWindowMouseMove).off('mouseup', handleWindowMouseUp);
     };
@@ -83,11 +84,13 @@ export default class RunnerView extends Observer {
   }
 
   private getCursorPosition($target: JQuery, clientX: number, clientY: number): number {
-    return this.$slider.hasClass('lrs_direction_vertical')
+    return this.$slider.hasClass('range-slider_direction_vertical')
       ? clientY + (parseFloat($target.css('bottom')) || 0) : clientX - (parseFloat($target.css('left')) || 0);
   }
 
   private getRunnerShift(position: number, clientX: number, clientY: number): number {
-    return this.$slider.hasClass('lrs_direction_vertical') ? position - clientY :clientX - position;
+    return this.$slider.hasClass('range-slider_direction_vertical')
+      ? position - clientY
+      : clientX - position;
   }
 }

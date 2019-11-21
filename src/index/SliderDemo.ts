@@ -1,8 +1,9 @@
 import IApp from '../slider/js/Interfaces/App/IApp';
 import IDefaultParameters from '../slider/js/Interfaces/IDefaultParameters';
+import IFullParameters from '../slider/js/Interfaces/IFullParameters';
 
 export default class SliderDemo {
-  private parameters: IParameters;
+  private parameters: IDefaultParameters;
   private slider: JQuery;
   private sliderData: IApp;
   private sliderElement: JQuery;
@@ -17,7 +18,7 @@ export default class SliderDemo {
   private fieldType: JQuery;
   private fieldView: JQuery;
 
-  constructor(slider: JQuery, parameters: IParameters) {
+  constructor(slider: JQuery, parameters: IDefaultParameters) {
     this.parameters = parameters;
     this.parameters.onChange = this.handleSliderChange;
 
@@ -41,7 +42,7 @@ export default class SliderDemo {
     this.fieldView = this.slider.find('[name=isVertical]');
   }
 
-  private addEventListeners() {
+  private addEventListeners(): void {
     const updateSliderFunction = this.updateSlider;
 
     this.slider.find('input').each(function () {
@@ -58,7 +59,7 @@ export default class SliderDemo {
     this.sliderData = this.sliderElement.data('rangeSlider');
   }
 
-  private handleSliderChange = (parameters: IParameters): void => {
+  private handleSliderChange = (parameters: IFullParameters): void => {
     const { firstValue, secondValue, min, max, step,
       hasScale, hasTip, hasInterval, isVertical, theme } = parameters;
 

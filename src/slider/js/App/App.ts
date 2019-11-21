@@ -15,7 +15,7 @@ export default class App implements IApp {
     new Presenter(this.model, this.view);
   }
 
-  update(parameters: IDefaultParameters = {}): void {
+  update(parameters: Partial<IDefaultParameters> = {}): void {
     this.model.dispatchState({ ...this.model.getState(), ...parameters, kind: 'stateUpdated' });
   }
 }

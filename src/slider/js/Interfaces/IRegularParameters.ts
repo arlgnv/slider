@@ -1,5 +1,5 @@
-import IFullParameters from './IFullParameters';
+import IDefaultParameters from './IDefaultParameters';
 
-export default interface IRegularParameters extends IFullParameters {
+export default interface IRegularParameters extends IDefaultParameters {
   kind: 'stateUpdated';
 }

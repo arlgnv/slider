@@ -1,28 +1,28 @@
 import Observer from '../Observer/Observer';
 import IModel from '../Interfaces/Model/IModel';
-import IFullParameters from '../Interfaces/IFullParameters';
+import IDefaultParameters from '../Interfaces/IDefaultParameters';
 import IRegularParameters from '../Interfaces/IRegularParameters';
 import IPercentParameters from '../Interfaces/IPercentParameters';
 
 export default class Model extends Observer implements IModel {
-  private state: IFullParameters;
+  private state: IDefaultParameters;
 
   constructor(parameters: IRegularParameters) {
     super();
-
     this.state = this.validateParameters(parameters);
   }
 
   public dispatchState(parameters: IRegularParameters | IPercentParameters): void {
     this.state = this.validateParameters({ ...this.state, ...parameters });
-    this.notify('updateState', this.state);
+    this.notify('updatedState', this.state);
   }
 
-  public getState(): IFullParameters {
+  public getState(): IDefaultParameters {
     return this.state;
   }
 
-  private validateParameters(parameters: IRegularParameters | IPercentParameters): IFullParameters {
+  private validateParameters(parameters: IRegularParameters | IPercentParameters):
+  IDefaultParameters {
     switch (parameters.kind) {
       case 'valuePercentUpdated':
         return this.validateParametersWithUpdatedPercent(parameters);
@@ -31,7 +31,7 @@ export default class Model extends Observer implements IModel {
     }
   }
 
-  private validateParametersWithUpdatedState(parameters: IRegularParameters): IFullParameters {
+  private validateParametersWithUpdatedState(parameters: IRegularParameters): IDefaultParameters {
     const { step } = this.validateStep(parameters);
     const { min, max } = this.validateMinMax(parameters);
     const { firstValue, secondValue } = this.validateValues({ ...parameters, step, min, max });
@@ -42,7 +42,7 @@ export default class Model extends Observer implements IModel {
       min, max, step };
   }
 
-  private validateParametersWithUpdatedPercent(parameters: IPercentParameters): IFullParameters {
+  private validateParametersWithUpdatedPercent(parameters: IPercentParameters): IDefaultParameters {
     const { firstValue, secondValue } = this.validateValues(parameters);
     const { firstValuePercent, secondValuePercent } =
       this.calculateValuesPercent({ ...parameters, firstValue, secondValue });
@@ -50,7 +50,7 @@ export default class Model extends Observer implements IModel {
     return { ...parameters, firstValue, secondValue, firstValuePercent, secondValuePercent };
   }
 
-  private validateValues(parameters: IFullParameters): IFullParameters {
+  private validateValues(parameters: IDefaultParameters): IDefaultParameters {
     return parameters.hasInterval
      ? {
        ...parameters,
@@ -63,7 +63,7 @@ export default class Model extends Observer implements IModel {
      };
   }
 
-  private validateSingleValue(parameters: IFullParameters, valueType: string): number {
+  private validateSingleValue(parameters: IDefaultParameters, valueType: string): number {
     const { kind, lastUpdatedOnPercent, percent, max, min, step } = parameters;
 
     if (kind === 'valuePercentUpdated') {
@@ -87,7 +87,7 @@ export default class Model extends Observer implements IModel {
     }
   }
 
-  private validateIntervalValues(parameters: IFullParameters): IFullParameters {
+  private validateIntervalValues(parameters: IDefaultParameters): IDefaultParameters {
     const firstValue = this.validateSingleValue(parameters, 'firstValue');
     const secondValue = this.validateSingleValue(parameters, 'secondValue');
 
@@ -98,7 +98,7 @@ export default class Model extends Observer implements IModel {
     };
   }
 
-  private validateMinMax(parameters: IFullParameters): IFullParameters {
+  private validateMinMax(parameters: IDefaultParameters): IDefaultParameters {
     const { min, max } = parameters;
 
     return {
@@ -108,7 +108,7 @@ export default class Model extends Observer implements IModel {
     };
   }
 
-  private validateStep(parameters: IFullParameters): IFullParameters {
+  private validateStep(parameters: IDefaultParameters): IDefaultParameters {
     const { step } = parameters;
 
     return {
@@ -117,7 +117,7 @@ export default class Model extends Observer implements IModel {
     };
   }
 
-  private calculateValuesPercent(parameters: IFullParameters): IFullParameters {
+  private calculateValuesPercent(parameters: IDefaultParameters): IDefaultParameters {
     const { hasInterval, firstValue, secondValue, min, max } = parameters;
 
     return {

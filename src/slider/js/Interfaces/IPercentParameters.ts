@@ -1,6 +1,6 @@
-import IFullParameters from './IFullParameters';
+import IDefaultParameters from './IDefaultParameters';
 
-export default interface IPercentParameters extends IFullParameters {
+export default interface IPercentParameters extends IDefaultParameters {
   kind: 'valuePercentUpdated';
   percent: number;
   lastUpdatedOnPercent: 'firstValue' | 'secondValue';

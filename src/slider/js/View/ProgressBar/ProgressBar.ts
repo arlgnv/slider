@@ -1,16 +1,16 @@
-import barTemplateHbs from './barTemplate.hbs';
-import IFullParameters from '../../Interfaces/IFullParameters';
+import progressBarTemplateHbs from './progressBarTemplate.hbs';
+import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 
-export default class BarView {
+export default class ProgressBar {
   private $slider: JQuery;
   private $bar: JQuery;
 
-  constructor($slider: JQuery, parameters: IFullParameters) {
+  constructor($slider: JQuery, parameters: IDefaultParameters) {
     this.init($slider, parameters);
   }
 
   update(runnerFromPosition: number, runnerToPosition: number | null): void {
-    const isVertical = this.$slider.hasClass('lrs_direction_vertical');
+    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
     const leftEdge = runnerToPosition ? runnerFromPosition : 0;
     const rightEdge = runnerToPosition ? 100 - runnerToPosition : 100 - runnerFromPosition;
 
@@ -18,9 +18,9 @@ export default class BarView {
     else this.$bar.attr('style', `left: ${leftEdge}%; right: ${rightEdge}%;`);
   }
 
-  private init($slider: JQuery, parameters: IFullParameters): void {
+  private init($slider: JQuery, parameters: IDefaultParameters): void {
     this.$slider = $slider;
-    this.$bar = $(barTemplateHbs());
+    this.$bar = $(progressBarTemplateHbs());
 
     this.$slider.append(this.$bar);
 

@@ -1,19 +1,19 @@
 import Observer from '../../Observer/Observer';
-import IFullParameters from '../../Interfaces/IFullParameters';
+import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import scaleTemplateHbs from './scaleTemplate.hbs';
 
 export default class ScaleView extends Observer {
   private $slider: JQuery;
   private $scale: JQuery;
 
-  constructor($slider: JQuery, parameters: IFullParameters) {
+  constructor($slider: JQuery, parameters: IDefaultParameters) {
     super();
 
     this.init($slider, parameters);
   }
 
-  update({ min, max, step }: IFullParameters): void {
-    const isVertical = this.$slider.hasClass('lrs_direction_vertical');
+  update({ min, max, step }: IDefaultParameters): void {
+    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
 
     this.$scale.text('');
 
@@ -27,13 +27,13 @@ export default class ScaleView extends Observer {
     for (let i: number = 0, value = min; i < amountMarks; i += 1) {
       const position = ((value - min) / (max - min)) * 100;
 
-      $('<span>', {class: 'lrs__scale-mark', text: value,
+      $('<span>', {class: 'range-slider__scale-mark', text: value,
         style: `${isVertical ? 'bottom' : 'left'}: ${position}%` }).appendTo(this.$scale);
 
       value += currentStep;
     }
 
-    $('<span>', {class: 'lrs__scale-mark', text: max,
+    $('<span>', {class: 'range-slider__scale-mark', text: max,
       style: `${isVertical ? 'bottom' : 'left'}: 100%` }).appendTo(this.$scale);
   }
 
@@ -43,17 +43,17 @@ export default class ScaleView extends Observer {
 
   private handleScaleClick = (evt: JQuery.ClickEvent): void => {
     const $target: JQuery = $(evt.target);
-    const metric = this.$slider.hasClass('lrs_direction_vertical') ? 'outerHeight' : 'outerWidth';
-    const positionPercent = this.$slider.hasClass('lrs_direction_vertical')
+    const metric = this.$slider.hasClass('range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
+    const positionPercent = this.$slider.hasClass('range-slider_direction_vertical')
       ? Math.round(parseFloat($target.css('bottom')) / this.$slider[metric]() * 100)
       : Math.round(parseFloat($target.css('left')) / this.$slider[metric]() * 100);
 
-    if ($target.hasClass('lrs__scale-mark')) {
+    if ($target.hasClass('range-slider__scale-mark')) {
       this.notify('clickOnScale', { positionPercent });
     }
   }
 
-  private init($slider: JQuery, parameters: IFullParameters): void {
+  private init($slider: JQuery, parameters: IDefaultParameters): void {
     this.$slider = $slider;
     this.$scale = $(scaleTemplateHbs());
     this.$scale.on('click', this.handleScaleClick);

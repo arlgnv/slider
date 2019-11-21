@@ -14,10 +14,11 @@ declare global {
 }
 
 (function ($: JQueryStatic): void {
-  $.fn.rangeSlider = function (defaultParameters: IDefaultParameters = {}): JQuery {
-    const initialParameters: IRegularParameters = {
+  $.fn.rangeSlider = function (defaultParameters: Partial<IDefaultParameters> = {}): JQuery {
+    const defaultConfig: IRegularParameters = {
       kind: 'stateUpdated',
       firstValue: 0,
+      firstValuePercent: 0,
       min: 0,
       max: 100,
       step: 1,
@@ -27,11 +28,14 @@ declare global {
       isVertical: false,
       theme: 'aqua',
       secondValue: null,
+      secondValuePercent: null,
       onChange: null,
     };
 
+    const initialParameters: IRegularParameters = $.extend({}, defaultConfig, defaultParameters);
+
     return this.each(function (): void {
-      $.data(this, 'rangeSlider', new App($(this), { ...initialParameters, ...defaultParameters }));
+      $.data(this, 'rangeSlider', new App($(this), initialParameters));
     });
   };
 })(window.$);

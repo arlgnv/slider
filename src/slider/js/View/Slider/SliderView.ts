@@ -1,25 +1,25 @@
 import Observer from '../../Observer/Observer';
 import RunnerView from '../Runner/RunnerView';
-import BarView from '../Bar/BarView';
+import ProgressBar from '../ProgressBar/ProgressBar';
 import ScaleView from '../Scale/ScaleView';
 import ISliderView from '../../Interfaces/View/ISliderView';
-import IFullParameters from '../../Interfaces/IFullParameters';
+import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import sliderTemplateHbs from './sliderTemplate.hbs';
 
 export default class SliderView extends Observer implements ISliderView {
   private $slider: JQuery;
   private runnerFrom: RunnerView;
-  private bar: BarView;
+  private bar: ProgressBar;
   private runnerTo?: RunnerView;
   private scale?: ScaleView;
 
-  constructor($anchorElement: JQuery, parameters: IFullParameters) {
+  constructor($anchorElement: JQuery, parameters: IDefaultParameters) {
     super();
 
     this.init(parameters, $anchorElement);
   }
 
-  updateSlider(parameters: IFullParameters): void {
+  updateSlider(parameters: IDefaultParameters): void {
     const { kind, onChange } = parameters;
 
     if (kind === 'valuePercentUpdated') this.updateSliderOnInteract(parameters);
@@ -27,7 +27,7 @@ export default class SliderView extends Observer implements ISliderView {
     if (onChange) onChange(parameters);
   }
 
-  private updateSliderOnInteract(parameters: IFullParameters): void {
+  private updateSliderOnInteract(parameters: IDefaultParameters): void {
     const { lastUpdatedOnPercent, hasInterval } = parameters;
 
     if (lastUpdatedOnPercent === 'firstValue') this.runnerFrom.update(parameters);
@@ -38,7 +38,7 @@ export default class SliderView extends Observer implements ISliderView {
       hasInterval ? this.runnerTo.getPositionPercent() : null);
   }
 
-  private init(parameters: IFullParameters, $anchorElement?: JQuery): void {
+  private init(parameters: IDefaultParameters, $anchorElement?: JQuery): void {
     if ($anchorElement) {
       $anchorElement.before(sliderTemplateHbs(parameters));
       this.$slider = $anchorElement.prev();
@@ -48,7 +48,7 @@ export default class SliderView extends Observer implements ISliderView {
     this.updateTheme(parameters);
 
     this.runnerFrom = new RunnerView(this.$slider, parameters, 'first');
-    this.bar = new BarView(this.$slider, parameters);
+    this.bar = new ProgressBar(this.$slider, parameters);
 
     const { hasInterval, hasScale, onChange } = parameters;
     if (hasInterval) this.runnerTo = new RunnerView(this.$slider, parameters, 'second');
@@ -58,7 +58,7 @@ export default class SliderView extends Observer implements ISliderView {
     this.subscribeToUpdates(parameters);
   }
 
-  private subscribeToUpdates(parameters: IFullParameters): void {
+  private subscribeToUpdates(parameters: IDefaultParameters): void {
     const { hasInterval, hasScale } = parameters;
 
     this.runnerFrom.subscribe('moveRunner', this.handleRunnerMove);
@@ -66,7 +66,7 @@ export default class SliderView extends Observer implements ISliderView {
     if (hasScale) this.scale.subscribe('clickOnScale', this.handleScaleClick);
   }
 
-  private reinit(parameters: IFullParameters): void {
+  private reinit(parameters: IDefaultParameters): void {
     this.$slider.text('');
     delete this.runnerFrom;
     delete this.runnerTo;
@@ -89,7 +89,7 @@ export default class SliderView extends Observer implements ISliderView {
       }
     }
 
-    this.notify('dispatchParameters', {
+    this.notify('dispatchedParameters', {
       lastUpdatedOnPercent: `${runnerType}Value`, percent: positionPercent});
   }
 
@@ -106,16 +106,16 @@ export default class SliderView extends Observer implements ISliderView {
       else updatedValue = 'secondValue';
     } else updatedValue = 'firstValue';
 
-    this.notify('dispatchParameters', {
+    this.notify('dispatchedParameters', {
       lastUpdatedOnPercent: updatedValue, percent: position });
   }
 
-  private updateTheme({ theme }: IFullParameters): void {
-    this.$slider.addClass(`lrs_theme_${theme}`).removeClass(`lrs_theme_${theme === 'aqua' ? 'red' : 'aqua'}`);
+  private updateTheme({ theme }: IDefaultParameters): void {
+    this.$slider.addClass(`range-slider_theme_${theme}`).removeClass(`range-slider_theme_${theme === 'aqua' ? 'red' : 'aqua'}`);
   }
 
-  private updateDirection({ isVertical }: IFullParameters): void {
-    if (isVertical) this.$slider.addClass('lrs_direction_vertical');
-    if (!isVertical) this.$slider.removeClass('lrs_direction_vertical');
+  private updateDirection({ isVertical }: IDefaultParameters): void {
+    if (isVertical) this.$slider.addClass('range-slider_direction_vertical');
+    if (!isVertical) this.$slider.removeClass('range-slider_direction_vertical');
   }
 }
