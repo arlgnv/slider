@@ -10,13 +10,16 @@ export default class ProgressBar implements IProgressBarView {
     this.initProgressBar($slider, parameters);
   }
 
-  updateProgressBar(runnerFromPosition: number, runnerToPosition: number | null): void {
+  updateProgressBar(leftShift: number, rightShift: number | null): void {
     const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
-    const leftEdge = runnerToPosition ? runnerFromPosition : 0;
-    const rightEdge = runnerToPosition ? 100 - runnerToPosition : 100 - runnerFromPosition;
+    const leftEdge = rightShift ? leftShift : 0;
+    const rightEdge = rightShift ? 100 - rightShift : 100 - leftShift;
 
-    if (isVertical) this.$bar.attr('style', `bottom: ${leftEdge}%; top: ${rightEdge}%;`);
-    else this.$bar.attr('style', `left: ${leftEdge}%; right: ${rightEdge}%;`);
+    if (isVertical) {
+      this.$bar.attr('style', `bottom: ${leftEdge}%; top: ${rightEdge}%;`);
+    } else {
+      this.$bar.attr('style', `left: ${leftEdge}%; right: ${rightEdge}%;`);
+    }
   }
 
   private initProgressBar($slider: JQuery, parameters: IDefaultParameters): void {
@@ -26,7 +29,6 @@ export default class ProgressBar implements IProgressBarView {
     this.$slider.append(this.$bar);
 
     const { firstValuePercent, secondValuePercent } = parameters;
-
-    this.updateProgressBar(firstValuePercent, secondValuePercent ? secondValuePercent : null);
+    this.updateProgressBar(firstValuePercent, secondValuePercent);
   }
 }

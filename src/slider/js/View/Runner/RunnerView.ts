@@ -1,12 +1,13 @@
 import Observer from '../../Observer/Observer';
 import IRunnerView from '../../Interfaces/View/Runner/IRunnerView';
+import TipView from '../Tip/TipView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import runnerTemplateHbs from './runnerTemplate.hbs';
 
 export default class RunnerView extends Observer implements IRunnerView {
   private $slider: JQuery;
   private $runner: JQuery;
-  private $tip: JQuery;
+  private tip: TipView;
   private runnerType: 'first' | 'second';
   private positionPercent: number;
   private value?: number;
@@ -23,9 +24,9 @@ export default class RunnerView extends Observer implements IRunnerView {
     const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
     this.$runner.attr('style', `${isVertical ? 'bottom' : 'left'}: ${this.positionPercent}%`);
 
-    if (this.$tip) {
+    if (parameters.hasTip) {
       this.value = parameters[`${this.runnerType}Value`];
-      this.$tip.text(this.value);
+      this.tip.updateTip(this.value);
     }
   }
 
@@ -41,7 +42,11 @@ export default class RunnerView extends Observer implements IRunnerView {
     this.runnerType = runnerType;
     this.positionPercent = runnerType === 'first'
       ? parameters.firstValuePercent : parameters.secondValuePercent;
-    if (parameters.hasTip) this.$tip = this.$runner.find('.range-slider__tip');
+
+    if (parameters.hasTip) {
+      this.tip = new TipView(this.$runner, parameters[`${this.runnerType}Value`]);
+    }
+
     this.addEventListeners();
 
     this.$slider.append(this.$runner);
@@ -64,7 +69,7 @@ export default class RunnerView extends Observer implements IRunnerView {
 
     const handleWindowMouseMove = (e: JQuery.Event): void => {
       const runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
-      const runnerShiftPercent = (runnerShift * 100) / this.$slider[metric]();
+      const runnerShiftPercent = runnerShift * 100 / this.$slider[metric]();
 
       this.notify('moveRunner', { runnerShiftPercent, runnerType: this.runnerType });
     };
@@ -80,7 +85,8 @@ export default class RunnerView extends Observer implements IRunnerView {
 
   private getCursorPosition($target: JQuery, clientX: number, clientY: number): number {
     return this.$slider.hasClass('range-slider_direction_vertical')
-      ? clientY + (parseFloat($target.css('bottom')) || 0) : clientX - (parseFloat($target.css('left')) || 0);
+      ? clientY + (parseFloat($target.css('bottom')) || 0)
+      : clientX - (parseFloat($target.css('left')) || 0);
   }
 
   private getRunnerShift(position: number, clientX: number, clientY: number): number {

@@ -9,7 +9,7 @@ declare global {
   }
 
   interface JQuery {
-    rangeSlider(parameters?: IDefaultParameters): JQuery;
+    rangeSlider(parameters?: Partial<IDefaultParameters>): JQuery;
   }
 }
 

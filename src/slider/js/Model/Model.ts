@@ -23,8 +23,8 @@ export default class Model extends Observer implements IModel {
     return this.state;
   }
 
-  private validateParameters(parameters: IRegularParameters | IPercentParameters):
-  IDefaultParameters {
+  private validateParameters(
+      parameters: IRegularParameters | IPercentParameters): IDefaultParameters {
     switch (parameters.kind) {
       case 'valuePercentUpdated':
         return this.validateParametersWithUpdatedPercent(parameters);
@@ -97,20 +97,23 @@ export default class Model extends Observer implements IModel {
     const firstValue = this.validateSingleValue(parameters, 'firstValue');
     const secondValue = this.validateSingleValue(parameters, 'secondValue');
 
-    if (kind === 'valuePercentUpdated' && firstValue >= secondValue) {
-      return {
-        ...parameters,
-        firstValue: lastUpdatedOnPercent === 'firstValue' ? secondValue : firstValue,
-        secondValue: lastUpdatedOnPercent === 'firstValue' ? secondValue : firstValue,
-      };
+    if (firstValue > secondValue) {
+      if (kind === 'valuePercentUpdated') {
+        if (lastUpdatedOnPercent === 'firstValue') {
+          return { ...parameters, secondValue, firstValue: secondValue };
+        }
 
+        if (lastUpdatedOnPercent === 'secondValue') {
+          return { ...parameters, firstValue, secondValue: firstValue };
+        }
+      }
+      if (kind === 'stateUpdated') {
+        return {...parameters, firstValue: Math.min(firstValue, secondValue),
+          secondValue: Math.max(firstValue, secondValue) };
+      }
     }
 
-    return {
-      ...parameters,
-      firstValue: firstValue >= secondValue ? Math.min(firstValue, secondValue) : firstValue,
-      secondValue: firstValue >= secondValue ? Math.max(firstValue, secondValue) : secondValue,
-    };
+    return { ...parameters, firstValue, secondValue };
   }
 
   private validateMinMax(parameters: IDefaultParameters): IDefaultParameters {

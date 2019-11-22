@@ -7,9 +7,10 @@ import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import sliderTemplateHbs from './sliderTemplate.hbs';
 
 export default class SliderView extends Observer implements ISliderView {
+  private $anchorElement: JQuery;
   private $slider: JQuery;
   private runnerFrom: RunnerView;
-  private bar: ProgressBar;
+  private progressBar: ProgressBar;
   private runnerTo?: RunnerView;
   private scale?: ScaleView;
 
@@ -22,24 +23,23 @@ export default class SliderView extends Observer implements ISliderView {
   updateSlider(parameters: IDefaultParameters): void {
     const { kind, onChange } = parameters;
 
-    if (kind === 'valuePercentUpdated') this.updateSliderOnInteract(parameters);
     if (kind === 'stateUpdated') this.reinit(parameters);
+
+    if (kind === 'valuePercentUpdated') {
+      const { lastUpdatedOnPercent, firstValuePercent, secondValuePercent } = parameters;
+
+      if (lastUpdatedOnPercent === 'firstValue') this.runnerFrom.updateRunner(parameters);
+      if (lastUpdatedOnPercent === 'secondValue') this.runnerTo.updateRunner(parameters);
+
+      this.progressBar.updateProgressBar(firstValuePercent, secondValuePercent);
+    }
+
     if (onChange) onChange(parameters);
-  }
-
-  private updateSliderOnInteract(parameters: IDefaultParameters): void {
-    const { lastUpdatedOnPercent, hasInterval } = parameters;
-
-    if (lastUpdatedOnPercent === 'firstValue') this.runnerFrom.updateRunner(parameters);
-    if (lastUpdatedOnPercent === 'secondValue') this.runnerTo.updateRunner(parameters);
-
-    this.bar.updateProgressBar(
-      this.runnerFrom.getPositionPercent(),
-      hasInterval ? this.runnerTo.getPositionPercent() : null);
   }
 
   private initSlider(parameters: IDefaultParameters, $anchorElement?: JQuery): void {
     if ($anchorElement) {
+      this.$anchorElement = $anchorElement;
       $anchorElement.before(sliderTemplateHbs(parameters));
       this.$slider = $anchorElement.prev();
     }
@@ -47,10 +47,9 @@ export default class SliderView extends Observer implements ISliderView {
     this.updateDirection(parameters);
     this.updateTheme(parameters);
 
-    this.runnerFrom = new RunnerView(this.$slider, parameters, 'first');
-    this.bar = new ProgressBar(this.$slider, parameters);
-
     const { hasInterval, hasScale, onChange } = parameters;
+    this.runnerFrom = new RunnerView(this.$slider, parameters, 'first');
+    this.progressBar = new ProgressBar(this.$slider, parameters);
     if (hasInterval) this.runnerTo = new RunnerView(this.$slider, parameters, 'second');
     if (hasScale) this.scale = new ScaleView(this.$slider, parameters);
     if (onChange) onChange(parameters);
@@ -68,7 +67,10 @@ export default class SliderView extends Observer implements ISliderView {
 
   private reinit(parameters: IDefaultParameters): void {
     this.$slider.text('');
-
+    this.runnerFrom = undefined;
+    this.runnerTo = undefined;
+    this.progressBar = undefined;
+    this.scale = undefined;
     this.initSlider(parameters);
   }
 
@@ -80,12 +82,21 @@ export default class SliderView extends Observer implements ISliderView {
 
   private handleScaleClick = ({ positionPercent }): void => {
     if (this.runnerTo) {
-      const isFirstValueNearer = Math.abs(positionPercent - this.runnerFrom.getPositionPercent())
+      const runnerFromPosition = this.runnerFrom.getPositionPercent();
+      const runnerToPosition = this.runnerTo.getPositionPercent();
+
+      if (runnerFromPosition === runnerToPosition) {
+        const lastUpdatedOnPercent = positionPercent < runnerFromPosition ? 'firstValue' : 'secondValue';
+
+        this.notify('dispatchedParameters', { lastUpdatedOnPercent, percent: positionPercent });
+      } else {
+        const isFirstValueNearer = Math.abs(positionPercent - this.runnerFrom.getPositionPercent())
         <= Math.abs(positionPercent - this.runnerTo.getPositionPercent());
 
-      const lastUpdatedOnPercent = isFirstValueNearer ? 'firstValue' : 'secondValue';
+        const lastUpdatedOnPercent = isFirstValueNearer ? 'firstValue' : 'secondValue';
 
-      this.notify('dispatchedParameters', { lastUpdatedOnPercent, percent: positionPercent });
+        this.notify('dispatchedParameters', { lastUpdatedOnPercent, percent: positionPercent });
+      }
     } else {
       const lastUpdatedOnPercent = 'firstValue';
 

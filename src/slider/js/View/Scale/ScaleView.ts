@@ -18,8 +18,11 @@ export default class ScaleView extends Observer implements IScaleView {
 
     const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
     const amountMarks = Math.ceil((max - min) / step) - 1;
-    const values = this.beautifyMarks(
-      Array.of(min, ...Array.from({ length: amountMarks }, (e, i) => (i + 1) * step + min), max));
+    const values = this.beautifyMarks([
+      min,
+      ...Array.from({ length: amountMarks }, (e, i) => (i + 1) * step + min),
+      max,
+    ]);
 
     values.forEach((value) => {
       const position = ((value - min) / (max - min)) * 100;
@@ -45,10 +48,13 @@ export default class ScaleView extends Observer implements IScaleView {
   private initScale($slider: JQuery, parameters: IDefaultParameters): void {
     this.$slider = $slider;
     this.$scale = $(scaleTemplateHbs());
-    this.$scale.on('click', this.handleScaleClick);
-
+    this.addEventListeners();
     this.$slider.append(this.$scale);
     this.updateScale(parameters);
+  }
+
+  private addEventListeners(): void {
+    this.$scale.on('click', this.handleScaleClick);
   }
 
   private beautifyMarks(array: number[]): number[] {
