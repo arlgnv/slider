@@ -13,21 +13,27 @@ export default class ScaleView extends Observer implements IScaleView {
     this.initScale($slider, parameters);
   }
 
-  updateScale({ min, max, step }: IDefaultParameters): void {
-    this.$scale.text('');
-
-    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
+  public updateScale({ min, max, step }: IDefaultParameters): void {
     const amountMarks = Math.ceil((max - min) / step) - 1;
-    const values = this.beautifyMarks([
+    const values = [
       min,
       ...Array.from({ length: amountMarks }, (e, i) => (i + 1) * step + min),
       max,
-    ]);
+    ];
+
+    this.drawMarks(this.scaleMarks(values), min, max);
+  }
+
+  private drawMarks(values: number[], min: number, max: number): void {
+    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
+    this.$scale.text('');
 
     values.forEach((value) => {
       const position = ((value - min) / (max - min)) * 100;
 
-      $('<span>', {class: 'range-slider__scale-mark', text: value,
+      $('<span>', {
+        class: 'range-slider__scale-mark',
+        text: value,
         style: `${isVertical ? 'bottom' : 'left'}: ${position}%` }).appendTo(this.$scale);
     });
   }
@@ -41,7 +47,7 @@ export default class ScaleView extends Observer implements IScaleView {
       const positionPercent =
         Math.round(parseFloat($target.css(property)) / this.$slider[metric]() * 100);
 
-      this.notify('clickOnScale', { positionPercent });
+      this.notify('selectedValue', { lastUpdatedOnPercent: 'either', percent: positionPercent });
     }
   }
 
@@ -57,9 +63,9 @@ export default class ScaleView extends Observer implements IScaleView {
     this.$scale.on('click', this.handleScaleClick);
   }
 
-  private beautifyMarks(array: number[]): number[] {
-    return array.length > 21
-      ? this.beautifyMarks(array.filter((e, i, arr) => i % 2 === 0  || i === arr.length - 1))
-      : array;
+  private scaleMarks(marks: number[]): number[] {
+    return marks.length > 21
+      ? this.scaleMarks(marks.filter((e, i, arr) => i % 2 === 0  || i === arr.length - 1))
+      : marks;
   }
 }

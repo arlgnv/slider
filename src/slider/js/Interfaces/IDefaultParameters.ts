@@ -14,5 +14,5 @@ export default interface IDefaultParameters {
   firstValuePercent: number;
   secondValuePercent: number | null;
   percent?: number;
-  lastUpdatedOnPercent?: 'firstValue' | 'secondValue';
+  lastUpdatedOnPercent?: 'firstValue' | 'secondValue' | 'either';
 }

@@ -14,7 +14,7 @@ declare global {
 }
 
 (function ($: JQueryStatic): void {
-  $.fn.rangeSlider = function (defaultParameters: Partial<IDefaultParameters> = {}): JQuery {
+  $.fn.rangeSlider = function (defaultParameters: Partial<IDefaultParameters>): JQuery {
     const defaultConfig: IRegularParameters = {
       kind: 'stateUpdated',
       firstValue: 0,
@@ -32,7 +32,7 @@ declare global {
       onChange: null,
     };
 
-    const initialParameters: IRegularParameters = $.extend({}, defaultConfig, defaultParameters);
+    const initialParameters: IRegularParameters = $.extend(defaultConfig, defaultParameters);
 
     return this.each(function (): void {
       $.data(this, 'rangeSlider', new App($(this), initialParameters));

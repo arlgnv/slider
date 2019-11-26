@@ -8,43 +8,33 @@ export default class RunnerView extends Observer implements IRunnerView {
   private $slider: JQuery;
   private $runner: JQuery;
   private tip: TipView;
-  private runnerType: 'first' | 'second';
-  private positionPercent: number;
-  private value?: number;
+  private runnerType: 'firstValue' | 'secondValue';
 
-  constructor($slider: JQuery, parameters: IDefaultParameters, runnerType: 'first' | 'second') {
+  constructor($slider: JQuery, parameters: IDefaultParameters, runnerType: 'firstValue' | 'secondValue') {
     super();
 
     this.initRunner($slider, parameters, runnerType);
   }
 
-  updateRunner(parameters: IDefaultParameters): void {
-    this.positionPercent = parameters[`${this.runnerType}ValuePercent`];
-
+  public updateRunner(parameters: IDefaultParameters): void {
     const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
-    this.$runner.attr('style', `${isVertical ? 'bottom' : 'left'}: ${this.positionPercent}%`);
+    const position = parameters[`${this.runnerType}Percent`];
+    this.$runner.attr('style', `${isVertical ? 'bottom' : 'left'}: ${position}%`);
 
     if (parameters.hasTip) {
-      this.value = parameters[`${this.runnerType}Value`];
-      this.tip.updateTip(this.value);
+      this.tip.updateTip(parameters[this.runnerType]);
     }
   }
 
-  getPositionPercent(): number {
-    return this.positionPercent;
-  }
-
   private initRunner(
-      $slider: JQuery, parameters: IDefaultParameters, runnerType: 'first' | 'second',
+      $slider: JQuery, parameters: IDefaultParameters, runnerType: 'firstValue' | 'secondValue',
     ): void {
     this.$slider = $slider;
     this.$runner = $(runnerTemplateHbs(parameters));
     this.runnerType = runnerType;
-    this.positionPercent = runnerType === 'first'
-      ? parameters.firstValuePercent : parameters.secondValuePercent;
 
     if (parameters.hasTip) {
-      this.tip = new TipView(this.$runner, parameters[`${this.runnerType}Value`]);
+      this.tip = new TipView(this.$runner, parameters[this.runnerType]);
     }
 
     this.addEventListeners();
@@ -71,7 +61,10 @@ export default class RunnerView extends Observer implements IRunnerView {
       const runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
       const runnerShiftPercent = runnerShift * 100 / this.$slider[metric]();
 
-      this.notify('moveRunner', { runnerShiftPercent, runnerType: this.runnerType });
+      this.notify('movedRunner', {
+        percent: runnerShiftPercent,
+        lastUpdatedOnPercent: this.runnerType,
+      });
     };
 
     const handleWindowMouseUp = (): void => {

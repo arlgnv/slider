@@ -1,0 +1,14 @@
+html {
+  font: 14px/24px Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-width: 22.8571rem;
+  max-width: 137.1429rem;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0;
+  user-select: none;
+}

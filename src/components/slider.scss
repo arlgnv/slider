@@ -1,0 +1,91 @@
+@import '../utilities/colors';
+
+.slider {
+  $root: &;
+
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  margin: 0.7143rem;
+  padding: 2.9143rem 0.7143rem;
+  box-shadow: 0 0 0.9143rem $gray-color-100;
+
+  &__title {
+    position: absolute;
+    left: 1.4286rem;
+    top: 1.4286rem;
+    margin: 0;
+    font-size: 2.1429rem;
+    text-align: center;
+  }
+
+  &__preview {
+    position: relative;
+    width: 42.8571rem;
+    margin-right: 1.4286rem;
+    text-align: center;
+
+    @media screen and (max-width: 1385px) {
+      width: 100%;
+      margin-top: 3.5714rem;
+    }
+  }
+
+  &__configuration {
+    @media screen and (max-width: 1385px) {
+      width: 100%;
+      margin-top: 3.5714rem;
+    }
+  }
+
+  &__form {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+
+    @media screen and (max-width: 1385px) {
+      justify-content: center;
+    }
+  }
+
+  &__group {
+    &:nth-child(1) {
+      width: 24.2857rem;
+      margin-right: 2.4286rem;
+
+      @media screen and (max-width: 764px) {
+        width: 100%;
+        margin: 0 0 2.1429rem;
+      }
+
+      #{$root}__field {
+        margin-left: 1.2143rem;
+      }
+    }
+
+    &:nth-child(2) {
+      width: 21.4286rem;
+
+      @media screen and (max-width: 764px) {
+        width: 100%;
+      }
+    }
+
+    &-title + #{$root}__group-title {
+      margin-left: 1.0714rem;
+    }
+  }
+
+  &__subgroup {
+    margin: 0 0 1.0714rem;
+
+    &:last-child {
+      margin: 0;
+    }
+  }
+}

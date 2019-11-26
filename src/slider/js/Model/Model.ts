@@ -66,19 +66,17 @@ export default class Model extends Observer implements IModel {
   }
 
   private validateSingleValue(parameters: IDefaultParameters, valueType: string): number {
-    const { kind, lastUpdatedOnPercent, percent, max, min, step } = parameters;
+    const { kind, percent, max, min, step } = parameters;
 
     if (kind === 'valuePercentUpdated') {
-      if (lastUpdatedOnPercent === valueType) {
-        const convertedValue = this.convertPercentToValue(percent, min, max);
-        if (convertedValue >= max) return max;
-        if (convertedValue <= min) return min;
-        const newValue = Math.round((convertedValue - min) / step) * step + min;
+      const convertedValue = this.convertPercentToValue(percent, min, max);
 
-        return newValue >= max ? max : newValue;
-      }
+      if (convertedValue >= max) return max;
+      if (convertedValue <= min) return min;
 
-      return parameters[valueType];
+      const newValue = Math.round((convertedValue - min) / step) * step + min;
+      return newValue >= max ? max : newValue;
+
     }
 
     if (kind === 'stateUpdated') {
@@ -93,27 +91,57 @@ export default class Model extends Observer implements IModel {
   }
 
   private validateIntervalValues(parameters: IDefaultParameters): IDefaultParameters {
-    const { kind, lastUpdatedOnPercent } = parameters;
-    const firstValue = this.validateSingleValue(parameters, 'firstValue');
-    const secondValue = this.validateSingleValue(parameters, 'secondValue');
+    const { kind } = parameters;
 
-    if (firstValue > secondValue) {
-      if (kind === 'valuePercentUpdated') {
-        if (lastUpdatedOnPercent === 'firstValue') {
-          return { ...parameters, secondValue, firstValue: secondValue };
-        }
+    if (kind === 'valuePercentUpdated') {
+      const { lastUpdatedOnPercent, percent, firstValuePercent, secondValuePercent } = parameters;
 
-        if (lastUpdatedOnPercent === 'secondValue') {
-          return { ...parameters, firstValue, secondValue: firstValue };
-        }
+      if (lastUpdatedOnPercent === 'firstValue') {
+        const firstValue = this.validateSingleValue(parameters, 'firstValue');
+        const { secondValue } = parameters;
+
+        return firstValue > secondValue
+          ? { ...parameters, secondValue, firstValue: secondValue }
+          : { ...parameters, firstValue, secondValue };
       }
-      if (kind === 'stateUpdated') {
-        return {...parameters, firstValue: Math.min(firstValue, secondValue),
-          secondValue: Math.max(firstValue, secondValue) };
+
+      if (lastUpdatedOnPercent === 'secondValue') {
+        const { firstValue } = parameters;
+        const secondValue = this.validateSingleValue(parameters, 'secondValue');
+
+        return firstValue > secondValue
+          ? { ...parameters, firstValue, secondValue: firstValue }
+          : { ...parameters, firstValue, secondValue };
+      }
+
+      if (lastUpdatedOnPercent === 'either') {
+        const isFirstValueNearer =
+          Math.abs(percent - firstValuePercent) < Math.abs(percent - secondValuePercent)
+          || percent < firstValuePercent && percent < secondValuePercent;
+
+        if (isFirstValueNearer) {
+          const firstValue = this.validateSingleValue(parameters, 'firstValue');
+          const { secondValue } = parameters;
+
+          return { ...parameters, firstValue, secondValue };
+        }
+
+        const { firstValue } = parameters;
+        const secondValue = this.validateSingleValue(parameters, 'secondValue');
+
+        return { ...parameters, firstValue, secondValue };
       }
     }
 
-    return { ...parameters, firstValue, secondValue };
+    if (kind === 'stateUpdated') {
+      const firstValue = this.validateSingleValue(parameters, 'firstValue');
+      const secondValue = this.validateSingleValue(parameters, 'secondValue');
+
+      return firstValue > secondValue
+        ? { ...parameters, firstValue: Math.min(firstValue, secondValue),
+          secondValue: Math.max(firstValue, secondValue) }
+        : { ...parameters, firstValue, secondValue };
+    }
   }
 
   private validateMinMax(parameters: IDefaultParameters): IDefaultParameters {

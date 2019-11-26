@@ -2,10 +2,10 @@
   "name": "range-slider",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index/index.pug",
+  "main": "src/demo-page/index.pug",
   "scripts": {
-    "start": "rimraf dist && parcel src/index/index.pug",
-    "build": "rimraf dist docs && parcel build src/index/index.pug -d docs --no-cache --public-url /range-slider/",
+    "start": "rimraf dist && parcel src/demo-page/index.pug",
+    "build": "rimraf dist docs && parcel build src/demo-page/index.pug -d docs --no-cache --public-url /range-slider/",
     "test": "jest"
   },
   "repository": {

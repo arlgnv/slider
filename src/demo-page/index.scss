@@ -1,0 +1,29 @@
+@import '../utilities/base';
+@import '../components/slider';
+@import '../slider/scss/slider';
+
+.demo-page {
+  flex-grow: 1;
+
+  &__title {
+    &_hidden {
+      position: absolute;
+      width: 0.0714rem;
+      height: 0.0714rem;
+      margin: -0.0714rem;
+      border: 0;
+      padding: 0;
+      clip-path: inset(100%);
+      clip: rect(0 0 0 0);
+      overflow: hidden;
+    }
+  }
+
+  &__container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 0 0.7143rem;
+  }
+}

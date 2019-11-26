@@ -1,0 +1,26 @@
+doctype html
+html(lang="ru")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    meta(name="description" content="Простой, расширяемый и легко настраиваемый слайдер диапазона")
+    meta(name="keywords" content="range slider, слайдер диапазона, jquery plugin range slider, jquery plugin")
+    link(rel="apple-touch-icon", sizes="180x180", href="../favicon/apple-touch-icon.png")
+    link(rel="icon", type="image/png", sizes="32x32", href="../favicon/favicon-32x32.png")
+    link(rel="icon", type="image/png", sizes="16x16", href="../favicon/favicon-16x16.png")
+    link(rel="manifest", href="../favicon/site.webmanifest")
+    link(rel="mask-icon", href="../favicon/safari-pinned-tab.svg", color="#5bbad5")
+    meta(name="msapplication-TileColor", content="#da532c")
+    meta(name="msapplication-config" content="../favicon/browserconfig.xml")
+    meta(name="theme-color", content="#ffffff")
+    title range-slider
+  body
+    include ../components/slider
+
+    main.demo-page
+      h1.demo-page__title.demo-page__title_hidden Демо страница со слайдерами
+      .demo-page__container
+        +slider('Слайдер 1')
+        +slider('Слайдер 2')
+        +slider('Слайдер 3')
+    script(src="./index.ts")

@@ -9,16 +9,14 @@ export default class TipView implements ITipView {
     this.initTip($runner, value);
   }
 
-  updateTip(value: number): void {
+  public updateTip(value: number): void {
     this.$tip.text(value);
   }
 
   private initTip($runner: JQuery, value: number): void {
     this.$runner = $runner;
     this.$tip = $(tipTemplateHbs());
-
     this.$runner.append(this.$tip);
-
     this.updateTip(value);
   }
 }

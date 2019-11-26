@@ -1,3 +1,3 @@
 export default interface IProgressBarView {
-  updateProgressBar(runnerFromPosition: number, runnerToPosition: number | null): void;
+  updateProgressBar(leftShift: number, rightShift: number | null): void;
 }
