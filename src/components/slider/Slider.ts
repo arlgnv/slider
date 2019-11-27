@@ -1,11 +1,12 @@
-import IApp from '../slider/js/Interfaces/App/IApp';
-import IDefaultParameters from '../slider/js/Interfaces/IDefaultParameters';
+import IApp from '../../plugin/Interfaces/App/IApp';
+import IDefaultParameters from '../../plugin/Interfaces/IDefaultParameters';
 
 export default class Slider {
   private parameters: Partial<IDefaultParameters>;
   private sliderData: IApp;
   private $slider: JQuery;
   private $sliderElement: JQuery;
+  private $dashboard: JQuery;
   private $fieldFirstValue: JQuery;
   private $fieldSecondValue: JQuery;
   private $fieldMin: JQuery;
@@ -25,17 +26,18 @@ export default class Slider {
 
   private findDomElements($slider: JQuery): void {
     this.$slider = $slider;
-    this.$sliderElement = this.$slider.find('.slider__field').first();
-    this.$fieldFirstValue = this.$slider.find('[name=firstValue]');
-    this.$fieldSecondValue = this.$slider.find('[name=secondValue]');
-    this.$fieldMin = this.$slider.find('[name=min]');
-    this.$fieldMax = this.$slider.find('[name=max]');
-    this.$fieldStep = this.$slider.find('[name=step]');
-    this.$fieldScale = this.$slider.find('[name=hasScale]');
-    this.$fieldTip = this.$slider.find('[name=hasTip]');
-    this.$fieldTheme = this.$slider.find('[name=theme]');
-    this.$fieldType = this.$slider.find('[name=hasInterval]');
-    this.$fieldView = this.$slider.find('[name=isVertical]');
+    this.$sliderElement = this.$slider.find('.slider__field');
+    this.$dashboard = this.$slider.find('.dashboard');
+    this.$fieldFirstValue = this.$dashboard.find('[name=firstValue]');
+    this.$fieldSecondValue = this.$dashboard.find('[name=secondValue]');
+    this.$fieldMin = this.$dashboard.find('[name=min]');
+    this.$fieldMax = this.$dashboard.find('[name=max]');
+    this.$fieldStep = this.$dashboard.find('[name=step]');
+    this.$fieldScale = this.$dashboard.find('[name=hasScale]');
+    this.$fieldTip = this.$dashboard.find('[name=hasTip]');
+    this.$fieldTheme = this.$dashboard.find('[name=theme]');
+    this.$fieldType = this.$dashboard.find('[name=hasInterval]');
+    this.$fieldView = this.$dashboard.find('[name=isVertical]');
   }
 
   private addEventListeners(): void {
@@ -72,7 +74,7 @@ export default class Slider {
     this.$fieldTip.prop('checked', hasTip);
     this.$fieldType.prop('checked', hasInterval);
     this.$fieldView.prop('checked', isVertical);
-    this.$slider.find(`[name=theme][value=${theme}]`).prop('checked', true);
+    this.$dashboard.find(`[name=theme][value=${theme}]`).prop('checked', true);
   }
 
   private dispatchParameters = (evt: JQuery.TriggeredEvent): void => {
@@ -81,6 +83,8 @@ export default class Slider {
 
     if (targetType === 'checkbox') {
       this.sliderData.update({ [$target.attr('name')]: $target.prop('checked') });
+    } else if (targetType === 'radio') {
+      this.sliderData.update({ [$target.attr('name')]: $target.val() });
     } else {
       this.sliderData.update({ [$target.attr('name')]: +$target.val() });
     }

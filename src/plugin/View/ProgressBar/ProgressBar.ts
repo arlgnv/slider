@@ -1,6 +1,7 @@
 import progressBarTemplateHbs from './progressBarTemplate.hbs';
 import IProgressBarView from '../../Interfaces/View/ProgressBar/IProgressBarView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
+import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
 
 export default class ProgressBar implements IProgressBarView {
   private $slider: JQuery;
@@ -10,10 +11,10 @@ export default class ProgressBar implements IProgressBarView {
     this.initProgressBar($slider, parameters);
   }
 
-  public updateProgressBar(leftShift: number, rightShift: number | null): void {
+  public updateProgressBar(leftoffset: number, rightoffset: number | null): void {
     const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
-    const leftEdge = rightShift ? leftShift : 0;
-    const rightEdge = rightShift ? 100 - rightShift : 100 - leftShift;
+    const leftEdge = rightoffset ? leftoffset : PERCENT_MIN;
+    const rightEdge = rightoffset ? PERCENT_MAX - rightoffset : PERCENT_MAX - leftoffset;
 
     if (isVertical) {
       this.$bar.attr('style', `bottom: ${leftEdge}%; top: ${rightEdge}%;`);

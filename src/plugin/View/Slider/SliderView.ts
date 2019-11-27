@@ -31,12 +31,11 @@ export default class SliderView extends Observer implements ISliderView {
       const { firstValuePercent, secondValuePercent, hasInterval } = parameters;
 
       this.runnerFrom.updateRunner(parameters);
+      this.progressBar.updateProgressBar(firstValuePercent, secondValuePercent);
 
       if (hasInterval) {
         this.runnerTo.updateRunner(parameters);
       }
-
-      this.progressBar.updateProgressBar(firstValuePercent, secondValuePercent);
     }
 
     if (kind === 'stateUpdated') {

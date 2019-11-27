@@ -3,6 +3,7 @@ import IModel from '../Interfaces/Model/IModel';
 import IDefaultParameters from '../Interfaces/IDefaultParameters';
 import IRegularParameters from '../Interfaces/IRegularParameters';
 import IPercentParameters from '../Interfaces/IPercentParameters';
+import { PERCENT_MAX, STEP_VALUE_DEFAULT } from '../constants';
 
 export default class Model extends Observer implements IModel {
   private state: IDefaultParameters;
@@ -115,19 +116,19 @@ export default class Model extends Observer implements IModel {
       }
 
       if (lastUpdatedOnPercent === 'either') {
-        const isFirstValueNearer =
-          Math.abs(percent - firstValuePercent) < Math.abs(percent - secondValuePercent)
-          || percent < firstValuePercent && percent < secondValuePercent;
+        const isSecondValueNearer =
+          Math.abs(percent - firstValuePercent) > Math.abs(percent - secondValuePercent)
+          || percent > firstValuePercent && percent > secondValuePercent;
 
-        if (isFirstValueNearer) {
-          const firstValue = this.validateSingleValue(parameters, 'firstValue');
-          const { secondValue } = parameters;
+        if (isSecondValueNearer) {
+          const { firstValue } = parameters;
+          const secondValue = this.validateSingleValue(parameters, 'secondValue');
 
           return { ...parameters, firstValue, secondValue };
         }
 
-        const { firstValue } = parameters;
-        const secondValue = this.validateSingleValue(parameters, 'secondValue');
+        const firstValue = this.validateSingleValue(parameters, 'firstValue');
+        const { secondValue } = parameters;
 
         return { ...parameters, firstValue, secondValue };
       }
@@ -159,7 +160,7 @@ export default class Model extends Observer implements IModel {
 
     return {
       ...parameters,
-      step: step < 1 ? 1 : Math.round(step),
+      step: step < STEP_VALUE_DEFAULT ? STEP_VALUE_DEFAULT : Math.round(step),
     };
   }
 
@@ -168,12 +169,12 @@ export default class Model extends Observer implements IModel {
 
     return {
       ...parameters,
-      firstValuePercent: (firstValue - min) * 100 / (max - min),
-      secondValuePercent: hasInterval ? (secondValue - min) * 100 / (max - min) : null,
+      firstValuePercent: (firstValue - min) * PERCENT_MAX / (max - min),
+      secondValuePercent: hasInterval ? (secondValue - min) * PERCENT_MAX / (max - min) : null,
     };
   }
 
   private convertPercentToValue(percent: number, min: number, max: number): number {
-    return min + (percent * (max - min)) / 100;
+    return min + (percent * (max - min)) / PERCENT_MAX;
   }
 }

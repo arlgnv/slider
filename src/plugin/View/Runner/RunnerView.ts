@@ -3,6 +3,7 @@ import IRunnerView from '../../Interfaces/View/Runner/IRunnerView';
 import TipView from '../Tip/TipView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import runnerTemplateHbs from './runnerTemplate.hbs';
+import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
 
 export default class RunnerView extends Observer implements IRunnerView {
   private $slider: JQuery;
@@ -59,7 +60,7 @@ export default class RunnerView extends Observer implements IRunnerView {
 
     const handleWindowMouseMove = (e: JQuery.Event): void => {
       const runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
-      const runnerShiftPercent = runnerShift * 100 / this.$slider[metric]();
+      const runnerShiftPercent = runnerShift * PERCENT_MAX / this.$slider[metric]();
 
       this.notify('movedRunner', {
         percent: runnerShiftPercent,
@@ -78,8 +79,8 @@ export default class RunnerView extends Observer implements IRunnerView {
 
   private getCursorPosition($target: JQuery, clientX: number, clientY: number): number {
     return this.$slider.hasClass('range-slider_direction_vertical')
-      ? clientY + (parseFloat($target.css('bottom')) || 0)
-      : clientX - (parseFloat($target.css('left')) || 0);
+      ? clientY + (parseFloat($target.css('bottom')) || PERCENT_MIN)
+      : clientX - (parseFloat($target.css('left')) || PERCENT_MIN);
   }
 
   private getRunnerShift(position: number, clientX: number, clientY: number): number {

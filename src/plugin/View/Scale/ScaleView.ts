@@ -2,6 +2,7 @@ import Observer from '../../Observer/Observer';
 import IScaleView from '../../Interfaces/View/Scale/IScaleView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import scaleTemplateHbs from './scaleTemplate.hbs';
+import { PERCENT_MAX } from '../../constants';
 
 export default class ScaleView extends Observer implements IScaleView {
   private $slider: JQuery;
@@ -29,7 +30,7 @@ export default class ScaleView extends Observer implements IScaleView {
     this.$scale.text('');
 
     values.forEach((value) => {
-      const position = ((value - min) / (max - min)) * 100;
+      const position = ((value - min) / (max - min)) * PERCENT_MAX;
 
       $('<span>', {
         class: 'range-slider__scale-mark',
@@ -45,7 +46,7 @@ export default class ScaleView extends Observer implements IScaleView {
       const metric = this.$slider.hasClass('range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
       const property = this.$slider.hasClass('range-slider_direction_vertical') ? 'bottom' : 'left';
       const positionPercent =
-        Math.round(parseFloat($target.css(property)) / this.$slider[metric]() * 100);
+        Math.round(parseFloat($target.css(property)) / this.$slider[metric]() * PERCENT_MAX);
 
       this.notify('selectedValue', { lastUpdatedOnPercent: 'either', percent: positionPercent });
     }

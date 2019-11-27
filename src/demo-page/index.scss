@@ -1,9 +1,11 @@
 @import '../utilities/base';
-@import '../components/slider';
-@import '../slider/scss/slider';
+@import '../components/dashboard/dashboard';
+@import '../components/slider/slider';
+@import '../plugin/styles/slider';
 
 .demo-page {
   flex-grow: 1;
+  padding: 0.7143rem;
 
   &__title {
     &_hidden {

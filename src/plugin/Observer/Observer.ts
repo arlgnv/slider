@@ -1,20 +1,19 @@
-import IObserver from '../Interfaces/Observer/IObserver';
-import IEvents from '../Interfaces/Observer/IEvents';
+import { IObserver, subscribes, events } from '../Interfaces/Observer/IObserver';
 
 export default class Observer implements IObserver {
-  private events: IEvents = {};
+  private events: subscribes = {};
 
-  public subscribe(type: string, cb: Function): void {
+  public subscribe(type: events, cb: Function): void {
     this.events[type] = this.events[type] ? [...this.events[type], cb] : [cb];
   }
 
-  public unsubscribe(type: string, cb: Function): void {
+  public unsubscribe(type: events, cb: Function): void {
     if (this.events[type]) {
       this.events[type] = this.events[type].filter(callback => callback !== cb);
     }
   }
 
-  public notify(type: string, arg?: Object): void {
+  public notify(type: events, arg?: Object): void {
     if (this.events[type]) {
       this.events[type].forEach(cb => cb(arg));
     }

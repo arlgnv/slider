@@ -1,4 +1,4 @@
-import IDefaultParameters from '../slider/js/Interfaces/IDefaultParameters';
+import IDefaultParameters from '../plugin/Interfaces/IDefaultParameters';
 
 export const DEFAULT_PARAMETERS: Partial<IDefaultParameters>[] = [
   { firstValue: 10, max: 20, hasScale: true, hasTip: true },
