@@ -1,7 +1,7 @@
-import { IObserver, subscribes, events } from '../Interfaces/Observer/IObserver';
+import { IObserver, ISubscribes, events } from '../Interfaces/Observer/IObserver';
 
 export default class Observer implements IObserver {
-  private events: subscribes = {};
+  private events: ISubscribes = {};
 
   public subscribe(type: events, cb: Function): void {
     this.events[type] = this.events[type] ? [...this.events[type], cb] : [cb];

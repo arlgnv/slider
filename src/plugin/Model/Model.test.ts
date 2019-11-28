@@ -45,7 +45,7 @@ describe('Обновление модели', (): void => {
   });
 });
 
-describe('Валидирование состояния', (): void => {
+describe('Валидирование параметров', (): void => {
   test('Step = 1 если step < 0', (): void => {
     const model = new Model({ ...defaultConfig, step: 0 });
     const state = model.getState();
@@ -75,6 +75,16 @@ describe('Валидирование состояния', (): void => {
 
     expect(state.firstValue).toEqual(state.max);
     expect(state.firstValue).toEqual(30);
+  });
+
+  test('Значение правильно корректируется в зависимости от шага', (): void => {
+    const model = new Model({ ...defaultConfig, step: 3, firstValue: 4 });
+    const state = model.getState();
+    model.dispatchState({ ...state, kind: 'stateUpdated', firstValue: 5 });
+    const newState = model.getState();
+
+    expect(state.firstValue).toEqual(3);
+    expect(newState.firstValue).toEqual(6);
   });
 
   test('SecondValue = null если hasInterval = false', (): void => {

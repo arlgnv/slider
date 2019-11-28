@@ -1,5 +1,6 @@
 import ITipView from '../../Interfaces/View/Tip/ITipView';
-import tipTemplateHbs from './tipTemplate.hbs';
+import tipTemplateHbs, * as template from './tipTemplate.hbs';
+const templateFunction = tipTemplateHbs || template;
 
 export default class TipView implements ITipView {
   private $runner: JQuery;
@@ -15,7 +16,7 @@ export default class TipView implements ITipView {
 
   private initTip($runner: JQuery, value: number): void {
     this.$runner = $runner;
-    this.$tip = $(tipTemplateHbs());
+    this.$tip = $(templateFunction());
     this.$runner.append(this.$tip);
     this.updateTip(value);
   }

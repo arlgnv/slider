@@ -1,5 +1,5 @@
 type events = 'dispatchedParameters' | 'updatedState' | 'movedRunner' | 'selectedValue';
-type subscribes = { [event in events]?: Function[] };
+type ISubscribes = { [event in events]?: Function[] };
 
 interface IObserver {
   subscribe(type: events, cb: Function): void;
@@ -7,4 +7,4 @@ interface IObserver {
   notify(type: events, arg?: Object): void;
 }
 
-export { IObserver, subscribes, events };
+export { IObserver, ISubscribes, events };

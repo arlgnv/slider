@@ -2,8 +2,9 @@ import Observer from '../../Observer/Observer';
 import IRunnerView from '../../Interfaces/View/Runner/IRunnerView';
 import TipView from '../Tip/TipView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
-import runnerTemplateHbs from './runnerTemplate.hbs';
 import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
+import runnerTemplateHbs, * as template from './runnerTemplate.hbs';
+const templateFunction = runnerTemplateHbs || template;
 
 export default class RunnerView extends Observer implements IRunnerView {
   private $slider: JQuery;
@@ -31,7 +32,7 @@ export default class RunnerView extends Observer implements IRunnerView {
       $slider: JQuery, parameters: IDefaultParameters, runnerType: 'firstValue' | 'secondValue',
     ): void {
     this.$slider = $slider;
-    this.$runner = $(runnerTemplateHbs(parameters));
+    this.$runner = $(templateFunction(parameters));
     this.runnerType = runnerType;
 
     if (parameters.hasTip) {

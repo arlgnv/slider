@@ -1,8 +1,9 @@
 import Observer from '../../Observer/Observer';
 import IScaleView from '../../Interfaces/View/Scale/IScaleView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
-import scaleTemplateHbs from './scaleTemplate.hbs';
 import { PERCENT_MAX } from '../../constants';
+import scaleTemplateHbs, * as template from './scaleTemplate.hbs';
+const templateFunction = scaleTemplateHbs || template;
 
 export default class ScaleView extends Observer implements IScaleView {
   private $slider: JQuery;
@@ -54,7 +55,7 @@ export default class ScaleView extends Observer implements IScaleView {
 
   private initScale($slider: JQuery, parameters: IDefaultParameters): void {
     this.$slider = $slider;
-    this.$scale = $(scaleTemplateHbs());
+    this.$scale = $(templateFunction());
     this.addEventListeners();
     this.$slider.append(this.$scale);
     this.updateScale(parameters);

@@ -35,7 +35,7 @@ declare global {
       onChange: null,
     };
 
-    const initialParameters: IRegularParameters = $.extend(defaultConfig, defaultParameters);
+    const initialParameters: IRegularParameters = $.extend({}, defaultConfig, defaultParameters);
 
     return this.each(function (): void {
       $.data(this, 'rangeSlider', new App($(this), initialParameters));

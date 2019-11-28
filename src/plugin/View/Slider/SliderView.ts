@@ -1,16 +1,17 @@
 import Observer from '../../Observer/Observer';
 import RunnerView from '../Runner/RunnerView';
-import ProgressBar from '../ProgressBar/ProgressBar';
+import ProgressBarView from '../ProgressBar/ProgressBarView';
 import ScaleView from '../Scale/ScaleView';
 import ISliderView from '../../Interfaces/View/Slider/ISliderView';
 import IDefaultParameters from '../../Interfaces/IDefaultParameters';
 import IPercentParameters from '../../Interfaces/IPercentParameters';
-import sliderTemplateHbs from './sliderTemplate.hbs';
+import sliderTemplateHbs, * as template from './sliderTemplate.hbs';
+const templateFunction = sliderTemplateHbs || template;
 
 export default class SliderView extends Observer implements ISliderView {
   private $slider: JQuery;
   private runnerFrom: RunnerView;
-  private progressBar: ProgressBar;
+  private progressBar: ProgressBarView;
   private runnerTo?: RunnerView;
   private scale?: ScaleView;
 
@@ -45,7 +46,7 @@ export default class SliderView extends Observer implements ISliderView {
 
   private initSlider(parameters: IDefaultParameters, $anchorElement?: JQuery): void {
     if ($anchorElement) {
-      $anchorElement.before(sliderTemplateHbs(parameters));
+      $anchorElement.before($(templateFunction(parameters)));
       this.$slider = $anchorElement.prev();
     }
 
@@ -54,7 +55,7 @@ export default class SliderView extends Observer implements ISliderView {
 
     const { hasInterval, hasScale, onChange } = parameters;
     this.runnerFrom = new RunnerView(this.$slider, parameters, 'firstValue');
-    this.progressBar = new ProgressBar(this.$slider, parameters);
+    this.progressBar = new ProgressBarView(this.$slider, parameters);
     if (hasInterval) {
       this.runnerTo = new RunnerView(this.$slider, parameters, 'secondValue');
     }
