@@ -1,5 +1,5 @@
 import Model from './Model';
-import IRegularParameters from '../Interfaces/IRegularParameters';
+import IRegularParameters from '../View/IRegularParameters';
 
 const defaultConfig: IRegularParameters = {
   kind: 'stateUpdated',

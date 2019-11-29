@@ -1,6 +1,6 @@
 import Observer from '../../Observer/Observer';
 import IScaleView from '../../Interfaces/View/Scale/IScaleView';
-import IDefaultParameters from '../../Interfaces/IDefaultParameters';
+import IDefaultParameters from '../../Model/IDefaultParameters';
 import { PERCENT_MAX } from '../../constants';
 import scaleTemplateHbs, * as template from './scaleTemplate.hbs';
 const templateFunction = scaleTemplateHbs || template;
@@ -15,7 +15,7 @@ export default class ScaleView extends Observer implements IScaleView {
     this.initScale($slider, parameters);
   }
 
-  public updateScale({ min, max, step }: IDefaultParameters): void {
+  public updateScale({ min, max, step, isVertical }: IDefaultParameters): void {
     const amountMarks = Math.ceil((max - min) / step) - 1;
     const values = [
       min,
@@ -23,18 +23,17 @@ export default class ScaleView extends Observer implements IScaleView {
       max,
     ];
 
-    this.drawMarks(this.scaleMarks(values), min, max);
+    this.drawMarks(this.scaleMarks(values), min, max, isVertical);
   }
 
-  private drawMarks(values: number[], min: number, max: number): void {
-    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
+  private drawMarks(values: number[], min: number, max: number, isVertical: boolean): void {
     this.$scale.text('');
 
     values.forEach((value) => {
       const position = ((value - min) / (max - min)) * PERCENT_MAX;
 
       $('<span>', {
-        class: 'range-slider__scale-mark',
+        class: 'range-slider__scale-mark js-range-slider__scale-mark',
         text: value,
         style: `${isVertical ? 'bottom' : 'left'}: ${position}%` }).appendTo(this.$scale);
     });
@@ -43,9 +42,10 @@ export default class ScaleView extends Observer implements IScaleView {
   private handleScaleClick = (evt: JQuery.ClickEvent): void => {
     const $target: JQuery = $(evt.target);
 
-    if ($target.hasClass('range-slider__scale-mark')) {
-      const metric = this.$slider.hasClass('range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
-      const property = this.$slider.hasClass('range-slider_direction_vertical') ? 'bottom' : 'left';
+    if ($target.hasClass('js-range-slider__scale-mark')) {
+      const isVertical = this.$slider.hasClass('js-range-slider_direction_vertical');
+      const metric = isVertical ? 'outerHeight' : 'outerWidth';
+      const property = isVertical ? 'bottom' : 'left';
       const positionPercent =
         Math.round(parseFloat($target.css(property)) / this.$slider[metric]() * PERCENT_MAX);
 

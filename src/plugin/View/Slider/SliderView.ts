@@ -3,8 +3,8 @@ import RunnerView from '../Runner/RunnerView';
 import ProgressBarView from '../ProgressBar/ProgressBarView';
 import ScaleView from '../Scale/ScaleView';
 import ISliderView from '../../Interfaces/View/Slider/ISliderView';
-import IDefaultParameters from '../../Interfaces/IDefaultParameters';
-import IPercentParameters from '../../Interfaces/IPercentParameters';
+import IDefaultParameters from '../../Model/IDefaultParameters';
+import IPercentParameters from '../IPercentParameters';
 import sliderTemplateHbs, * as template from './sliderTemplate.hbs';
 const templateFunction = sliderTemplateHbs || template;
 
@@ -101,16 +101,19 @@ export default class SliderView extends Observer implements ISliderView {
   }
 
   private updateTheme({ theme }: IDefaultParameters): void {
-    this.$slider
-      .addClass(`range-slider_theme_${theme}`)
-      .removeClass(`range-slider_theme_${theme === 'aqua' ? 'red' : 'aqua'}`);
+    const oldClassName = theme === 'aqua' 
+      ? 'range-slider_theme_red js-range-slider_theme_red'
+      : 'range-slider_theme_aqua js-range-slider_theme_aqua';
+    const newClassName = `range-slider_theme_${theme} js-range-slider_theme_${theme}`;
+
+    this.$slider.addClass(newClassName).removeClass(oldClassName);
   }
 
   private updateDirection({ isVertical }: IDefaultParameters): void {
     if (isVertical) {
-      this.$slider.addClass('range-slider_direction_vertical');
+      this.$slider.addClass('range-slider_direction_vertical js-range-slider_direction_vertical');
     } else {
-      this.$slider.removeClass('range-slider_direction_vertical');
+      this.$slider.removeClass('range-slider_direction_vertical js-range-slider_direction_vertical');
     }
   }
 }

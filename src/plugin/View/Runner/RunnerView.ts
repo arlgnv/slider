@@ -1,7 +1,7 @@
 import Observer from '../../Observer/Observer';
 import IRunnerView from '../../Interfaces/View/Runner/IRunnerView';
 import TipView from '../Tip/TipView';
-import IDefaultParameters from '../../Interfaces/IDefaultParameters';
+import IDefaultParameters from '../../Model/IDefaultParameters';
 import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
 import runnerTemplateHbs, * as template from './runnerTemplate.hbs';
 const templateFunction = runnerTemplateHbs || template;
@@ -19,11 +19,11 @@ export default class RunnerView extends Observer implements IRunnerView {
   }
 
   public updateRunner(parameters: IDefaultParameters): void {
-    const isVertical = this.$slider.hasClass('range-slider_direction_vertical');
+    const {isVertical, hasTip} = parameters;
     const position = parameters[`${this.runnerType}Percent`];
     this.$runner.attr('style', `${isVertical ? 'bottom' : 'left'}: ${position}%`);
 
-    if (parameters.hasTip) {
+    if (hasTip) {
       this.tip.updateTip(parameters[this.runnerType]);
     }
   }
@@ -50,14 +50,14 @@ export default class RunnerView extends Observer implements IRunnerView {
   }
 
   private handleRunnerMouseDown = (evt: JQuery.MouseDownEvent): void => {
-    const $runner: JQuery = $(evt.currentTarget).addClass('range-slider__runner_grabbed');
+    const $runner: JQuery = $(evt.currentTarget).addClass('range-slider__runner_grabbed js-range-slider__runner_grabbed');
     const cursorPosition = this.getCursorPosition($runner, evt.clientX, evt.clientY);
-    const metric = this.$slider.hasClass('range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
+    const metric = this.$slider.hasClass('js-range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
 
-    this.$slider.find('.range-slider__runner').each(function () {
-      $(this).removeClass('range-slider__runner_type_last-grabbed');
+    this.$slider.find('.js-range-slider__runner_type_last-grabbed').each(function () {
+      $(this).removeClass('range-slider__runner_type_last-grabbed js-range-slider__runner_type_last-grabbed');
     });
-    $runner.addClass('range-slider__runner_type_last-grabbed');
+    $runner.addClass('range-slider__runner_type_last-grabbed js-range-slider__runner_type_last-grabbed');
 
     const handleWindowMouseMove = (e: JQuery.Event): void => {
       const runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
@@ -70,7 +70,7 @@ export default class RunnerView extends Observer implements IRunnerView {
     };
 
     const handleWindowMouseUp = (): void => {
-      $runner.removeClass('range-slider__runner_grabbed');
+      $runner.removeClass('range-slider__runner_grabbed js-range-slider__runner_grabbed');
 
       $(window).off('mousemove', handleWindowMouseMove).off('mouseup', handleWindowMouseUp);
     };

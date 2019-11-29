@@ -2,8 +2,8 @@ import Model from '../Model/Model';
 import SliderView from '../View/Slider/SliderView';
 import Presenter from '../Presenter/Presenter';
 import IApp from '../Interfaces/App/IApp';
-import IDefaultParameters from '../Interfaces/IDefaultParameters';
-import IRegularParameters from '../Interfaces/IRegularParameters';
+import IDefaultParameters from '../Model/IDefaultParameters';
+import IRegularParameters from '../View/IRegularParameters';
 
 export default class App implements IApp {
   private model: Model;
@@ -15,7 +15,7 @@ export default class App implements IApp {
     new Presenter(this.model, this.view);
   }
 
-  update(parameters: Partial<IDefaultParameters> = {}): void {
+  public update(parameters: Partial<IDefaultParameters> = {}): void {
     this.model.dispatchState({ ...this.model.getState(), ...parameters, kind: 'stateUpdated' });
   }
 }

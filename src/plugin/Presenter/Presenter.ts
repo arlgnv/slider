@@ -1,8 +1,8 @@
 import Model from '../Model/Model';
 import SliderView from '../View/Slider/SliderView';
 import IPresenter from '../Interfaces/Presenter/IPresenter';
-import IDefaultParameters from '../Interfaces/IDefaultParameters';
-import IPercentParameters from '../Interfaces/IPercentParameters';
+import IDefaultParameters from '../Model/IDefaultParameters';
+import IPercentParameters from '../View/IPercentParameters';
 
 export default class Presenter implements IPresenter {
   constructor(private model: Model, private view: SliderView) {

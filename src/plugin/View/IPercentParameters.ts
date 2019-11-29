@@ -1,4 +1,4 @@
-import IDefaultParameters from './IDefaultParameters';
+import IDefaultParameters from '../Model/IDefaultParameters';
 
 export default interface IPercentParameters extends IDefaultParameters {
   kind: 'valuePercentUpdated';

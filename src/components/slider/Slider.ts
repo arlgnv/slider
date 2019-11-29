@@ -1,5 +1,5 @@
 import IApp from '../../plugin/Interfaces/App/IApp';
-import IDefaultParameters from '../../plugin/Interfaces/IDefaultParameters';
+import IDefaultParameters from '../../plugin/Model/IDefaultParameters';
 
 export default class Slider {
   private parameters: Partial<IDefaultParameters>;
@@ -14,7 +14,8 @@ export default class Slider {
   private $fieldStep: JQuery;
   private $fieldScale: JQuery;
   private $fieldTip: JQuery;
-  private $fieldTheme: JQuery;
+  private $fieldThemeAqua: JQuery;
+  private $fieldThemeRed: JQuery;
   private $fieldType: JQuery;
   private $fieldView: JQuery;
 
@@ -26,18 +27,19 @@ export default class Slider {
 
   private findDomElements($slider: JQuery): void {
     this.$slider = $slider;
-    this.$sliderElement = this.$slider.find('.slider__field');
-    this.$dashboard = this.$slider.find('.dashboard');
-    this.$fieldFirstValue = this.$dashboard.find('[name=firstValue]');
-    this.$fieldSecondValue = this.$dashboard.find('[name=secondValue]');
-    this.$fieldMin = this.$dashboard.find('[name=min]');
-    this.$fieldMax = this.$dashboard.find('[name=max]');
-    this.$fieldStep = this.$dashboard.find('[name=step]');
-    this.$fieldScale = this.$dashboard.find('[name=hasScale]');
-    this.$fieldTip = this.$dashboard.find('[name=hasTip]');
-    this.$fieldTheme = this.$dashboard.find('[name=theme]');
-    this.$fieldType = this.$dashboard.find('[name=hasInterval]');
-    this.$fieldView = this.$dashboard.find('[name=isVertical]');
+    this.$sliderElement = this.$slider.find('.js-slider__field');
+    this.$dashboard = this.$slider.find('.js-dashboard');
+    this.$fieldFirstValue = this.$dashboard.find('.js-dashboard__field_type_first-value');
+    this.$fieldSecondValue = this.$dashboard.find('.js-dashboard__field_type_second-value');
+    this.$fieldMin = this.$dashboard.find('.js-dashboard__field_type_min-value');
+    this.$fieldMax = this.$dashboard.find('.js-dashboard__field_type_max-value');
+    this.$fieldStep = this.$dashboard.find('.js-dashboard__field_type_step-value');
+    this.$fieldScale = this.$dashboard.find('.js-dashboard__field_type_has-scale');
+    this.$fieldTip = this.$dashboard.find('.js-dashboard__field_type_has-tip');
+    this.$fieldThemeAqua = this.$dashboard.find('.js-dashboard__field_type_aqua-theme');
+    this.$fieldThemeRed = this.$dashboard.find('.js-dashboard__field_type_red-theme');
+    this.$fieldType = this.$dashboard.find('.js-dashboard__field_type_has-interval');
+    this.$fieldView = this.$dashboard.find('.js-dashboard__field_type_is-vertical');
   }
 
   private addEventListeners(): void {
@@ -48,7 +50,8 @@ export default class Slider {
     this.$fieldStep.on('blur', this.dispatchParameters);
     this.$fieldScale.on('click', this.dispatchParameters);
     this.$fieldTip.on('click', this.dispatchParameters);
-    this.$fieldTheme.on('click', this.dispatchParameters);
+    this.$fieldThemeAqua.on('click', this.dispatchParameters);
+    this.$fieldThemeRed.on('click', this.dispatchParameters);
     this.$fieldType.on('click', this.dispatchParameters);
     this.$fieldView.on('click', this.dispatchParameters);
   }
@@ -74,7 +77,14 @@ export default class Slider {
     this.$fieldTip.prop('checked', hasTip);
     this.$fieldType.prop('checked', hasInterval);
     this.$fieldView.prop('checked', isVertical);
-    this.$dashboard.find(`[name=theme][value=${theme}]`).prop('checked', true);
+
+    if (theme === 'aqua') {
+      this.$fieldThemeAqua.prop('checked', true);
+    }
+
+    if (theme === 'red') {
+      this.$fieldThemeRed.prop('checked', true);
+    }
   }
 
   private dispatchParameters = (evt: JQuery.TriggeredEvent): void => {

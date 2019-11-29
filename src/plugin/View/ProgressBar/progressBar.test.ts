@@ -1,6 +1,6 @@
 window.$ = require('jquery');
 import ProgressBarView from './ProgressBarView';
-import IDefaultParameters from '../../Interfaces/IDefaultParameters';
+import IDefaultParameters from '../../Model/IDefaultParameters';
 
 beforeEach((): void => {
   $('body').html('<span class="js-anchor"></span>');
