@@ -49,7 +49,7 @@ describe('Обновление прогресс-бара', (): void => {
     expect($('.range-slider__progress-bar').attr('style')).toEqual('left: 0%; right: 0%;');
   });
 
-  test('Положение кбновляется в случае с двумя ползунками', (): void => {
+  test('Положение корректно обновляется в случае с двумя ползунками', (): void => {
     const bar = new ProgressBarView($('.js-anchor'), {...defaultConfig, hasInterval: true, secondValuePercent: 30});
     bar.updateProgressBar(0, 100);
 
