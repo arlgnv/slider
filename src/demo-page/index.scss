@@ -1,7 +1,7 @@
 @import '../utilities/base';
-@import '../components/dashboard/dashboard';
-@import '../components/slider/slider';
-@import '../plugin/styles/slider';
+@import './components/dashboard/dashboard';
+@import './components/slider/slider';
+@import '../components/styles/slider';
 
 .demo-page {
   flex-grow: 1;
