@@ -1,6 +1,6 @@
 window.$ = require('jquery');
-import ScaleView from './ScaleView';
-import IDefaultParameters from '../../Model/IDefaultParameters';
+import Scale from './Scale';
+import IDefaultParameters from '../../Interfaces/Model/IDefaultParameters';
 
 beforeEach((): void => {
   $('body').html('<span class="js-anchor"></span>');
@@ -25,7 +25,7 @@ const defaultConfig: IDefaultParameters = {
 
 describe('Инициализация', (): void => {
   test('Шкала корректно инициализируется', (): void => {
-    new ScaleView($('.js-anchor'), defaultConfig);
+    new Scale($('.js-anchor'), defaultConfig);
     const marks = $('.range-slider__scale').children();
 
     expect(marks.first().text()).toEqual('0');
@@ -35,7 +35,7 @@ describe('Инициализация', (): void => {
 
 describe('Обновление шкалы', (): void => {
   test('Шкала корректно обновляется', (): void => {
-    const scale = new ScaleView($('.js-anchor'), defaultConfig);
+    const scale = new Scale($('.js-anchor'), defaultConfig);
     scale.updateScale({...defaultConfig, max: 10});
     const marks = $('.range-slider__scale').children();
 

@@ -1,6 +1,6 @@
 window.$ = require('jquery');
-import SliderView from './SliderView';
-import IDefaultParameters from '../../Model/IDefaultParameters';
+import Slider from './Slider';
+import IDefaultParameters from '../../Interfaces/Model/IDefaultParameters';
 
 beforeEach((): void => {
   $('body').html('<span class="js-anchor"></span>');
@@ -25,7 +25,7 @@ const defaultConfig: IDefaultParameters = {
 
 describe('Инициализация', (): void => {
   test('Инициализируется дефолтный вид', (): void => {
-    new SliderView($('.js-anchor'), defaultConfig);
+    new Slider($('.js-anchor'), defaultConfig);
 
     expect($('.range-slider__runner').length).toEqual(1);
     expect($('.range-slider__progress-bar').length).toEqual(1);
@@ -34,7 +34,7 @@ describe('Инициализация', (): void => {
   });
 
   test('Инициализируется вид с подсказкой', (): void => {
-    new SliderView($('.js-anchor'), { ...defaultConfig, hasTip: true });
+    new Slider($('.js-anchor'), { ...defaultConfig, hasTip: true });
 
     expect($('.range-slider__runner').length).toEqual(1);
     expect($('.range-slider__progress-bar').length).toEqual(1);
@@ -43,7 +43,7 @@ describe('Инициализация', (): void => {
   });
 
   test('Инициализируется вид со шкалой', (): void => {
-    new SliderView($('.js-anchor'), { ...defaultConfig, hasScale: true });
+    new Slider($('.js-anchor'), { ...defaultConfig, hasScale: true });
 
     expect($('.range-slider__runner').length).toEqual(1);
     expect($('.range-slider__progress-bar').length).toEqual(1);
@@ -52,7 +52,7 @@ describe('Инициализация', (): void => {
   });
 
   test('Инициализируется вид с двумя бегунками', (): void => {
-    new SliderView($('.js-anchor'), { ...defaultConfig, hasInterval: true });
+    new Slider($('.js-anchor'), { ...defaultConfig, hasInterval: true });
 
     expect($('.range-slider__runner').length).toEqual(2);
     expect($('.range-slider__progress-bar').length).toEqual(1);
@@ -63,7 +63,7 @@ describe('Инициализация', (): void => {
 
 describe('Обновление слайдера', (): void => {
   test('Корректно обновляется тема слайдера', (): void => {
-    const slider = new SliderView($('.js-anchor'), defaultConfig);
+    const slider = new Slider($('.js-anchor'), defaultConfig);
 
     expect($('.range-slider').hasClass('range-slider_theme_aqua')).toEqual(true);
     expect($('.range-slider').hasClass('range-slider_theme_red')).toEqual(false);
@@ -75,7 +75,7 @@ describe('Обновление слайдера', (): void => {
   });
 
   test('Корректно обновляется вид слайдера', (): void => {
-    const slider = new SliderView($('.js-anchor'), defaultConfig);
+    const slider = new Slider($('.js-anchor'), defaultConfig);
 
     expect($('.range-slider').hasClass('range-slider_direction_vertical')).toEqual(false);
 

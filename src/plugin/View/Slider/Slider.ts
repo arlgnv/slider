@@ -1,19 +1,19 @@
 import Observer from '../../Observer/Observer';
-import RunnerView from '../Runner/RunnerView';
-import ProgressBarView from '../ProgressBar/ProgressBarView';
-import ScaleView from '../Scale/ScaleView';
-import ISliderView from '../../Interfaces/View/Slider/ISliderView';
-import IDefaultParameters from '../../Model/IDefaultParameters';
-import IPercentParameters from '../IPercentParameters';
+import Runner from '../Runner/Runner';
+import ProgressBar from '../ProgressBar/ProgressBar';
+import Scale from '../Scale/Scale';
+import ISlider from '../../Interfaces/View/Slider/ISlider';
+import IDefaultParameters from '../../Interfaces/Model/IDefaultParameters';
+import IPercentParameters from '../../Interfaces/View/IPercentParameters';
 import sliderTemplateHbs, * as template from './sliderTemplate.hbs';
 const templateFunction = sliderTemplateHbs || template;
 
-export default class SliderView extends Observer implements ISliderView {
+export default class Slider extends Observer implements ISlider {
   private $slider: JQuery;
-  private runnerFrom: RunnerView;
-  private progressBar: ProgressBarView;
-  private runnerTo?: RunnerView;
-  private scale?: ScaleView;
+  private runnerFrom: Runner;
+  private progressBar: ProgressBar;
+  private runnerTo?: Runner;
+  private scale?: Scale;
 
   constructor($anchorElement: JQuery, parameters: IDefaultParameters) {
     super();
@@ -54,13 +54,13 @@ export default class SliderView extends Observer implements ISliderView {
     this.updateTheme(parameters);
 
     const { hasInterval, hasScale, onChange } = parameters;
-    this.runnerFrom = new RunnerView(this.$slider, parameters, 'firstValue');
-    this.progressBar = new ProgressBarView(this.$slider, parameters);
+    this.runnerFrom = new Runner(this.$slider, parameters, 'firstValue');
+    this.progressBar = new ProgressBar(this.$slider, parameters);
     if (hasInterval) {
-      this.runnerTo = new RunnerView(this.$slider, parameters, 'secondValue');
+      this.runnerTo = new Runner(this.$slider, parameters, 'secondValue');
     }
     if (hasScale) {
-      this.scale = new ScaleView(this.$slider, parameters);
+      this.scale = new Scale(this.$slider, parameters);
     }
     if (onChange) {
       onChange(parameters);

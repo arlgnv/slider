@@ -1,10 +1,10 @@
-import IProgressBarView from '../../Interfaces/View/ProgressBar/IProgressBarView';
-import IDefaultParameters from '../../Model/IDefaultParameters';
+import IProgressBar from '../../Interfaces/View/ProgressBar/IProgressBar';
+import IDefaultParameters from '../../Interfaces/Model/IDefaultParameters';
 import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
 import progressBarTemplateHbs, * as template from './progressBarTemplate.hbs';
 const templateFunction = progressBarTemplateHbs || template;
 
-export default class ProgressBar implements IProgressBarView {
+export default class ProgressBar implements IProgressBar {
   private $slider: JQuery;
   private $progressBar: JQuery;
 

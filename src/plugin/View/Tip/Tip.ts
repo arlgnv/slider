@@ -1,8 +1,8 @@
-import ITipView from '../../Interfaces/View/Tip/ITipView';
+import ITip from '../../Interfaces/View/Tip/ITip';
 import tipTemplateHbs, * as template from './tipTemplate.hbs';
 const templateFunction = tipTemplateHbs || template;
 
-export default class TipView implements ITipView {
+export default class TipView implements ITip {
   private $runner: JQuery;
   private $tip: JQuery;
 

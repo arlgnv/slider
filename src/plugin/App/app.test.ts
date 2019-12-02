@@ -1,6 +1,6 @@
 window.$ = require('jquery');
 import App from './App';
-import IRegularParameters from '../View/IRegularParameters';
+import IRegularParameters from '../Interfaces/View/IRegularParameters';
 
 const defaultConfig: IRegularParameters = {
   kind: 'stateUpdated',

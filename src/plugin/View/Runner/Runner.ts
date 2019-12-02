@@ -1,15 +1,15 @@
 import Observer from '../../Observer/Observer';
-import IRunnerView from '../../Interfaces/View/Runner/IRunnerView';
-import TipView from '../Tip/TipView';
-import IDefaultParameters from '../../Model/IDefaultParameters';
+import IRunner from '../../Interfaces/View/Runner/IRunner';
+import Tip from '../Tip/Tip';
+import IDefaultParameters from '../../Interfaces/Model/IDefaultParameters';
 import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
 import runnerTemplateHbs, * as template from './runnerTemplate.hbs';
 const templateFunction = runnerTemplateHbs || template;
 
-export default class RunnerView extends Observer implements IRunnerView {
+export default class Runner extends Observer implements IRunner {
   private $slider: JQuery;
   private $runner: JQuery;
-  private tip: TipView;
+  private tip: Tip;
   private runnerType: 'firstValue' | 'secondValue';
 
   constructor($slider: JQuery, parameters: IDefaultParameters, runnerType: 'firstValue' | 'secondValue') {
@@ -36,7 +36,7 @@ export default class RunnerView extends Observer implements IRunnerView {
     this.runnerType = runnerType;
 
     if (parameters.hasTip) {
-      this.tip = new TipView(this.$runner, parameters[this.runnerType]);
+      this.tip = new Tip(this.$runner, parameters[this.runnerType]);
     }
 
     this.addEventListeners();

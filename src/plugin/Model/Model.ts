@@ -1,8 +1,8 @@
 import Observer from '../Observer/Observer';
 import IModel from '../Interfaces/Model/IModel';
-import IDefaultParameters from './IDefaultParameters';
-import IRegularParameters from '../View/IRegularParameters';
-import IPercentParameters from '../View/IPercentParameters';
+import IDefaultParameters from '../Interfaces/Model/IDefaultParameters';
+import IRegularParameters from '../Interfaces/View/IRegularParameters';
+import IPercentParameters from '../Interfaces/View/IPercentParameters';
 import { PERCENT_MAX, STEP_VALUE_DEFAULT } from '../constants';
 
 export default class Model extends Observer implements IModel {

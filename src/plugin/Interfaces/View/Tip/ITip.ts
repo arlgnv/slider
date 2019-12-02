@@ -1,3 +1,3 @@
-export default interface ITipView {
+export default interface ITip {
   updateTip(value: number): void;
 }

@@ -1,7 +1,7 @@
 window.$ = require('jquery');
 import App from './App/App';
-import IDefaultParameters from './Model/IDefaultParameters';
-import IRegularParameters from './View/IRegularParameters';
+import IDefaultParameters from './Interfaces/Model/IDefaultParameters';
+import IRegularParameters from './Interfaces/View/IRegularParameters';
 import {
   FIRST_VALUE_DEFAULT, FIRST_VALUE_PERCENT_DEFAULT,
   MIN_VALUE_DEFAULT, MAX_VALUE_DEFAULT, STEP_VALUE_DEFAULT } from './constants';

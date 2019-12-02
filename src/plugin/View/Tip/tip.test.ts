@@ -1,5 +1,5 @@
 window.$ = require('jquery');
-import TipView from './TipView';
+import Tip from './Tip';
 
 beforeEach((): void => {
   $('body').html('<span class="js-anchor"></span>');
@@ -8,7 +8,7 @@ beforeEach((): void => {
 
 describe('Инициализация', (): void => {
   test('Корректно инициализируется', (): void => {
-    new TipView($('.js-anchor'), 10);
+    new Tip($('.js-anchor'), 10);
 
     expect($('.range-slider__tip').length).toEqual(1);
     expect($('.range-slider__tip').text()).toEqual('10');
@@ -17,7 +17,7 @@ describe('Инициализация', (): void => {
 
 describe('Обновление подсказки', (): void => {
   test('Текст подсказки корректно обновляется', (): void => {
-    const tip = new TipView($('.js-anchor'), 10);
+    const tip = new Tip($('.js-anchor'), 10);
     tip.updateTip(20);
 
     expect($('.range-slider__tip').text()).toEqual('20');

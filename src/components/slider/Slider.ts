@@ -1,5 +1,5 @@
 import IApp from '../../plugin/Interfaces/App/IApp';
-import IDefaultParameters from '../../plugin/Model/IDefaultParameters';
+import IDefaultParameters from '../../plugin/Interfaces/Model/IDefaultParameters';
 
 export default class Slider {
   private parameters: Partial<IDefaultParameters>;

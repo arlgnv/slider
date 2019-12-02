@@ -1,8 +1,8 @@
 window.$ = require('jquery');
 import Presenter from './Presenter';
-import SliderView from '../View/Slider/SliderView';
+import Slider from '../View/Slider/Slider';
 import Model from '../Model/Model';
-import IRegularParameters from '../View/IRegularParameters';
+import IRegularParameters from '../Interfaces/View/IRegularParameters';
 
 const defaultConfig: IRegularParameters = {
   kind: 'stateUpdated',
@@ -29,7 +29,7 @@ describe('Инициализация', (): void => {
   test('Презентер корректно инициализируется и подписывается на обновления', (): void => {
     const model = new Model(defaultConfig);
     const spyModelSubscribe = jest.spyOn(model, 'subscribe');
-    const view = new SliderView($('.js-anchor'), model.getState());
+    const view = new Slider($('.js-anchor'), model.getState());
     const spyViewSubscribe = jest.spyOn(view, 'subscribe');
     new Presenter(model, view);
     
