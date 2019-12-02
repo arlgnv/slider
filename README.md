@@ -98,4 +98,4 @@ exampleData.update({
 
 ## UML-диаграмма приложения
 
-![range-slider uml diagram](https://i.ibb.co/7rPCnSh/range-Slider-uml.png 'UML diagram')
+![range-slider uml diagram](https://i.ibb.co/t3Jhg84/range-Slider-uml.png 'UML diagram')
