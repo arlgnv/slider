@@ -7,7 +7,7 @@ import { IDefaultParameters, IPercentParameters } from '../../Interfaces/Model/I
 import sliderTemplateHbs, * as template from './sliderTemplate.hbs';
 const templateFunction = sliderTemplateHbs || template;
 
-export default class Slider extends Observer implements ISlider {
+class Slider extends Observer implements ISlider {
   private $slider: JQuery;
   private runnerFrom: Runner;
   private progressBar: ProgressBar;
@@ -100,7 +100,7 @@ export default class Slider extends Observer implements ISlider {
   }
 
   private updateTheme({ theme }: IDefaultParameters): void {
-    const oldClassName = theme === 'aqua' 
+    const oldClassName = theme === 'aqua'
       ? 'range-slider_theme_red js-range-slider_theme_red'
       : 'range-slider_theme_aqua js-range-slider_theme_aqua';
     const newClassName = `range-slider_theme_${theme} js-range-slider_theme_${theme}`;
@@ -116,3 +116,5 @@ export default class Slider extends Observer implements ISlider {
     }
   }
 }
+
+export default Slider;

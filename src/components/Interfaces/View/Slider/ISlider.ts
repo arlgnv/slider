@@ -1,5 +1,7 @@
 import { IDefaultParameters } from '../../Model/IModel';
 
-export default interface ISlider {
+interface ISlider {
   updateSlider(parameters: IDefaultParameters): void;
 }
+
+export default ISlider;

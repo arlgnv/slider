@@ -4,7 +4,7 @@ import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
 import progressBarTemplateHbs, * as template from './progressBarTemplate.hbs';
 const templateFunction = progressBarTemplateHbs || template;
 
-export default class ProgressBar implements IProgressBar {
+class ProgressBar implements IProgressBar {
   private $slider: JQuery;
   private $progressBar: JQuery;
 
@@ -34,3 +34,5 @@ export default class ProgressBar implements IProgressBar {
     this.updateProgressBar(firstValuePercent, secondValuePercent);
   }
 }
+
+export default ProgressBar;

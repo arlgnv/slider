@@ -1,7 +1,7 @@
 import IApp from '../../../components/Interfaces/App/IApp';
 import { IDefaultParameters } from '../../../components/Interfaces/Model/IModel';
 
-export default class Slider {
+class Slider {
   private parameters: Partial<IDefaultParameters>;
   private sliderData: IApp;
   private $slider: JQuery;
@@ -65,8 +65,8 @@ export default class Slider {
   }
 
   private updateSlider = (parameters: IDefaultParameters): void => {
-    const { firstValue, secondValue, min, max, step,
-      hasScale, hasTip, hasInterval, isVertical, theme } = parameters;
+    const { firstValue, secondValue,
+      min, max, step, hasScale, hasTip, hasInterval, isVertical, theme } = parameters;
 
     this.$fieldFirstValue.val(firstValue);
     this.$fieldSecondValue.val(secondValue);
@@ -100,3 +100,5 @@ export default class Slider {
     }
   }
 }
+
+export default Slider;

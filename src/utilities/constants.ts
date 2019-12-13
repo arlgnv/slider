@@ -1,4 +1,4 @@
-import IDefaultParameters from '../plugin/Interfaces/Model/IDefaultParameters';
+import { IDefaultParameters } from '../components/Interfaces/Model/IModel';
 
 export const DEFAULT_PARAMETERS: Partial<IDefaultParameters>[] = [
   { firstValue: 10, max: 20, hasScale: true, hasTip: true },

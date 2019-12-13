@@ -1,5 +1,7 @@
 import { IDefaultParameters } from '../../Model/IModel';
 
-export default interface IScale {
+interface IScale {
   updateScale(parameters: IDefaultParameters): void;
 }
+
+export default IScale;

@@ -5,7 +5,7 @@ import { PERCENT_MAX } from '../../constants';
 import scaleTemplateHbs, * as template from './scaleTemplate.hbs';
 const templateFunction = scaleTemplateHbs || template;
 
-export default class ScaleView extends Observer implements IScale {
+class Scale extends Observer implements IScale {
   private $slider: JQuery;
   private $scale: JQuery;
 
@@ -71,3 +71,5 @@ export default class ScaleView extends Observer implements IScale {
       : marks;
   }
 }
+
+export default Scale;

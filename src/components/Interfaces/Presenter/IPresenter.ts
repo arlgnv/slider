@@ -1,3 +1,5 @@
-export default interface IPresenter {
+interface IPresenter {
   initSubscribes(): void;
 }
+
+export default IPresenter;

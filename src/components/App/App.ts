@@ -4,7 +4,7 @@ import Presenter from '../Presenter/Presenter';
 import IApp from '../Interfaces/App/IApp';
 import { IDefaultParameters, IRegularParameters } from '../Interfaces/Model/IModel';
 
-export default class App implements IApp {
+class App implements IApp {
   private model: Model;
   private view: Slider;
 
@@ -18,3 +18,5 @@ export default class App implements IApp {
     this.model.dispatchState({ ...this.model.getState(), ...parameters, kind: 'stateUpdated' });
   }
 }
+
+export default App;

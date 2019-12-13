@@ -1,6 +1,6 @@
 import { IObserver, ISubscribes, events } from '../Interfaces/Observer/IObserver';
 
-export default class Observer implements IObserver {
+class Observer implements IObserver {
   private events: ISubscribes = {};
 
   public subscribe(type: events, cb: Function): void {
@@ -19,3 +19,5 @@ export default class Observer implements IObserver {
     }
   }
 }
+
+export default Observer;

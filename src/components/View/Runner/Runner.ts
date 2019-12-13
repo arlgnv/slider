@@ -6,7 +6,7 @@ import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
 import runnerTemplateHbs, * as template from './runnerTemplate.hbs';
 const templateFunction = runnerTemplateHbs || template;
 
-export default class Runner extends Observer implements IRunner {
+class Runner extends Observer implements IRunner {
   private $slider: JQuery;
   private $runner: JQuery;
   private tip: Tip;
@@ -89,3 +89,5 @@ export default class Runner extends Observer implements IRunner {
       ? position - clientY : clientX - position;
   }
 }
+
+export default Runner;

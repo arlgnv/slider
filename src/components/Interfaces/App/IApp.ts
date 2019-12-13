@@ -1,5 +1,7 @@
 import { IDefaultParameters } from '../Model/IModel';
 
-export default interface IApp {
+interface IApp {
   update(parameters: Partial<IDefaultParameters>): void;
 }
+
+export default IApp;

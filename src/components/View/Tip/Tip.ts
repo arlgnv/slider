@@ -2,7 +2,7 @@ import ITip from '../../Interfaces/View/Tip/ITip';
 import tipTemplateHbs, * as template from './tipTemplate.hbs';
 const templateFunction = tipTemplateHbs || template;
 
-export default class TipView implements ITip {
+class Tip implements ITip {
   private $runner: JQuery;
   private $tip: JQuery;
 
@@ -21,3 +21,5 @@ export default class TipView implements ITip {
     this.updateTip(value);
   }
 }
+
+export default Tip;

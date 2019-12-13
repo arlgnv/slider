@@ -2,8 +2,12 @@ window.$ = require('jquery');
 import App from './App/App';
 import { IDefaultParameters, IRegularParameters } from './Interfaces/Model/IModel';
 import {
-  FIRST_VALUE_DEFAULT, FIRST_VALUE_PERCENT_DEFAULT,
-  MIN_VALUE_DEFAULT, MAX_VALUE_DEFAULT, STEP_VALUE_DEFAULT } from './constants';
+  FIRST_VALUE_DEFAULT,
+  FIRST_VALUE_PERCENT_DEFAULT,
+  MIN_VALUE_DEFAULT,
+  MAX_VALUE_DEFAULT,
+  STEP_VALUE_DEFAULT,
+} from './constants';
 
 declare global {
   interface Window {

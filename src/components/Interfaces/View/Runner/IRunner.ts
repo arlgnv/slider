@@ -1,5 +1,7 @@
 import { IDefaultParameters } from '../../Model/IModel';
 
-export default interface IRunner {
+interface IRunner {
   updateRunner(parameters: IDefaultParameters): void;
 }
+
+export default IRunner;

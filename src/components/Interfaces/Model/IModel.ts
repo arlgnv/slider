@@ -32,4 +32,4 @@ interface IRegularParameters extends IDefaultParameters {
   kind: 'stateUpdated';
 }
 
-export { IModel, IDefaultParameters, IPercentParameters, IRegularParameters }
+export { IModel, IDefaultParameters, IPercentParameters, IRegularParameters };
