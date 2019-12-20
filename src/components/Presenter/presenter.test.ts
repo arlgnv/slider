@@ -32,7 +32,7 @@ describe('Инициализация', (): void => {
     const view = new Slider($('.js-anchor'), model.getState());
     const spyViewSubscribe = jest.spyOn(view, 'subscribe');
     new Presenter(model, view);
-    
+
     expect(spyModelSubscribe).toHaveBeenCalledTimes(1);
     expect(spyViewSubscribe).toHaveBeenCalledTimes(1);
   });

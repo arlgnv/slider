@@ -31,7 +31,7 @@ describe('Инициализация', (): void => {
   });
 
   test('Прогресс-бар корректно инициализируется с двумя ползунками', (): void => {
-    new ProgressBar($('.js-anchor'), {...defaultConfig, hasInterval: true, secondValuePercent: 30});
+    new ProgressBar($('.js-anchor'), { ...defaultConfig, hasInterval: true, secondValuePercent: 30 });
 
     expect($('.range-slider__progress-bar').attr('style')).toEqual('left: 0%; right: 70%;');
   });
@@ -50,7 +50,7 @@ describe('Обновление прогресс-бара', (): void => {
   });
 
   test('Положение корректно обновляется в случае с двумя ползунками', (): void => {
-    const bar = new ProgressBar($('.js-anchor'), {...defaultConfig, hasInterval: true, secondValuePercent: 30});
+    const bar = new ProgressBar($('.js-anchor'), { ...defaultConfig, hasInterval: true, secondValuePercent: 30 });
     bar.updateProgressBar(0, 100);
 
     expect($('.range-slider__progress-bar').attr('style')).toEqual('left: 0%; right: 0%;');

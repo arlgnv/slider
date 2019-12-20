@@ -1,5 +1,5 @@
 import ITip from '../../Interfaces/View/Tip/ITip';
-import tipTemplateHbs, * as template from './tipTemplate.hbs';
+import tipTemplateHbs, * as template from './tip.template.hbs';
 const templateFunction = tipTemplateHbs || template;
 
 class Tip implements ITip {

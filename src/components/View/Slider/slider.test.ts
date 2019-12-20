@@ -68,7 +68,7 @@ describe('Обновление слайдера', (): void => {
     expect($('.range-slider').hasClass('range-slider_theme_aqua')).toEqual(true);
     expect($('.range-slider').hasClass('range-slider_theme_red')).toEqual(false);
 
-    slider.updateSlider({...defaultConfig, theme: 'red'});
+    slider.updateSlider({ ...defaultConfig, theme: 'red' });
 
     expect($('.range-slider').hasClass('range-slider_theme_aqua')).toEqual(false);
     expect($('.range-slider').hasClass('range-slider_theme_red')).toEqual(true);
@@ -79,7 +79,7 @@ describe('Обновление слайдера', (): void => {
 
     expect($('.range-slider').hasClass('range-slider_direction_vertical')).toEqual(false);
 
-    slider.updateSlider({...defaultConfig, isVertical: true});
+    slider.updateSlider({ ...defaultConfig, isVertical: true });
 
     expect($('.range-slider').hasClass('range-slider_direction_vertical')).toEqual(true);
   });

@@ -1,7 +1,7 @@
 import IProgressBar from '../../Interfaces/View/ProgressBar/IProgressBar';
 import { IDefaultParameters } from '../../Interfaces/Model/IModel';
 import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
-import progressBarTemplateHbs, * as template from './progressBarTemplate.hbs';
+import progressBarTemplateHbs, * as template from './progressBar.template.hbs';
 const templateFunction = progressBarTemplateHbs || template;
 
 class ProgressBar implements IProgressBar {

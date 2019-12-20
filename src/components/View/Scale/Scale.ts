@@ -2,7 +2,7 @@ import Observer from '../../Observer/Observer';
 import IScale from '../../Interfaces/View/Scale/IScale';
 import { IDefaultParameters } from '../../Interfaces/Model/IModel';
 import { PERCENT_MAX } from '../../constants';
-import scaleTemplateHbs, * as template from './scaleTemplate.hbs';
+import scaleTemplateHbs, * as template from './scale.template.hbs';
 const templateFunction = scaleTemplateHbs || template;
 
 class Scale extends Observer implements IScale {

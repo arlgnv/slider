@@ -12,7 +12,7 @@ it('Корректно работает подписка и уведомлени
 
 it('Корректно отписывается от события', () => {
   const newCb = jest.fn();
-  
+
   observer.subscribe('updatedState', newCb);
   observer.unsubscribe('updatedState', newCb);
   observer.notify('updatedState');

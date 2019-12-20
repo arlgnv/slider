@@ -36,7 +36,7 @@ describe('Инициализация', (): void => {
 describe('Обновление шкалы', (): void => {
   test('Шкала корректно обновляется', (): void => {
     const scale = new Scale($('.js-anchor'), defaultConfig);
-    scale.updateScale({...defaultConfig, max: 10});
+    scale.updateScale({ ...defaultConfig, max: 10 });
     const marks = $('.range-slider__scale').children();
 
     expect(marks.first().text()).toEqual('0');

@@ -3,7 +3,7 @@ import IRunner from '../../Interfaces/View/Runner/IRunner';
 import Tip from '../Tip/Tip';
 import { IDefaultParameters } from '../../Interfaces/Model/IModel';
 import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
-import runnerTemplateHbs, * as template from './runnerTemplate.hbs';
+import runnerTemplateHbs, * as template from './runner.template.hbs';
 const templateFunction = runnerTemplateHbs || template;
 
 class Runner extends Observer implements IRunner {
@@ -19,7 +19,7 @@ class Runner extends Observer implements IRunner {
   }
 
   public updateRunner(parameters: IDefaultParameters): void {
-    const {isVertical, hasTip} = parameters;
+    const { isVertical, hasTip } = parameters;
     const position = parameters[`${this.runnerType}Percent`];
     this.$runner.attr('style', `${isVertical ? 'bottom' : 'left'}: ${position}%`);
 

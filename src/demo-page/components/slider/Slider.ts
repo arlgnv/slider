@@ -96,7 +96,7 @@ class Slider {
     } else if (targetType === 'radio') {
       this.sliderData.update({ [$target.attr('name')]: $target.val() });
     } else {
-      this.sliderData.update({ [$target.attr('name')]: +$target.val() });
+      this.sliderData.update({ [$target.attr('name')]: Number($target.val()) });
     }
   }
 }

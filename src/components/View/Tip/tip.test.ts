@@ -5,7 +5,6 @@ beforeEach((): void => {
   $('body').html('<span class="js-anchor"></span>');
 });
 
-
 describe('Инициализация', (): void => {
   test('Корректно инициализируется', (): void => {
     new Tip($('.js-anchor'), 10);

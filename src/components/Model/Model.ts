@@ -59,14 +59,14 @@ class Model extends Observer implements IModel {
   private validateValues(parameters: IDefaultParameters): IDefaultParameters {
     return parameters.hasInterval
       ? {
-          ...parameters,
-          ...this.validateIntervalValues(parameters),
-        }
+        ...parameters,
+        ...this.validateIntervalValues(parameters),
+      }
       : {
-          ...parameters,
-          firstValue: this.validateSingleValue(parameters, 'firstValue'),
-          secondValue: null,
-        };
+        ...parameters,
+        firstValue: this.validateSingleValue(parameters, 'firstValue'),
+        secondValue: null,
+      };
   }
 
   private validateSingleValue(parameters: IDefaultParameters, valueType: string): number {
@@ -142,10 +142,10 @@ class Model extends Observer implements IModel {
 
       return firstValue > secondValue
         ? {
-            ...parameters,
-            firstValue: Math.min(firstValue, secondValue),
-            secondValue: Math.max(firstValue, secondValue),
-          }
+          ...parameters,
+          firstValue: Math.min(firstValue, secondValue),
+          secondValue: Math.max(firstValue, secondValue),
+        }
         : { ...parameters, firstValue, secondValue };
     }
   }

@@ -4,7 +4,7 @@ import ProgressBar from '../ProgressBar/ProgressBar';
 import Scale from '../Scale/Scale';
 import ISlider from '../../Interfaces/View/Slider/ISlider';
 import { IDefaultParameters, IPercentParameters } from '../../Interfaces/Model/IModel';
-import sliderTemplateHbs, * as template from './sliderTemplate.hbs';
+import sliderTemplateHbs, * as template from './slider.template.hbs';
 const templateFunction = sliderTemplateHbs || template;
 
 class Slider extends Observer implements ISlider {
