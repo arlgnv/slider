@@ -28,15 +28,20 @@ class Scale extends Observer implements IScale {
 
   private drawMarks(values: number[], min: number, max: number, isVertical: boolean): void {
     this.$scale.text('');
+    const $fragment = $(document.createDocumentFragment());
 
     values.forEach((value) => {
       const position = ((value - min) / (max - min)) * PERCENT_MAX;
 
-      $('<span>', {
+      const $scaleMark = $('<span>', {
         class: 'range-slider__scale-mark js-range-slider__scale-mark',
         text: value,
-        style: `${isVertical ? 'bottom' : 'left'}: ${position}%` }).appendTo(this.$scale);
+        style: `${isVertical ? 'bottom' : 'left'}: ${position}%` });
+
+      $fragment.append($scaleMark);
     });
+
+    this.$scale.append($fragment);
   }
 
   private handleScaleClick = (evt: JQuery.ClickEvent): void => {

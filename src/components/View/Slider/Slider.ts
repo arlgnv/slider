@@ -55,12 +55,15 @@ class Slider extends Observer implements ISlider {
     const { hasInterval, hasScale, onChange } = parameters;
     this.runnerFrom = new Runner(this.$slider, parameters, 'firstValue');
     this.progressBar = new ProgressBar(this.$slider, parameters);
+
     if (hasInterval) {
       this.runnerTo = new Runner(this.$slider, parameters, 'secondValue');
     }
+
     if (hasScale) {
       this.scale = new Scale(this.$slider, parameters);
     }
+
     if (onChange) {
       onChange(parameters);
     }
@@ -105,7 +108,7 @@ class Slider extends Observer implements ISlider {
       : 'range-slider_theme_aqua js-range-slider_theme_aqua';
     const newClassName = `range-slider_theme_${theme} js-range-slider_theme_${theme}`;
 
-    this.$slider.addClass(newClassName).removeClass(oldClassName);
+    this.$slider.removeClass(oldClassName).addClass(newClassName);
   }
 
   private updateDirection({ isVertical }: IDefaultParameters): void {
