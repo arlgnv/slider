@@ -28,9 +28,7 @@ class Runner extends Observer implements IRunner {
     }
   }
 
-  private initRunner(
-      $slider: JQuery, parameters: IDefaultParameters, runnerType: 'firstValue' | 'secondValue',
-    ): void {
+  private initRunner($slider: JQuery, parameters: IDefaultParameters, runnerType: 'firstValue' | 'secondValue'): void {
     this.$slider = $slider;
     this.$runner = $(templateFunction(parameters));
     this.runnerType = runnerType;
@@ -63,10 +61,7 @@ class Runner extends Observer implements IRunner {
       const runnerShift = this.getRunnerShift(cursorPosition, e.clientX, e.clientY);
       const runnerShiftPercent = runnerShift * PERCENT_MAX / this.$slider[metric]();
 
-      this.notify('movedRunner', {
-        percent: runnerShiftPercent,
-        lastUpdatedOnPercent: this.runnerType,
-      });
+      this.notify('movedRunner', { percent: runnerShiftPercent, lastUpdatedOnPercent: this.runnerType });
     };
 
     const handleWindowMouseUp = (): void => {
@@ -86,7 +81,8 @@ class Runner extends Observer implements IRunner {
 
   private getRunnerShift(position: number, clientX: number, clientY: number): number {
     return this.$slider.hasClass('range-slider_direction_vertical')
-      ? position - clientY : clientX - position;
+      ? position - clientY
+      : clientX - position;
   }
 }
 

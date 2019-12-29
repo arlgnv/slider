@@ -34,24 +34,16 @@ class Model extends Observer implements IModel {
     const { step } = this.validateStep(parameters);
     const { min, max } = this.validateMinMax(parameters);
     const { firstValue, secondValue } = this.validateValues({ ...parameters, step, min, max });
-    const { firstValuePercent, secondValuePercent } = this.calculateValuesPercent({
-      ...parameters,
-      firstValue,
-      secondValue,
-      min,
-      max,
-    });
+    const { firstValuePercent, secondValuePercent } =
+      this.calculateValuesPercent({ ...parameters, firstValue, secondValue, min, max });
 
     return { ...parameters, firstValue, secondValue, firstValuePercent, secondValuePercent, min, max, step };
   }
 
   private validateParametersWithUpdatedPercent(parameters: IPercentParameters): IDefaultParameters {
     const { firstValue, secondValue } = this.validateValues(parameters);
-    const { firstValuePercent, secondValuePercent } = this.calculateValuesPercent({
-      ...parameters,
-      firstValue,
-      secondValue,
-    });
+    const { firstValuePercent, secondValuePercent } =
+      this.calculateValuesPercent({ ...parameters, firstValue, secondValue });
 
     return { ...parameters, firstValue, secondValue, firstValuePercent, secondValuePercent };
   }
@@ -85,7 +77,8 @@ class Model extends Observer implements IModel {
     if (kind === 'stateUpdated') {
       const value = parameters[valueType];
 
-      if (value >= max || value === null) return max;
+      if (value === null) return max;
+      if (value >= max) return max;
       if (value <= min) return min;
 
       const newValue = Math.round((value - min) / step) * step + min;
