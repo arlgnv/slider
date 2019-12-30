@@ -111,11 +111,10 @@ class Model extends Observer implements IModel {
       }
 
       if (lastUpdatedOnPercent === 'either') {
-        const isSecondValueNearer =
-          Math.abs(percent - firstValuePercent) > Math.abs(percent - secondValuePercent) ||
-          (percent > firstValuePercent && percent > secondValuePercent);
+        const isPercentNearerToSecondValuePercent = Math.abs(percent - firstValuePercent) > Math.abs(percent - secondValuePercent);
+        const isPercentGreaterBothPercentValues = percent > firstValuePercent && percent > secondValuePercent;
 
-        if (isSecondValueNearer) {
+        if (isPercentNearerToSecondValuePercent || isPercentGreaterBothPercentValues) {
           const { firstValue } = parameters;
           const secondValue = this.validateSingleValue(parameters, 'secondValue');
 
