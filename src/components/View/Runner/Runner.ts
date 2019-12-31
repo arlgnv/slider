@@ -52,9 +52,10 @@ class Runner extends Observer implements IRunner {
     const cursorPosition = this.getCursorPosition($runner, evt.clientX, evt.clientY);
     const metric = this.$slider.hasClass('js-range-slider_direction_vertical') ? 'outerHeight' : 'outerWidth';
 
-    this.$slider.find('.js-range-slider__runner_type_last-grabbed').each(function () {
-      $(this).removeClass('range-slider__runner_type_last-grabbed js-range-slider__runner_type_last-grabbed');
-    });
+    this.$slider
+      .find('.js-range-slider__runner_type_last-grabbed')
+      .removeClass('range-slider__runner_type_last-grabbed js-range-slider__runner_type_last-grabbed');
+
     $runner.addClass('range-slider__runner_type_last-grabbed js-range-slider__runner_type_last-grabbed');
 
     const handleWindowMouseMove = (e: JQuery.Event): void => {
