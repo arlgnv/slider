@@ -1,38 +1,40 @@
+include ../text-input/text-input
+
 mixin dashboard
   .dashboard.js-dashboard
     form.dashboard__form(action="/mock-address/change-me" method="post")
       .dashboard__group
         p.dashboard__subgroup
-          label.dashboard__title Ползунок 1
-            input.dashboard__field.dashboard__field_type_first-value.js-dashboard__field_type_first-value(type="number" name="firstValue")
+          label.dashboard__label Ползунок 1 
+            +text-input({"modifier": "first-value", "type": "number", "name": "firstValue"})
         p.dashboard__subgroup
-          label.dashboard__title Ползунок 2
-            input.dashboard__field.dashboard__field_type_second-value.js-dashboard__field_type_second-value(type="number" name="secondValue")
+          label.dashboard__label Ползунок 2 
+            +text-input({"modifier": "second-value", "type": "number", "name": "secondValue"})
         p.dashboard__subgroup
-          label.dashboard__title Минимальное значение
-            input.dashboard__field.dashboard__field_type_min-value.js-dashboard__field_type_min-value(type="number" name="min")
+          label.dashboard__label Минимальное значение 
+            +text-input({"modifier": "min-value", "type": "number", "name": "min"})
         p.dashboard__subgroup
-          label.dashboard__title Максимальное значение
-            input.dashboard__field.dashboard__field_type_max-value.js-dashboard__field_type_max-value(type="number" name="max")
+          label.dashboard__label Максимальное значение 
+            +text-input({"modifier": "max-value", "type": "number", "name": "max"})
         p.dashboard__subgroup
-          label.dashboard__title Шаг слайдера
-            input.dashboard__field.dashboard__field_type_step-value.js-dashboard__field_type_step-value(type="number" name="step")
+          label.dashboard__label Шаг слайдера 
+            +text-input({"modifier": "step-value", "type": "number", "name": "step"})
       .dashboard__group
         p.dashboard__subgroup
-          label.dashboard__title Показать шкалу
-            input.dashboard__field.dashboard__field_type_has-scale.js-dashboard__field_type_has-scale(type="checkbox" name="hasScale")
+          label.dashboard__label Показать шкалу 
+            +text-input({"modifier": "has-scale", "type": "checkbox", "name": "hasScale"})
         p.dashboard__subgroup
-          label.dashboard__title Показать подсказку
-            input.dashboard__field.dashboard__field_type_has-tip.js-dashboard__field_type_has-tip(type="checkbox" name="hasTip")
+          label.dashboard__label Показать подсказку 
+            +text-input({"modifier": "has-tip", "type": "checkbox", "name": "hasTip"})
         p.dashboard__subgroup
-          label.dashboard__title Интервал
-            input.dashboard__field.dashboard__field_type_has-interval.js-dashboard__field_type_has-interval(type="checkbox" name="hasInterval")
+          label.dashboard__label Интервал 
+            +text-input({"modifier": "has-interval", "type": "checkbox", "name": "hasInterval"})
         p.dashboard__subgroup
-          label.dashboard__title Вертикальный вид
-            input.dashboard__field.dashboard__field_type_is-vertical.js-dashboard__field_type_is-vertical(type="checkbox" name="isVertical")
+          label.dashboard__label Вертикальный вид 
+            +text-input({"modifier": "is-vertical", "type": "checkbox", "name": "isVertical"})
         fieldset.dashboard__subgroup
           legend Цветовые темы слайдера
-          label.dashboard__title Голубая тема
-            input.dashboard__field.dashboard__field_type_aqua-theme.js-dashboard__field_type_aqua-theme(type="radio" name="theme" value="aqua")
-          label.dashboard__title Красная тема
-            input.dashboard__field.dashboard__field_type_red-theme.js-dashboard__field_type_red-theme(type="radio" name="theme" value="red")
+          label.dashboard__label Голубая тема 
+            +text-input({"modifier": "aqua-theme", "type": "radio", "name": "theme", "value": "aqua"})
+          label.dashboard__label Красная тема 
+            +text-input({"modifier": "red-theme", "type": "radio", "name": "theme", "value": "red"})

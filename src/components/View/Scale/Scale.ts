@@ -52,7 +52,7 @@ class Scale extends Observer implements IScale {
       const metric = isVertical ? 'outerHeight' : 'outerWidth';
       const property = isVertical ? 'bottom' : 'left';
       const positionPercent =
-        Math.round(parseFloat($target.css(property)) / this.$slider[metric]() * PERCENT_MAX);
+        parseFloat($target.css(property)) / this.$slider[metric]() * PERCENT_MAX;
 
       this.notify('selectedValue', { lastUpdatedOnPercent: 'either', percent: positionPercent });
     }

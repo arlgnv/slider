@@ -29,17 +29,17 @@ class Slider {
     this.$slider = $slider;
     this.$sliderElement = this.$slider.find('.js-slider__field');
     this.$dashboard = this.$slider.find('.js-dashboard');
-    this.$fieldFirstValue = this.$dashboard.find('.js-dashboard__field_type_first-value');
-    this.$fieldSecondValue = this.$dashboard.find('.js-dashboard__field_type_second-value');
-    this.$fieldMin = this.$dashboard.find('.js-dashboard__field_type_min-value');
-    this.$fieldMax = this.$dashboard.find('.js-dashboard__field_type_max-value');
-    this.$fieldStep = this.$dashboard.find('.js-dashboard__field_type_step-value');
-    this.$fieldScale = this.$dashboard.find('.js-dashboard__field_type_has-scale');
-    this.$fieldTip = this.$dashboard.find('.js-dashboard__field_type_has-tip');
-    this.$fieldThemeAqua = this.$dashboard.find('.js-dashboard__field_type_aqua-theme');
-    this.$fieldThemeRed = this.$dashboard.find('.js-dashboard__field_type_red-theme');
-    this.$fieldType = this.$dashboard.find('.js-dashboard__field_type_has-interval');
-    this.$fieldView = this.$dashboard.find('.js-dashboard__field_type_is-vertical');
+    this.$fieldFirstValue = this.$dashboard.find('.js-text-input__field_type_first-value');
+    this.$fieldSecondValue = this.$dashboard.find('.js-text-input__field_type_second-value');
+    this.$fieldMin = this.$dashboard.find('.js-text-input__field_type_min-value');
+    this.$fieldMax = this.$dashboard.find('.js-text-input__field_type_max-value');
+    this.$fieldStep = this.$dashboard.find('.js-text-input__field_type_step-value');
+    this.$fieldScale = this.$dashboard.find('.js-text-input__field_type_has-scale');
+    this.$fieldTip = this.$dashboard.find('.js-text-input__field_type_has-tip');
+    this.$fieldThemeAqua = this.$dashboard.find('.js-text-input__field_type_aqua-theme');
+    this.$fieldThemeRed = this.$dashboard.find('.js-text-input__field_type_red-theme');
+    this.$fieldType = this.$dashboard.find('.js-text-input__field_type_has-interval');
+    this.$fieldView = this.$dashboard.find('.js-text-input__field_type_is-vertical');
   }
 
   private addEventListeners(): void {

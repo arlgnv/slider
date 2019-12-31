@@ -25,10 +25,6 @@
         width: 100%;
         margin: 0 0 2.1429rem;
       }
-
-      #{$root}__field {
-        margin-left: 1.2143rem;
-      }
     }
 
     &:nth-child(2) {
@@ -48,7 +44,7 @@
     }
   }
 
-  &__title + #{$root}__title {
-    margin-left: 1.0714rem;
+  &__label + #{$root}__label {
+    margin-left: 0.5rem;
   }
 }

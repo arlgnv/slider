@@ -1,0 +1,5 @@
+mixin text-input({modifier = "", type = "text", name = "", value = ""} = {})
+  - const className = modifier ? `text-input__field_type_${modifier} js-text-input__field_type_${modifier}` : ''
+
+  span.text-input
+    input.text-input__field(class= className type= type name= name value= value)&attributes(attributes)
