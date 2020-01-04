@@ -39,7 +39,7 @@ class Slider extends Observer implements ISlider {
     }
 
     if (kind === 'stateUpdated') {
-      this.redrawSlider(parameters);
+      this.initSlider(parameters);
     }
   }
 
@@ -47,6 +47,8 @@ class Slider extends Observer implements ISlider {
     if ($anchorElement) {
       $anchorElement.before($(templateFunction(parameters)));
       this.$slider = $anchorElement.prev();
+    } else {
+      this.$slider.text('');
     }
 
     this.updateDirection(parameters);
@@ -55,43 +57,26 @@ class Slider extends Observer implements ISlider {
     const { hasInterval, hasScale, onChange } = parameters;
     this.runnerFrom = new Runner(this.$slider, parameters, 'firstValue');
     this.progressBar = new ProgressBar(this.$slider, parameters);
-
-    if (hasInterval) {
-      this.runnerTo = new Runner(this.$slider, parameters, 'secondValue');
-    }
-
-    if (hasScale) {
-      this.scale = new Scale(this.$slider, parameters);
-    }
+    this.runnerTo = hasInterval ? new Runner(this.$slider, parameters, 'secondValue') : null;
+    this.scale = hasScale ? new Scale(this.$slider, parameters) : null;
 
     if (onChange) {
       onChange(parameters);
     }
 
-    this.initSubscribes(parameters);
+    this.initSubscribes();
   }
 
-  private initSubscribes(parameters: IDefaultParameters): void {
-    const { hasInterval, hasScale } = parameters;
-
+  private initSubscribes(): void {
     this.runnerFrom.subscribe('movedRunner', this.handleRunnerMove);
 
-    if (hasInterval) {
+    if (this.runnerTo) {
       this.runnerTo.subscribe('movedRunner', this.handleRunnerMove);
     }
 
-    if (hasScale) {
+    if (this.scale) {
       this.scale.subscribe('selectedValue', this.handleScaleClick);
     }
-  }
-
-  private redrawSlider(parameters: IDefaultParameters): void {
-    this.$slider.text('');
-    this.runnerFrom = undefined;
-    this.runnerTo = undefined;
-    this.progressBar = undefined;
-    this.scale = undefined;
-    this.initSlider(parameters);
   }
 
   private handleRunnerMove = (parameters: IPercentParameters): void => {
