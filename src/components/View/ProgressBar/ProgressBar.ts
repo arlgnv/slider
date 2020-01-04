@@ -16,12 +16,10 @@ class ProgressBar implements IProgressBar {
     const isVertical = this.$slider.hasClass('js-range-slider_direction_vertical');
     const leftEdge = rightOffset ? leftOffset : PERCENT_MIN;
     const rightEdge = rightOffset ? PERCENT_MAX - rightOffset : PERCENT_MAX - leftOffset;
+    const leftEdgeStyle = isVertical ? 'bottom' : 'left';
+    const rightEdgeStyle = isVertical ? 'top' : 'right';
 
-    if (isVertical) {
-      this.$progressBar.attr('style', `bottom: ${leftEdge}%; top: ${rightEdge}%;`);
-    } else {
-      this.$progressBar.attr('style', `left: ${leftEdge}%; right: ${rightEdge}%;`);
-    }
+    this.$progressBar.attr('style', `${leftEdgeStyle}: ${leftEdge}%; ${rightEdgeStyle}: ${rightEdge}%;`);
   }
 
   private initProgressBar($slider: JQuery, parameters: IDefaultParameters): void {
