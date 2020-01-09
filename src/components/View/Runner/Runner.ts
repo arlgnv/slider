@@ -19,13 +19,17 @@ class Runner extends Observer implements IRunner {
   }
 
   public updateRunner(parameters: IDefaultParameters): void {
-    const { isVertical, hasTip } = parameters;
-    const position = parameters[`${this.runnerType}Percent`];
+    const { isVertical, hasTip, firstValuePercent, secondValuePercent } = parameters;
+    const position = this.runnerType === 'firstValue' ? firstValuePercent : secondValuePercent;
     this.$runner.attr('style', `${isVertical ? 'bottom' : 'left'}: ${position}%`);
 
     if (hasTip) {
       this.tip.updateTip(parameters[this.runnerType]);
     }
+  }
+
+  public correctZAxis(): void {
+    this.$runner.addClass('range-slider__runner_type_last-grabbed js-range-slider__runner_type_last-grabbed');
   }
 
   private initRunner($slider: JQuery, parameters: IDefaultParameters, runnerType: 'firstValue' | 'secondValue'): void {
@@ -37,9 +41,8 @@ class Runner extends Observer implements IRunner {
       this.tip = new Tip(this.$runner, parameters[this.runnerType]);
     }
 
-    this.addEventListeners();
-
     this.$slider.append(this.$runner);
+    this.addEventListeners();
     this.updateRunner(parameters);
   }
 

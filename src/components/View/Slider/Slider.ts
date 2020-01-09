@@ -4,6 +4,7 @@ import ProgressBar from '../ProgressBar/ProgressBar';
 import Scale from '../Scale/Scale';
 import ISlider from '../../Interfaces/View/Slider/ISlider';
 import { IDefaultParameters, IPercentParameters } from '../../Interfaces/Model/IModel';
+import { PERCENT_MIN, PERCENT_MAX } from '../../constants';
 import sliderTemplateHbs, * as template from './slider.template.hbs';
 const templateFunction = sliderTemplateHbs || template;
 
@@ -54,11 +55,23 @@ class Slider extends Observer implements ISlider {
     this.updateDirection(parameters);
     this.updateTheme(parameters);
 
-    const { hasInterval, hasScale, onChange } = parameters;
+    const { hasInterval, hasScale, onChange, firstValuePercent, secondValuePercent } = parameters;
     this.runnerFrom = new Runner(this.$slider, parameters, 'firstValue');
     this.progressBar = new ProgressBar(this.$slider, parameters);
     this.runnerTo = hasInterval ? new Runner(this.$slider, parameters, 'secondValue') : null;
     this.scale = hasScale ? new Scale(this.$slider, parameters) : null;
+
+    const isValuesPercentEqual = firstValuePercent === secondValuePercent;
+    const isNeedToCorrectFirstRunnerZAxis = isValuesPercentEqual && secondValuePercent === PERCENT_MAX;
+    const isNeedToCorrectSecondRunnerZAxis = isValuesPercentEqual && firstValuePercent === PERCENT_MIN;
+
+    if (isNeedToCorrectFirstRunnerZAxis) {
+      this.runnerFrom.correctZAxis();
+    }
+
+    if (isNeedToCorrectSecondRunnerZAxis) {
+      this.runnerTo.correctZAxis();
+    }
 
     if (onChange) {
       onChange(parameters);
