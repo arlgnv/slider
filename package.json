@@ -6,7 +6,8 @@
   "scripts": {
     "start": "rimraf dist && parcel src/demo-page/index.pug",
     "build": "rimraf dist docs && parcel build src/demo-page/index.pug -d docs --no-cache --public-url /range-slider/",
-    "test": "jest"
+    "test": "jest",
+    "lint": "tslint -c tslint.json -p tsconfig.json src/**/**/*.ts"
   },
   "repository": {
     "type": "git",
