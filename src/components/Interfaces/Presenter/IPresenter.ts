@@ -1,5 +1,7 @@
+import { IDefaultParameters } from '../Model/IModel';
+
 interface IPresenter {
-  initSubscribes(): void;
+  update(parameters: Partial<IDefaultParameters>): void;
 }
 
 export default IPresenter;

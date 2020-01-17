@@ -1,5 +1,5 @@
 window.$ = require('jquery');
-import App from './App/App';
+import Presenter from './Presenter/Presenter';
 import { IDefaultParameters, IRegularParameters } from './Interfaces/Model/IModel';
 import {
   FIRST_VALUE_DEFAULT,
@@ -41,7 +41,7 @@ declare global {
     const initialParameters: IRegularParameters = $.extend({}, defaultConfig, defaultParameters);
 
     return this.each(function (): void {
-      $.data(this, 'rangeSlider', new App($(this), initialParameters));
+      $.data(this, 'rangeSlider', new Presenter($(this), initialParameters));
     });
   };
 })(window.$);

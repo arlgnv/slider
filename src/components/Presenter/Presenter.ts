@@ -1,17 +1,24 @@
 import Model from '../Model/Model';
 import Slider from '../View/Slider/Slider';
 import IPresenter from '../Interfaces/Presenter/IPresenter';
-import { IPercentParameters, IDefaultParameters } from '../Interfaces/Model/IModel';
+import { IDefaultParameters, IRegularParameters, IPercentParameters } from '../Interfaces/Model/IModel';
 
 class Presenter implements IPresenter {
-  constructor(private model: Model, private view: Slider) {
-    this.model = model;
-    this.view = view;
+  private model: Model;
+  private view: Slider;
+
+  constructor(anchorElement: JQuery, parameters: IRegularParameters) {
+    this.model = new Model(parameters);
+    this.view = new Slider(anchorElement, this.model.getState());
 
     this.initSubscribes();
   }
 
-  public initSubscribes(): void {
+  public update(parameters: Partial<IDefaultParameters> = {}): void {
+    this.model.dispatchState({ ...this.model.getState(), ...parameters, kind: 'stateUpdated' });
+  }
+
+  private initSubscribes(): void {
     this.view.subscribe('dispatchedParameters', this.dispatchState);
     this.model.subscribe('updatedState', this.updateState);
   }

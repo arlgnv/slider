@@ -1,9 +1,9 @@
-import IApp from '../../../components/Interfaces/App/IApp';
+import IPresenter from '../../../components/Interfaces/Presenter/IPresenter';
 import { IDefaultParameters } from '../../../components/Interfaces/Model/IModel';
 
 class Slider {
   private parameters: Partial<IDefaultParameters>;
-  private sliderData: IApp;
+  private sliderData: IPresenter;
   private $slider: JQuery;
   private $sliderElement: JQuery;
   private $dashboard: JQuery;
