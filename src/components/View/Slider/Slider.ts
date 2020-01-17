@@ -22,11 +22,7 @@ class Slider extends Observer implements ISlider {
   }
 
   public updateSlider(parameters: IDefaultParameters): void {
-    const { kind, onChange } = parameters;
-
-    if (onChange) {
-      onChange(parameters);
-    }
+    const { kind } = parameters;
 
     if (kind === 'valuePercentUpdated') {
       const { firstValuePercent, secondValuePercent, hasInterval } = parameters;
@@ -55,7 +51,7 @@ class Slider extends Observer implements ISlider {
     this.updateDirection(parameters);
     this.updateTheme(parameters);
 
-    const { hasInterval, hasScale, onChange, firstValuePercent, secondValuePercent } = parameters;
+    const { hasInterval, hasScale, firstValuePercent, secondValuePercent } = parameters;
     this.runnerFrom = new Runner(this.$slider, parameters, 'firstValue');
     this.progressBar = new ProgressBar(this.$slider, parameters);
     this.runnerTo = hasInterval ? new Runner(this.$slider, parameters, 'secondValue') : null;
@@ -71,10 +67,6 @@ class Slider extends Observer implements ISlider {
 
     if (isNeedToCorrectSecondRunnerZAxis) {
       this.runnerTo.correctZAxis();
-    }
-
-    if (onChange) {
-      onChange(parameters);
     }
 
     this.initSubscribes();

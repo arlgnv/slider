@@ -1,41 +1,24 @@
 import Model from './Model';
-import { IRegularParameters } from '../Interfaces/Model/IModel';
-
-const defaultConfig: IRegularParameters = {
-  kind: 'stateUpdated',
-  firstValue: 0,
-  firstValuePercent: 0,
-  min: 0,
-  max: 100,
-  step: 1,
-  hasInterval: false,
-  hasTip: false,
-  hasScale: false,
-  isVertical: false,
-  theme: 'aqua',
-  secondValue: null,
-  secondValuePercent: null,
-  onChange: null,
-};
+import { DEFAULT_CONFIG } from '../constants';
 
 describe('Инициализация', (): void => {
   test('Инициализируется корректное состояние модели', (): void => {
-    const model = new Model(defaultConfig);
+    const model = new Model(DEFAULT_CONFIG);
     const state = model.getState();
 
     expect(Object.getOwnPropertyNames(state).length)
-      .toEqual(Object.getOwnPropertyNames(defaultConfig).length);
-    expect(state.kind).toEqual(defaultConfig.kind);
-    expect(state.max).toEqual(defaultConfig.max);
-    expect(state.hasScale).toEqual(defaultConfig.hasScale);
-    expect(state.theme).toEqual(defaultConfig.theme);
-    expect(state.onChange).toEqual(defaultConfig.onChange);
+      .toEqual(Object.getOwnPropertyNames(DEFAULT_CONFIG).length);
+    expect(state.kind).toEqual(DEFAULT_CONFIG.kind);
+    expect(state.max).toEqual(DEFAULT_CONFIG.max);
+    expect(state.hasScale).toEqual(DEFAULT_CONFIG.hasScale);
+    expect(state.theme).toEqual(DEFAULT_CONFIG.theme);
+    expect(state.onChange).toEqual(DEFAULT_CONFIG.onChange);
   });
 });
 
 describe('Обновление модели', (): void => {
   test('Модель обновляется', (): void => {
-    const model = new Model(defaultConfig);
+    const model = new Model(DEFAULT_CONFIG);
     const state = model.getState();
     model.dispatchState({ ...state, kind: 'stateUpdated', theme: 'red' });
     const newState = model.getState();
@@ -47,14 +30,14 @@ describe('Обновление модели', (): void => {
 
 describe('Валидирование параметров', (): void => {
   test('Step = 1 если step < 0', (): void => {
-    const model = new Model({ ...defaultConfig, step: 0 });
+    const model = new Model({ ...DEFAULT_CONFIG, step: 0 });
     const state = model.getState();
 
     expect(state.step).toEqual(1);
   });
 
   test('Min <=> Max меняются местами если min > max', (): void => {
-    const model = new Model({ ...defaultConfig, min: 10, max: 5 });
+    const model = new Model({ ...DEFAULT_CONFIG, min: 10, max: 5 });
     const state = model.getState();
 
     expect(state.min).toEqual(5);
@@ -62,7 +45,7 @@ describe('Валидирование параметров', (): void => {
   });
 
   test('FirstValue = min если firstValue < min', (): void => {
-    const model = new Model({ ...defaultConfig, min: 0, firstValue: -1 });
+    const model = new Model({ ...DEFAULT_CONFIG, min: 0, firstValue: -1 });
     const state = model.getState();
 
     expect(state.firstValue).toEqual(state.min);
@@ -70,7 +53,7 @@ describe('Валидирование параметров', (): void => {
   });
 
   test('FirstValue = max если firstValue > max', (): void => {
-    const model = new Model({ ...defaultConfig, max: 30, firstValue: 31 });
+    const model = new Model({ ...DEFAULT_CONFIG, max: 30, firstValue: 31 });
     const state = model.getState();
 
     expect(state.firstValue).toEqual(state.max);
@@ -78,7 +61,7 @@ describe('Валидирование параметров', (): void => {
   });
 
   test('Значение правильно корректируется в зависимости от шага', (): void => {
-    const model = new Model({ ...defaultConfig, step: 3, firstValue: 4 });
+    const model = new Model({ ...DEFAULT_CONFIG, step: 3, firstValue: 4 });
     const state = model.getState();
     model.dispatchState({ ...state, kind: 'stateUpdated', firstValue: 5 });
     const newState = model.getState();
@@ -88,14 +71,14 @@ describe('Валидирование параметров', (): void => {
   });
 
   test('SecondValue = null если hasInterval = false', (): void => {
-    const model = new Model({ ...defaultConfig, hasInterval: false, secondValue: 31 });
+    const model = new Model({ ...DEFAULT_CONFIG, hasInterval: false, secondValue: 31 });
     const state = model.getState();
 
     expect(state.secondValue).toEqual(null);
   });
 
   test('SecondValue = min если secondValue < min и hasInterval = true', (): void => {
-    const model = new Model({ ...defaultConfig, min: 0, hasInterval: true, secondValue: -1 });
+    const model = new Model({ ...DEFAULT_CONFIG, min: 0, hasInterval: true, secondValue: -1 });
     const state = model.getState();
 
     expect(state.secondValue).toEqual(state.min);
@@ -103,7 +86,7 @@ describe('Валидирование параметров', (): void => {
   });
 
   test('SecondValue = max если secondValue > max и hasInterval = true', (): void => {
-    const model = new Model({ ...defaultConfig, max: 30, hasInterval: true, secondValue: 31 });
+    const model = new Model({ ...DEFAULT_CONFIG, max: 30, hasInterval: true, secondValue: 31 });
     const state = model.getState();
 
     expect(state.secondValue).toEqual(state.max);
@@ -112,7 +95,7 @@ describe('Валидирование параметров', (): void => {
 
   test('FirstValue <=> SecondValue меняются местами если firstValue > secondValue и hasInterval = true', (): void => {
     const model =
-      new Model({ ...defaultConfig, hasInterval: true, firstValue: 21, secondValue: 20 });
+      new Model({ ...DEFAULT_CONFIG, hasInterval: true, firstValue: 21, secondValue: 20 });
     const state = model.getState();
 
     expect(state.firstValue).toEqual(20);

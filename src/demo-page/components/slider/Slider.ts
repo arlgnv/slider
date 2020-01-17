@@ -1,8 +1,8 @@
 import IPresenter from '../../../components/Interfaces/Presenter/IPresenter';
-import { IDefaultParameters } from '../../../components/Interfaces/Model/IModel';
+import { IRegularParameters } from '../../../components/Interfaces/Model/IModel';
 
 class Slider {
-  private parameters: Partial<IDefaultParameters>;
+  private parameters: Partial<IRegularParameters>;
   private sliderData: IPresenter;
   private $slider: JQuery;
   private $sliderElement: JQuery;
@@ -19,7 +19,7 @@ class Slider {
   private $fieldType: JQuery;
   private $fieldView: JQuery;
 
-  constructor($slider: JQuery, parameters: Partial<IDefaultParameters>) {
+  constructor($slider: JQuery, parameters: Partial<IRegularParameters>) {
     this.parameters = { ...parameters, onChange: this.updateSlider };
 
     this.initSlider($slider);
@@ -64,7 +64,7 @@ class Slider {
     this.sliderData = this.$sliderElement.data('rangeSlider');
   }
 
-  private updateSlider = (parameters: IDefaultParameters): void => {
+  private updateSlider = (parameters: IRegularParameters): void => {
     const { firstValue, secondValue,
       min, max, step, hasScale, hasTip, hasInterval, isVertical, theme } = parameters;
 

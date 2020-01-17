@@ -1,31 +1,14 @@
 window.$ = require('jquery');
 import Scale from './Scale';
-import { IDefaultParameters } from '../../Interfaces/Model/IModel';
+import { DEFAULT_CONFIG } from '../../constants';
 
 beforeEach((): void => {
   $('body').html('<span class="js-anchor"></span>');
 });
 
-const defaultConfig: IDefaultParameters = {
-  kind: 'stateUpdated',
-  firstValue: 0,
-  firstValuePercent: 0,
-  min: 0,
-  max: 100,
-  step: 1,
-  hasInterval: false,
-  hasTip: false,
-  hasScale: false,
-  isVertical: false,
-  theme: 'aqua',
-  secondValue: null,
-  secondValuePercent: null,
-  onChange: null,
-};
-
 describe('Инициализация', (): void => {
   test('Шкала корректно инициализируется', (): void => {
-    new Scale($('.js-anchor'), defaultConfig);
+    new Scale($('.js-anchor'), DEFAULT_CONFIG);
     const marks = $('.range-slider__scale').children();
 
     expect(marks.first().text()).toEqual('0');
@@ -35,8 +18,8 @@ describe('Инициализация', (): void => {
 
 describe('Обновление шкалы', (): void => {
   test('Шкала корректно обновляется', (): void => {
-    const scale = new Scale($('.js-anchor'), defaultConfig);
-    scale.updateScale({ ...defaultConfig, max: 10 });
+    const scale = new Scale($('.js-anchor'), DEFAULT_CONFIG);
+    scale.updateScale({ ...DEFAULT_CONFIG, max: 10 });
     const marks = $('.range-slider__scale').children();
 
     expect(marks.first().text()).toEqual('0');
