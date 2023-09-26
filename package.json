@@ -1,17 +1,17 @@
 {
-  "name": "range-slider",
+  "name": "slider",
   "version": "1.0.0",
   "description": "",
   "main": "src/demo-page/index.pug",
   "scripts": {
     "start": "rimraf dist && parcel src/demo-page/index.pug",
-    "build": "rimraf dist docs && parcel build src/demo-page/index.pug -d docs --no-cache --public-url /range-slider/",
+    "build": "rimraf dist docs && parcel build src/demo-page/index.pug -d docs --no-cache --public-url /slider/",
     "test": "jest",
     "lint": "tslint -c tslint.json -p tsconfig.json src/**"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/madnessJs/range-slider.git"
+    "url": "git+https://github.com/alagunoff/slider.git"
   },
   "author": "Artem Lagunov",
   "license": "ISC",
