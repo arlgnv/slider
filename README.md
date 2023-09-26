@@ -10,7 +10,7 @@
 
 | ssh                                         | https                                           |
 | ------------------------------------------- | ----------------------------------------------- |
-| `git@github.com:madnessJs/range-slider.git` | `https://github.com/madnessJs/range-slider.git` |
+| `git@github.com:madnessJs/slider.git` | `https://github.com/madnessJs/slider.git` |
 
 ### Npm
 
