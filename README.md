@@ -2,7 +2,7 @@
 
 Простой слайдер диапазона с расширяемыми параметрами
 
-Демо проекта - [посмотреть](https://alagunoff.github.io/range-slider/) 
+Демо проекта - [посмотреть](https://alagunoff.github.io/slider/) 
 
 ---
 
