@@ -4,7 +4,7 @@
 
 | ssh                                         | https                                           |
 | ------------------------------------------- | ----------------------------------------------- |
-| `git@github.com:alagunoff/slider.git` | `https://github.com/alagunoff/slider.git` |
+| `git@github.com:arlgnv/slider.git` | `https://github.com/arlgnv/slider.git` |
 
 ### Npm
 
